@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>VIMS - Register</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .card { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 400px; }
+        h2 { color: #1e3a8a; text-align: center; }
+        input { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; }
+        .btn { width: 100%; padding: 12px; background: #28a745; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; margin-top: 10px; }
+        .footer-link { display: block; text-align: center; margin-top: 15px; color: #1a73e8; text-decoration: none; font-size: 0.9em; }
+    </style>
+</head>
+<body>
+<div class="card">
+    <h2>Customer Registration</h2>
+    <form id="regForm">
+        <input type="text" id="name" placeholder="Full Name" required>
+        <input type="email" id="email" placeholder="Email Address" required>
+        <input type="text" id="regUsername" placeholder="Choose Username" required>
+        <input type="password" id="regPassword" placeholder="Create Password" required>
+        <button type="submit" class="btn">Register Now</button>
+    </form>
+    <a href="index.html" class="footer-link">Already have an account? Login</a>
+</div>
+<script src="../js/jQuery.js"></script>
+
+<script>
+    document.getElementById('regForm').onsubmit = async (e) => {
+        e.preventDefault();
+        const payload = {
+            fullName: document.getElementById('name').value,
+            email: document.getElementById('email').value,
+            username: document.getElementById('regUsername').value,
+            password: document.getElementById('regPassword').value
+        };
+        const res = await fetch('/api/auth/register', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(payload)
+        });
+        if(res.ok) {
+            alert("Registration Successful!");
+            window.location.href = 'index.html';
+        } else {
+            alert("Registration failed. Try again.");
+        }
+    };
+</script>
+</body>
+</html>

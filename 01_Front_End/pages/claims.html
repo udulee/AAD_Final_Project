@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="style.css">
+    <title>Claims</title>
+</head>
+<body>
+<div class="card p-4">
+    <h4>Submit a Claim</h4>
+    <form id="claimSubmitForm">
+        <div class="row">
+            <div class="col-md-6">
+                <label>Select Active Policy</label>
+                <select id="activePolicySelect" class="form-select" required></select>
+            </div>
+            <div class="col-md-6">
+                <label>Estimated Loss (LKR)</label>
+                <input type="number" id="claimAmt" class="form-control" placeholder="0.00" required>
+            </div>
+        </div>
+        <div class="mt-3">
+            <label>Description of Incident</label>
+            <textarea id="claimDesc" class="form-control" rows="3" required></textarea>
+        </div>
+        <button type="submit" class="btn btn-danger mt-3">Submit Claim for Review</button>
+    </form>
+
+    <h5 class="mt-5">My Claim History</h5>
+    <table class="table mt-2">
+        <thead>
+        <tr>
+            <th>Date</th>
+            <th>Policy No</th>
+            <th>Amount</th>
+            <th>Status [cite: 30]</th>
+        </tr>
+        </thead>
+        <tbody id="customerClaimTable"></tbody>
+    </table>
+</div>
+<script src="../js/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
