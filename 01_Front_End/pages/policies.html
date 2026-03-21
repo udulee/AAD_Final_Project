@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="style.css">
+    <title>My Policies</title>
+</head>
+<body>
+<div class="container mt-4">
+    <div class="d-flex justify-content-between">
+        <h4>My Insurance Policies</h4>
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#applyModal">Apply for New Policy</button>
+    </div>
+
+    <div class="row mt-4" id="policyListContainer">
+    </div>
+</div>
+
+<div class="modal fade" id="applyModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header"><h5>New Insurance Application</h5></div>
+            <div class="modal-body">
+                <form id="policyApplyForm">
+                    <label>Select Registered Vehicle</label>
+                    <select class="form-select mb-3" id="vehicleSelect" required></select>
+
+                    <label>Insurance Plan</label>
+                    <select class="form-select mb-3" id="planSelect">
+                        <option value="THIRD_PARTY">Third Party Only</option>
+                        <option value="FULL_INSURANCE">Full Insurance</option>
+                    </select>
+                    <div class="alert alert-warning">Note: Premium is calculated based on vehicle age and your claim history (NCB)[cite: 52, 57].</div>
+                    <button type="submit" class="btn btn-success w-100">Submit Application</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="../js/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
