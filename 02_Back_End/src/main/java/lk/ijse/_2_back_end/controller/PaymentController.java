@@ -1,7 +1,7 @@
 package lk.ijse._2_back_end.controller;
 
-import lk.ijse._2_back_end.dto.PolicyDTO;
-import lk.ijse._2_back_end.service.PolicyService;
+import lk.ijse._2_back_end.dto.PaymentRequest;
+import lk.ijse._2_back_end.service.PaymentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,73 +10,73 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/policies")
+@RequestMapping("/api/v1/payments")
 @CrossOrigin(origins = "*")
-public class PolicyController {
+public class PaymentController {
 
     @Autowired
-    private PolicyService policyService;
+    private PaymentService paymentService;
 
-    // POST /api/v1/policies
+    // POST /api/v1/payments
     @PostMapping
-    public ResponseEntity<?> registerPolicy(@RequestBody PolicyDTO dto) {
+    public ResponseEntity<?> registerPayment(@RequestBody PaymentRequest dto) {
         try {
-            policyService.registerPolicy(dto);
-            return ResponseEntity.status(HttpStatus.CREATED).body("Policy registered successfully!");
+            paymentService.registerPayment(dto);
+            return ResponseEntity.status(HttpStatus.CREATED).body("Payment registered successfully!");
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
-    // GET /api/v1/policies
+    // GET /api/v1/payments
     @GetMapping
-    public ResponseEntity<?> getAllPolicies() {
+    public ResponseEntity<?> getAllPayments() {
         try {
-            List<PolicyDTO> list = policyService.getAllPolicies();
+            List<PaymentRequest> list = paymentService.getAllPayments();
             return ResponseEntity.ok(list);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 
-    // GET /api/v1/policies/{id}
+    // GET /api/v1/payments/{id}
     @GetMapping("/{id}")
-    public ResponseEntity<?> getPolicyById(@PathVariable Long id) {
+    public ResponseEntity<?> getPaymentById(@PathVariable Long id) {
         try {
-            return ResponseEntity.ok(policyService.getPolicyById(id));
+            return ResponseEntity.ok(paymentService.getPaymentById(id));
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
 
-    // PUT /api/v1/policies/{id}
+    // PUT /api/v1/payments/{id}
     @PutMapping("/{id}")
-    public ResponseEntity<?> updatePolicy(@PathVariable Long id, @RequestBody PolicyDTO dto) {
+    public ResponseEntity<?> updatePayment(@PathVariable Long id, @RequestBody PaymentRequest dto) {
         try {
-            policyService.updatePolicy(id, dto);
-            return ResponseEntity.ok("Policy updated successfully!");
+            paymentService.updatePayment(id, dto);
+            return ResponseEntity.ok("Payment updated successfully!");
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
-    // DELETE /api/v1/policies/{id}
+    // DELETE /api/v1/payments/{id}
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deletePolicy(@PathVariable Long id) {
+    public ResponseEntity<?> deletePayment(@PathVariable Long id) {
         try {
-            policyService.deletePolicy(id);
-            return ResponseEntity.ok("Policy deleted successfully!");
+            paymentService.deletePayment(id);
+            return ResponseEntity.ok("Payment deleted successfully!");
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
 
-    // DELETE /api/v1/policies/reset
+    // DELETE /api/v1/payments/reset
     @DeleteMapping("/reset")
-    public ResponseEntity<?> resetPolicies() {
+    public ResponseEntity<?> resetPayments() {
         try {
-            policyService.resetPolicies();
-            return ResponseEntity.ok("All policies reset successfully!");
+            paymentService.resetPayments();
+            return ResponseEntity.ok("All payments reset successfully!");
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }

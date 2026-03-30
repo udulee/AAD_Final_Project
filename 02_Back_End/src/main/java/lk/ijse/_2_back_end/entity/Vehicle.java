@@ -3,35 +3,32 @@ package lk.ijse._2_back_end.entity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class Vehicle {
+
+    // Basic Identification
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    private String chassis;
-    private String vehicleNo;
-    private String vehicleType;
+    private String vehicleNumber;
+    private String make;
     private String model;
+
+    // Premium Calculation Factors
+    private String vehicleType;
+    private Integer manufacturedYear;
+    private Double marketValue;
+    private String engineNumber;
+    private String chassisNumber;
+
+    // Risk & Behavior Assessment
     private String fuelType;
+    private String usageType;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User owner; // Vehicle eka ayithi customer
+    // Ownership Link
+    private Long customerId;
 
-
-    public Vehicle() {
-
-    }
-
-    public Vehicle(String chassis, String vehicleNo, String vehicleType, String model, String fuelType) {
-        this.chassis=chassis;
-        this.vehicleNo=vehicleNo;
-        this.vehicleType=vehicleType;
-        this.model=model;
-        this.fuelType=fuelType;
-    }
 }

@@ -1,47 +1,622 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+    <meta charset="UTF-8">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="style.css">
-    <title>Claims</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <title>Claims - VIMS</title>
+    <style>
+        body { background: #f4f6f9; }
+
+        .card { border-radius: 12px; border: none; box-shadow: 0 2px 12px rgba(0,0,0,0.07); }
+
+        .section-title {
+            font-size: 0.7rem; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 2px; color: #6c757d; margin-bottom: 16px;
+        }
+
+        .form-label { font-size: 0.82rem; font-weight: 600; color: #444; margin-bottom: 4px; }
+
+        .form-control, .form-select {
+            font-size: 0.85rem; border-radius: 8px;
+            border: 1px solid #dee2e6; padding: 9px 12px;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: #dc3545; box-shadow: 0 0 0 3px rgba(220,53,69,0.1);
+        }
+
+        /* Action buttons */
+        .action-bar { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-top: 18px; }
+
+        /* Status pill */
+        .badge-pending  { background:#fff3cd; color:#856404; }
+        .badge-approved { background:#d1e7dd; color:#0f5132; }
+        .badge-rejected { background:#f8d7da; color:#842029; }
+        .badge-paid     { background:#cff4fc; color:#055160; }
+
+        .status-badge {
+            display: inline-block; padding: 3px 10px;
+            border-radius: 20px; font-size: 0.72rem; font-weight: 600;
+        }
+
+        .table thead th {
+            font-size: 0.72rem; text-transform: uppercase;
+            letter-spacing: 1px; color: #6c757d; background: #f8f9fa;
+            border-bottom: 2px solid #dee2e6;
+        }
+        .table tbody td { font-size: 0.84rem; vertical-align: middle; }
+        tr.selected-row td { background: #fff5f5 !important; }
+        tr:hover td { background: #fafafa; cursor: pointer; }
+
+        .act-btn { padding: 3px 10px; font-size: 0.75rem; border-radius: 5px; }
+
+        /* Status indicator */
+        .api-status {
+            margin-left: auto; display: flex; align-items: center;
+            gap: 6px; font-size: 0.75rem; color: #6c757d;
+        }
+        .api-dot {
+            width: 8px; height: 8px; border-radius: 50%; background: #adb5bd;
+        }
+        .api-dot.ok      { background: #198754; }
+        .api-dot.loading { background: #ffc107; animation: blink 0.8s infinite; }
+        .api-dot.error   { background: #dc3545; }
+        @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+
+        .empty-row td { text-align: center; color: #adb5bd; padding: 30px; font-size: 0.83rem; }
+    </style>
 </head>
 <body>
-<div class="card p-4">
-    <h4>Submit a Claim</h4>
-    <form id="claimSubmitForm">
-        <div class="row">
-            <div class="col-md-6">
-                <label>Select Active Policy</label>
-                <select id="activePolicySelect" class="form-select" required></select>
-            </div>
-            <div class="col-md-6">
-                <label>Estimated Loss (LKR)</label>
-                <input type="number" id="claimAmt" class="form-control" placeholder="0.00" required>
-            </div>
-        </div>
-        <div class="mt-3">
-            <label>Description of Incident</label>
-            <textarea id="claimDesc" class="form-control" rows="3" required></textarea>
-        </div>
-        <button type="submit" class="btn btn-danger mt-3">Submit Claim for Review</button>
-    </form>
 
-    <h5 class="mt-5">My Claim History</h5>
-    <table class="table mt-2">
-        <thead>
-        <tr>
-            <th>Date</th>
-            <th>Policy No</th>
-            <th>Amount</th>
-            <th>Status [cite: 30]</th>
-        </tr>
-        </thead>
-        <tbody id="customerClaimTable"></tbody>
-    </table>
+<div class="container py-4">
+
+    <!-- ── FORM CARD ── -->
+    <div class="card p-4 mb-4">
+
+        <div class="section-title" id="formTitle"> Submit a Claim</div>
+
+        <!-- Row 1 -->
+        <div class="row g-3">
+            <div class="col-md-4">
+                <label class="form-label">Claim ID <small class="text-muted">(auto on load)</small></label>
+                <input type="number" id="claimId" class="form-control" placeholder="Auto" readonly>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Vehicle Number *</label>
+                <input type="text" id="vehicleNumber" class="form-control" placeholder="e.g. WP-ABC-1234">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Claim Amount (LKR) *</label>
+                <input type="number" id="claimAmount" class="form-control" placeholder="0.00">
+            </div>
+        </div>
+
+        <!-- Row 2 -->
+        <div class="row g-3 mt-1">
+            <div class="col-md-4">
+                <label class="form-label">Claim Date</label>
+                <input type="date" id="claimDate" class="form-control">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Incident Date</label>
+                <input type="date" id="incidentDate" class="form-control">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Incident Location</label>
+                <input type="text" id="incidentLocation" class="form-control" placeholder="e.g. Colombo">
+            </div>
+        </div>
+
+        <!-- Row 3 -->
+        <div class="row g-3 mt-1">
+            <div class="col-md-4">
+                <label class="form-label">Claim Status</label>
+                <select id="claimStatus" class="form-select">
+                    <option value="">-- Select --</option>
+                    <option>Pending</option>
+                    <option>Approved</option>
+                    <option>Rejected</option>
+                    <option>Paid</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Approved Date</label>
+                <input type="date" id="approvedDate" class="form-control">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Approved By (User ID)</label>
+                <input type="number" id="approvedBy" class="form-control" placeholder="User ID">
+            </div>
+        </div>
+
+        <!-- Row 4 -->
+        <div class="row g-3 mt-1">
+            <div class="col-md-8">
+                <label class="form-label">Description of Incident</label>
+                <textarea id="description" class="form-control" rows="2" placeholder="Describe what happened..."></textarea>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Document Path</label>
+                <input type="text" id="documentPath" class="form-control" placeholder="e.g. /docs/claim.pdf">
+            </div>
+        </div>
+
+        <!-- ── BUTTONS ── -->
+        <div class="action-bar">
+
+            <!-- POST /api/v1/claim/register -->
+            <button class="btn btn-danger" id="btnRegister" onclick="doRegister()">
+                Register
+            </button>
+
+            <!-- PUT /api/v1/claim/update/{claimId} -->
+            <button class="btn btn-warning" id="btnUpdate" onclick="doUpdate()" disabled>
+                Update
+            </button>
+
+            <!-- DELETE /api/v1/claim/delete/{claimId} -->
+            <button class="btn btn-dark" id="btnDelete" onclick="doDeleteSelected()" disabled>
+                Delete
+            </button>
+
+            <div class="vr mx-1"></div>
+
+            <!-- GET /api/v1/claim/all -->
+            <button class="btn btn-success" id="btnGetAll" onclick="doGetAll()">
+                Get All
+            </button>
+
+            <!-- DELETE /api/v1/claim/reset -->
+            <button class="btn btn-outline-danger" id="btnResetAll" onclick="openResetModal()">
+                Reset All
+            </button>
+
+            <!-- Clear form only -->
+            <button class="btn btn-outline-secondary" onclick="doClear()">
+                Clear
+            </button>
+
+            <div class="api-status">
+                <div class="api-dot" id="apiDot"></div>
+                <span id="apiStatus">Idle</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── TABLE CARD ── -->
+    <div class="card p-4">
+        <div class="d-flex align-items-center mb-3">
+            <div class="section-title mb-0"> Claim History</div>
+            <span class="badge bg-danger ms-2" id="countBadge">0</span>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead>
+                <tr>
+                    <th>Claim ID</th>
+                    <th>Claim Date</th>
+                    <th>Vehicle No</th>
+                    <th>Amount (LKR)</th>
+                    <th>Incident Date</th>
+                    <th>Location</th>
+                    <th>Status</th>
+                    <th>Approved Date</th>
+                    <th>Approved By</th>
+                    <th>Description</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody id="claimTableBody">
+                <tr class="empty-row">
+                    <td colspan="11">Click <strong>⟳ Get All</strong> to load claims.</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div><!-- /container -->
+
+<!-- ── DELETE CONFIRM MODAL ── -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header border-0">
+                <h5 class="modal-title text-danger">🗑 Delete Claim?</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p id="deleteModalText" class="text-muted">Are you sure? This cannot be undone.</p>
+            </div>
+            <div class="modal-footer border-0">
+                <button class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button class="btn btn-danger" onclick="confirmDelete()">Yes, Delete</button>
+            </div>
+        </div>
+    </div>
 </div>
+
+<!-- ── RESET ALL MODAL ── -->
+<div class="modal fade" id="resetModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header border-0">
+                <h5 class="modal-title text-danger">⚠️ Reset All Claims?</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p class="text-muted">
+                    This will permanently delete <strong>every claim</strong> in the database.
+                    This action cannot be undone.
+                </p>
+            </div>
+            <div class="modal-footer border-0">
+                <button class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button class="btn btn-danger" onclick="confirmResetAll()">Yes, Reset All</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Toast -->
+<div class="position-fixed bottom-0 end-0 p-3" style="z-index:9999">
+    <div id="toastEl" class="toast align-items-center border-0" role="alert">
+        <div class="d-flex">
+            <div class="toast-body" id="toastMsg"></div>
+            <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast"></button>
+        </div>
+    </div>
+</div>
+
 <script src="../js/jquery-3.7.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="app.js"></script>
+<script src="../js/app.js"></script>
+
+<script>
+    // Base URL
+    const BASE = "http://localhost:8080/api/v1/claim";
+
+    // State
+    let claims        = [];
+    let selectedIndex = -1;
+    let deleteTarget  = null;
+
+    //  Bootstrap instances
+    const bsDeleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+    const bsResetModal  = new bootstrap.Modal(document.getElementById('resetModal'));
+    const bsToast       = new bootstrap.Toast(document.getElementById('toastEl'),
+        { delay: 3200 });
+
+    // Field IDs (match ClaimRequestDTO)
+    const FIELDS = [
+        "claimId", "claimDate", "claimStatus", "claimAmount",
+        "incidentDate", "incidentLocation", "description",
+        "documentPath", "approvedDate", "vehicleNumber", "approvedBy"
+    ];
+
+    // Helpers
+    const $  = id => document.getElementById(id);
+    const ui = {
+        tBody:    $("claimTableBody"),
+        badge:    $("countBadge"),
+        title:    $("formTitle"),
+        register: $("btnRegister"),
+        update:   $("btnUpdate"),
+        del:      $("btnDelete"),
+        getAll:   $("btnGetAll"),
+        resetAll: $("btnResetAll"),
+        dot:      $("apiDot"),
+        status:   $("apiStatus"),
+    };
+
+    function getFields() {
+        const o = {};
+        FIELDS.forEach(f => {
+            const e = $(f);
+            o[f] = e ? e.value.trim() : null;
+        });
+        // Convert types to match DTO
+        if (o.claimId)    o.claimId    = o.claimId    ? Number(o.claimId)    : null;
+        if (o.claimAmount) o.claimAmount = Number(o.claimAmount);
+        if (o.approvedBy) o.approvedBy = o.approvedBy ? Number(o.approvedBy) : null;
+        if (!o.claimId)   delete o.claimId;      // let backend generate
+        return o;
+    }
+
+    function setFields(c) {
+        FIELDS.forEach(f => {
+            const e = $(f);
+            if (!e) return;
+            e.value = c[f] ?? "";
+        });
+    }
+
+    function clearFields() {
+        FIELDS.forEach(f => {
+            const e = $(f);
+            if (!e) return;
+            e.tagName === "SELECT" ? (e.selectedIndex = 0) : (e.value = "");
+        });
+    }
+
+    function setStatus(state, msg) {
+        ui.dot.className      = "api-dot " + state;
+        ui.status.textContent = msg;
+    }
+
+    function toast(msg, type = "secondary") {
+        const el = $("toastEl");
+        el.className = `toast align-items-center border-0 text-bg-${type}`;
+        $("toastMsg").textContent = msg;
+        bsToast.show();
+    }
+
+    // Render table
+    function render(data) {
+        claims = Array.isArray(data) ? data : [];
+        ui.badge.textContent = claims.length;
+
+        if (!claims.length) {
+            ui.tBody.innerHTML =
+                '<tr class="empty-row"><td colspan="11">No claims found in the database.</td></tr>';
+            return;
+        }
+
+        ui.tBody.innerHTML = claims.map((c, i) => `
+      <tr id="crow-${i}" onclick="selectRow(${i})">
+        <td><strong>#${c.claimId ?? "—"}</strong></td>
+        <td>${fmt(c.claimDate)}</td>
+        <td><span class="badge bg-secondary">${esc(c.vehicleNumber)}</span></td>
+        <td>${c.claimAmount ? Number(c.claimAmount).toLocaleString() : "—"}</td>
+        <td>${fmt(c.incidentDate)}</td>
+        <td>${esc(c.incidentLocation)}</td>
+        <td>${statusBadge(c.claimStatus)}</td>
+        <td>${fmt(c.approvedDate)}</td>
+        <td>${c.approvedBy ?? "—"}</td>
+        <td title="${esc(c.description)}">${shortDesc(c.description)}</td>
+        <td>
+          <div class="d-flex gap-1">
+            <button class="btn btn-sm btn-outline-warning act-btn"
+                    onclick="event.stopPropagation(); rowEdit(${i})">Edit</button>
+            <button class="btn btn-sm btn-outline-danger act-btn"
+                    onclick="event.stopPropagation(); rowDel(${i})">Delete</button>
+          </div>
+        </td>
+      </tr>`).join('');
+
+        // Restore highlight
+        if (selectedIndex >= 0 && selectedIndex < claims.length)
+            $(`crow-${selectedIndex}`)?.classList.add("selected-row");
+    }
+
+    function esc(v)        { return v == null ? "—" : String(v).replace(/&/g,"&amp;").replace(/</g,"&lt;"); }
+    function fmt(d)        { return d ? String(d).substring(0,10) : "—"; }
+    function shortDesc(d)  { return d ? (d.length > 30 ? d.substring(0,30)+"…" : d) : "—"; }
+
+    function statusBadge(s) {
+        const map = {
+            "Pending":  "badge-pending",
+            "Approved": "badge-approved",
+            "Rejected": "badge-rejected",
+            "Paid":     "badge-paid",
+        };
+        const cls = map[s] || "bg-secondary text-white";
+        return `<span class="status-badge ${cls}">${s || "—"}</span>`;
+    }
+
+    // ── Row select ────────────────────────────────────────────────────────────
+    function selectRow(i) {
+        if (selectedIndex === i) { doClear(); return; }
+        $(`crow-${selectedIndex}`)?.classList.remove("selected-row");
+        selectedIndex = i;
+        $(`crow-${i}`).classList.add("selected-row");
+        setFields(claims[i]);
+        setEditMode();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function rowEdit(i) { selectRow(i); }
+    function rowDel(i) {
+        deleteTarget = i;
+        const c = claims[i];
+        $("deleteModalText").textContent =
+            `Remove Claim #${c.claimId} (Vehicle: ${c.vehicleNumber || "—"}, Amount: LKR ${c.claimAmount?.toLocaleString() || "—"})? This cannot be undone.`;
+        bsDeleteModal.show();
+    }
+
+    // ── Modes ─────────────────────────────────────────────────────────────────
+    function setEditMode() {
+        ui.title.textContent  = ` Edit Claim #${claims[selectedIndex].claimId}`;
+        ui.register.disabled  = true;
+        ui.update.disabled    = false;
+        ui.del.disabled       = false;
+    }
+
+    function setIdleMode() {
+        ui.title.textContent  = " Submit a Claim";
+        ui.register.disabled  = false;
+        ui.update.disabled    = true;
+        ui.del.disabled       = true;
+        $(`crow-${selectedIndex}`)?.classList.remove("selected-row");
+        selectedIndex = -1;
+    }
+
+    function setBusy(btn, label, on) {
+        btn.innerHTML = on
+            ? `<span class="spinner-border spinner-border-sm me-1"></span>${label}`
+            : label;
+        btn.disabled = on;
+    }
+
+    //  API CALLS
+    // POST /api/v1/claim/register
+    async function doRegister() {
+        const data = getFields();
+        if (!data.vehicleNumber) { toast("Vehicle Number is required.", "danger"); return; }
+        if (!data.claimAmount)   { toast("Claim Amount is required.",   "danger"); return; }
+
+        setBusy(ui.register, " Register", true);
+        setStatus("loading", "Registering…");
+
+        try {
+            const res  = await fetch(`${BASE}/register`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data)
+            });
+            const json = await res.json();    // APIResponse<Void>
+
+            if (res.ok) {
+                toast("Claim registered successfully. ✓", "success");
+                setStatus("ok", "Registered");
+                clearFields();
+                await doGetAll();
+            } else {
+                toast(`Register failed: ${json.message}`, "danger");
+                setStatus("error", "Failed");
+            }
+        } catch(e) {
+            toast("Network error: " + e.message, "danger");
+            setStatus("error", "Network error");
+        } finally {
+            setBusy(ui.register, "💾 Register", false);
+        }
+    }
+
+    // GET /api/v1/claim/all
+    async function doGetAll() {
+        setBusy(ui.getAll, "⟳ Get All", true);
+        setStatus("loading", "Loading…");
+
+        try {
+            const res  = await fetch(`${BASE}/all`);
+            const json = await res.json();    // APIResponse<List<ClaimRequestDTO>>
+
+            if (res.ok) {
+                render(json.data);
+                setStatus("ok", `${claims.length} record(s)`);
+                toast(`Loaded ${claims.length} claim(s).`, "secondary");
+            } else {
+                toast(`Get All failed: ${json.message}`, "danger");
+                setStatus("error", "Failed");
+                ui.tBody.innerHTML =
+                    `<tr class="empty-row"><td colspan="11">⚠ ${json.message}</td></tr>`;
+            }
+        } catch(e) {
+            toast("Network error: " + e.message, "danger");
+            setStatus("error", "Network error");
+            ui.tBody.innerHTML =
+                `<tr class="empty-row"><td colspan="11">⚠ Cannot reach <strong>${BASE}/all</strong></td></tr>`;
+            ui.badge.textContent = 0;
+        } finally {
+            setBusy(ui.getAll, "⟳ Get All", false);
+        }
+    }
+
+    // PUT /api/v1/claim/update/{claimId}
+    async function doUpdate() {
+        if (selectedIndex < 0) { toast("Select a row to update.", "warning"); return; }
+
+        const data   = getFields();
+        const claimId = claims[selectedIndex].claimId;
+
+        setBusy(ui.update, " Update", true);
+        setStatus("loading", "Updating…");
+
+        try {
+            const res  = await fetch(`${BASE}/update/${claimId}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data)
+            });
+            const json = await res.json();
+
+            if (res.ok) {
+                toast(`Claim #${claimId} updated. ✓`, "warning");
+                setStatus("ok", "Updated");
+                doClear();
+                await doGetAll();
+            } else {
+                toast(`Update failed: ${json.message}`, "danger");
+                setStatus("error", "Failed");
+            }
+        } catch(e) {
+            toast("Network error: " + e.message, "danger");
+            setStatus("error", "Network error");
+        } finally {
+            setBusy(ui.update, " Update", false);
+        }
+    }
+
+    // DELETE /api/v1/claim/delete/{claimId}  — header button
+    function doDeleteSelected() {
+        if (selectedIndex < 0) { toast("Select a row to delete.", "warning"); return; }
+        rowDel(selectedIndex);
+    }
+
+    async function confirmDelete() {
+        if (deleteTarget === null) return;
+        const claimId = claims[deleteTarget].claimId;
+        bsDeleteModal.hide();
+        setStatus("loading", "Deleting…");
+
+        try {
+            const res  = await fetch(`${BASE}/delete/${claimId}`, { method: "DELETE" });
+            const json = await res.json();
+
+            if (res.ok) {
+                toast(`Claim #${claimId} deleted.`, "danger");
+                setStatus("ok", "Deleted");
+                doClear();
+                await doGetAll();
+            } else {
+                toast(`Delete failed: ${json.message}`, "danger");
+                setStatus("error", "Failed");
+            }
+        } catch(e) {
+            toast("Network error: " + e.message, "danger");
+            setStatus("error", "Network error");
+        } finally {
+            deleteTarget = null;
+        }
+    }
+
+    // DELETE /api/v1/claim/reset
+    function openResetModal() { bsResetModal.show(); }
+
+    async function confirmResetAll() {
+        bsResetModal.hide();
+        setBusy(ui.resetAll, "⚠ Reset All", true);
+        setStatus("loading", "Resetting…");
+
+        try {
+            const res  = await fetch(`${BASE}/reset`, { method: "DELETE" });
+            const json = await res.json();
+
+            if (res.ok) {
+                toast("All claims deleted from database.", "danger");
+                setStatus("ok", "Reset done");
+                doClear();
+                render([]);
+            } else {
+                toast(`Reset failed: ${json.message}`, "danger");
+                setStatus("error", "Failed");
+            }
+        } catch(e) {
+            toast("Network error: " + e.message, "danger");
+            setStatus("error", "Network error");
+        } finally {
+            setBusy(ui.resetAll, "⚠ Reset All", false);
+        }
+    }
+
+    // Clear form + deselect (local only)
+    function doClear() {
+        clearFields();
+        setIdleMode();
+        setStatus("", "Idle");
+    }
+</script>
 </body>
 </html>

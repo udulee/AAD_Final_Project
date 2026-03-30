@@ -1,16 +1,21 @@
 package lk.ijse._2_back_end.util;
 
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 
-@AllArgsConstructor
-@NoArgsConstructor
 @Data
 public class APIResponse<T>{
     private int status;
     private String message;
     private T data;
+
+    public APIResponse() {
+    }
+
+    public APIResponse(int status, String message, T data) {
+        this.status = status;
+        this.message = message;
+        this.data = data;
+    }
 }

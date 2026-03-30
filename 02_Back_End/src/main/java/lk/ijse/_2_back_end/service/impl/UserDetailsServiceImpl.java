@@ -12,7 +12,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
-        // 🔴 TEMP (for testing JWT)
+        // (for testing JWT)
         if ("admin".equals(username)) {
             return User.builder()
                     .username("admin")

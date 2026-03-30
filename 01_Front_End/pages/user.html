@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <title>User Management - VIMS</title>
+    <style>
+        :root {
+            --sidebar-bg: #1a1f2e;
+            --sidebar-hover: #2d3550;
+            --accent: #4f8ef7;
+            --accent-hover: #3a7ae0;
+            --danger: #e74c3c;
+            --success: #2ecc71;
+            --warning: #f39c12;
+            --text-light: #cfd8f0;
+            --card-bg: #ffffff;
+            --body-bg: #f0f3fb;
+        }
+
+        body {
+            background-color: var(--body-bg);
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        /* ── Sidebar ── */
+        .sidebar {
+            background: var(--sidebar-bg);
+            min-height: 100vh;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-brand {
+            padding: 24px 20px 16px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .sidebar-brand h4 {
+            color: var(--accent);
+            font-weight: 800;
+            letter-spacing: 4px;
+            font-size: 1.4rem;
+            margin: 0;
+        }
+
+        .sidebar-brand small {
+            color: var(--text-light);
+            font-size: 0.7rem;
+            opacity: 0.6;
+            letter-spacing: 1px;
+        }
+
+        .sidebar nav {
+            padding: 16px 12px;
+            flex: 1;
+        }
+
+        .sidebar nav a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            color: var(--text-light);
+            text-decoration: none;
+            border-radius: 8px;
+            margin-bottom: 4px;
+            font-size: 0.9rem;
+            transition: background 0.2s, color 0.2s;
+        }
+
+        .sidebar nav a:hover,
+        .sidebar nav a.active {
+            background: var(--sidebar-hover);
+            color: #fff;
+        }
+
+        .sidebar nav a.active {
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        .sidebar nav a i {
+            font-size: 1rem;
+            width: 18px;
+            text-align: center;
+        }
+
+        .sidebar-footer {
+            padding: 16px 12px;
+            border-top: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .sidebar-footer a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            color: #e74c3c;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            transition: background 0.2s;
+        }
+
+        .sidebar-footer a:hover {
+            background: rgba(231,76,60,0.12);
+        }
+
+        /* ── Main ── */
+        .main-content {
+            padding: 30px 32px;
+        }
+
+        .page-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 28px;
+        }
+
+        .page-header h2 {
+            font-weight: 700;
+            font-size: 1.6rem;
+            color: #1a1f2e;
+            margin: 0;
+        }
+
+        .page-header small {
+            color: #8a94a8;
+            font-size: 0.85rem;
+        }
+
+        /* ── Cards ── */
+        .vims-card {
+            background: var(--card-bg);
+            border: none;
+            border-radius: 14px;
+            box-shadow: 0 2px 16px rgba(0,0,0,0.06);
+            padding: 28px;
+            margin-bottom: 24px;
+        }
+
+        .vims-card h5 {
+            font-weight: 700;
+            color: #1a1f2e;
+            font-size: 1rem;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .vims-card h5 i {
+            color: var(--accent);
+        }
+
+        /* ── Form ── */
+        .form-label {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: #5a6278;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-control,
+        .form-select {
+            border: 1.5px solid #e2e8f2;
+            border-radius: 9px;
+            font-size: 0.9rem;
+            padding: 9px 14px;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            background: #fafbff;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(79,142,247,0.12);
+            background: #fff;
+        }
+
+        /* ── Buttons ── */
+        .btn {
+            border-radius: 9px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            padding: 9px 20px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+
+        .btn-register {
+            background: var(--accent);
+            color: #fff;
+            border: none;
+        }
+
+        .btn-register:hover {
+            background: var(--accent-hover);
+            color: #fff;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 14px rgba(79,142,247,0.35);
+        }
+
+        .btn-update {
+            background: var(--warning);
+            color: #fff;
+            border: none;
+        }
+
+        .btn-update:hover {
+            background: #e08c0c;
+            color: #fff;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 14px rgba(243,156,18,0.35);
+        }
+
+        .btn-delete {
+            background: var(--danger);
+            color: #fff;
+            border: none;
+        }
+
+        .btn-delete:hover {
+            background: #c0392b;
+            color: #fff;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 14px rgba(231,76,60,0.35);
+        }
+
+        .btn-reset {
+            background: #edf0f7;
+            color: #5a6278;
+            border: none;
+        }
+
+        .btn-reset:hover {
+            background: #dde2ef;
+            color: #1a1f2e;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        /* Action buttons in table */
+        .btn-sm {
+            padding: 5px 12px;
+            font-size: 0.78rem;
+            border-radius: 7px;
+        }
+
+        /* ── Table ── */
+        .table {
+            font-size: 0.875rem;
+        }
+
+        .table thead th {
+            background: #1a1f2e;
+            color: #cfd8f0;
+            font-weight: 600;
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            border: none;
+            padding: 13px 16px;
+        }
+
+        .table thead th:first-child { border-radius: 10px 0 0 0; }
+        .table thead th:last-child  { border-radius: 0 10px 0 0; }
+
+        .table tbody tr {
+            transition: background 0.15s;
+        }
+
+        .table tbody tr:hover {
+            background: #f5f7ff;
+        }
+
+        .table tbody td {
+            padding: 13px 16px;
+            vertical-align: middle;
+            border-color: #f0f3fb;
+            color: #2d3550;
+        }
+
+        .table tbody tr.selected-row {
+            background: #eef3ff;
+            border-left: 3px solid var(--accent);
+        }
+
+        /* ── Badge ── */
+        .role-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .role-admin {
+            background: rgba(231,76,60,0.12);
+            color: #c0392b;
+        }
+
+        .role-customer {
+            background: rgba(46,204,113,0.12);
+            color: #27ae60;
+        }
+
+        /* ── Alert ── */
+        .alert-floating {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            border-radius: 10px;
+            padding: 12px 20px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 260px;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(120%); opacity: 0; }
+            to   { transform: translateX(0);   opacity: 1; }
+        }
+
+        /* ── Stats ── */
+        .stat-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 18px 22px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .stat-icon {
+            width: 46px;
+            height: 46px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .stat-info h6 {
+            font-size: 0.75rem;
+            color: #8a94a8;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin: 0 0 2px;
+        }
+
+        .stat-info h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1a1f2e;
+            margin: 0;
+        }
+
+        /* selected row id display */
+        #selectedIdDisplay {
+            font-size: 0.78rem;
+            color: #8a94a8;
+            margin-top: 6px;
+        }
+    </style>
+</head>
+<body>
+<div class="container-fluid g-0">
+    <div class="row g-0">
+
+        <!-- ── Sidebar ── -->
+        <div class="col-md-2 sidebar">
+            <div class="sidebar-brand">
+                <h4>VIMS</h4>
+                <small>Vehicle Insurance Mgmt</small>
+            </div>
+            <nav>
+                <a href="customer.html"><i class="bi bi-grid-1x2"></i> Dashboard</a>
+                <a href="vehicles.html"><i class="bi bi-car-front"></i> My Vehicles</a>
+                <a href="policies.html"><i class="bi bi-shield-check"></i> Policies</a>
+                <a href="claims.html"><i class="bi bi-file-earmark-text"></i> Claims</a>
+                <a href="user.html" class="active"><i class="bi bi-people"></i> Users</a>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="#" onclick="logout()"><i class="bi bi-box-arrow-right"></i> Logout</a>
+            </div>
+        </div>
+
+        <!-- ── Main Content ── -->
+        <main class="col-md-10 main-content">
+
+            <!-- Header -->
+            <div class="page-header">
+                <div>
+                    <h2><i class="bi bi-people me-2" style="color:var(--accent)"></i>User Management</h2>
+                    <small>Manage system users and their roles</small>
+                </div>
+            </div>
+
+            <!-- Stats Row -->
+            <div class="row g-3 mb-4">
+                <div class="col-md-4">
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background:rgba(79,142,247,0.12);color:var(--accent)">
+                            <i class="bi bi-people-fill"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h6>Total Users</h6>
+                            <h3 id="totalUsers">0</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background:rgba(231,76,60,0.12);color:#e74c3c">
+                            <i class="bi bi-shield-lock-fill"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h6>Admins</h6>
+                            <h3 id="totalAdmins">0</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background:rgba(46,204,113,0.12);color:#2ecc71">
+                            <i class="bi bi-person-check-fill"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h6>Customers</h6>
+                            <h3 id="totalCustomers">0</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Form Card -->
+            <div class="vims-card">
+                <h5><i class="bi bi-person-plus-fill"></i> <span id="formTitle">Register New User</span></h5>
+
+                <div class="row g-3">
+                    <input type="hidden" id="userId">
+
+                    <div class="col-md-4">
+                        <label class="form-label">Username</label>
+                        <input type="text" class="form-control" id="username" placeholder="e.g. john_doe">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Full Name</label>
+                        <input type="text" class="form-control" id="fullName" placeholder="e.g. John Doe">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-control" id="email" placeholder="e.g. john@example.com">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Password</label>
+                        <input type="password" class="form-control" id="password" placeholder="Enter password">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Role</label>
+                        <select class="form-select" id="role">
+                            <option value="CUSTOMER">Customer</option>
+                            <option value="ADMIN">Admin</option>
+                        </select>
+                    </div>
+
+                    <!-- Buttons -->
+                    <div class="col-12 d-flex flex-wrap gap-2 mt-2">
+                        <button class="btn btn-register" onclick="registerUser()">
+                            <i class="bi bi-person-plus"></i> Register
+                        </button>
+                        <button class="btn btn-update" id="btnUpdate" onclick="updateUser()" disabled>
+                            <i class="bi bi-pencil-square"></i> Update
+                        </button>
+                        <button class="btn btn-delete" id="btnDelete" onclick="deleteUser()" disabled>
+                            <i class="bi bi-trash3"></i> Delete
+                        </button>
+                        <button class="btn btn-reset" onclick="resetForm()">
+                            <i class="bi bi-arrow-counterclockwise"></i> Reset
+                        </button>
+                    </div>
+                    <div id="selectedIdDisplay"></div>
+                </div>
+            </div>
+
+            <!-- Table Card -->
+            <div class="vims-card">
+                <h5><i class="bi bi-table"></i> All Users</h5>
+                <div class="table-responsive">
+                    <table class="table table-borderless">
+                        <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Username</th>
+                            <th>Full Name</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Action</th>
+                        </tr>
+                        </thead>
+                        <tbody id="userTableBody">
+                        <tr>
+                            <td colspan="6" class="text-center text-muted py-4">
+                                <i class="bi bi-hourglass-split me-1"></i> Loading...
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </main>
+    </div>
+</div>
+
+<!-- Floating Alert -->
+<div id="floatingAlert" class="alert-floating d-none"></div>
+
+<script src="../js/jquery-3.7.1.min.js"></script>
+<script src="../js/app.js"></script>
+<script>
+    const API = "http://localhost:8080/api/v1/users";
+
+    // ── Toast ──
+    function showToast(msg, type = "success") {
+        const icons = { success: "bi-check-circle-fill", danger: "bi-x-circle-fill", warning: "bi-exclamation-triangle-fill" };
+        const colors = { success: "#2ecc71", danger: "#e74c3c", warning: "#f39c12" };
+        const el = $("#floatingAlert");
+        el.html(`<i class="bi ${icons[type]}" style="color:${colors[type]}"></i> ${msg}`)
+            .css("background", "#fff")
+            .removeClass("d-none");
+        setTimeout(() => el.addClass("d-none"), 3000);
+    }
+
+    // ── Load all users ──
+    function loadUsers() {
+        $.get(API, function (data) {
+            updateStats(data);
+            if (!data.length) {
+                $("#userTableBody").html(`
+                    <tr><td colspan="6" class="text-center text-muted py-4">
+                        <i class="bi bi-inbox me-1"></i> No users found
+                    </td></tr>`);
+                return;
+            }
+            let rows = "";
+            data.forEach((user, i) => {
+                const roleCls = user.role === "ADMIN" ? "role-admin" : "role-customer";
+                rows += `
+                    <tr id="row-${user.userId}" style="cursor:pointer" onclick="selectRow(${user.userId})">
+                        <td>${i + 1}</td>
+                        <td><i class="bi bi-person-circle me-1" style="color:var(--accent)"></i>${user.username}</td>
+                        <td>${user.fullName ?? "-"}</td>
+                        <td>${user.email ?? "-"}</td>
+                        <td><span class="role-badge ${roleCls}">${user.role}</span></td>
+                        <td>
+                            <button class="btn btn-sm btn-update me-1" onclick="event.stopPropagation(); fillForm(${user.userId})">
+                                <i class="bi bi-pencil"></i> Edit
+                            </button>
+                        </td>
+                    </tr>`;
+            });
+            $("#userTableBody").html(rows);
+        }).fail(function () {
+            $("#userTableBody").html(`
+                <tr><td colspan="6" class="text-center text-danger py-4">
+                    <i class="bi bi-wifi-off me-1"></i> Failed to connect to server
+                </td></tr>`);
+        });
+    }
+
+    // ── Stats ──
+    function updateStats(data) {
+        $("#totalUsers").text(data.length);
+        $("#totalAdmins").text(data.filter(u => u.role === "ADMIN").length);
+        $("#totalCustomers").text(data.filter(u => u.role === "CUSTOMER").length);
+    }
+
+    // ── Select row (highlight) ──
+    function selectRow(id) {
+        $("tbody tr").removeClass("selected-row");
+        $(`#row-${id}`).addClass("selected-row");
+        fillForm(id);
+    }
+
+    // ── Fill form from API ──
+    function fillForm(id) {
+        $.get(`${API}/${id}`, function (user) {
+            $("#userId").val(user.userId);
+            $("#username").val(user.username);
+            $("#fullName").val(user.fullName);
+            $("#email").val(user.email);
+            $("#password").val("");
+            $("#role").val(user.role);
+            $("#formTitle").text("Edit User");
+            $("#btnUpdate").prop("disabled", false);
+            $("#btnDelete").prop("disabled", false);
+            $("#selectedIdDisplay").html(`<i class="bi bi-info-circle me-1"></i>Selected User ID: <strong>${user.userId}</strong>`);
+        }).fail(() => showToast("Failed to fetch user!", "danger"));
+    }
+
+    // ── Register ──
+    function registerUser() {
+        const data = getFormData();
+        if (!validateForm(data, true)) return;
+
+        $.ajax({
+            url: API,
+            type: "POST",
+            contentType: "application/json",
+            data: JSON.stringify(data),
+            success: function () {
+                showToast("User registered successfully!");
+                resetForm();
+                loadUsers();
+            },
+            error: function (xhr) {
+                showToast(xhr.responseText || "Failed to register user!", "danger");
+            }
+        });
+    }
+
+    // ── Update ──
+    function updateUser() {
+        const id = $("#userId").val();
+        if (!id) { showToast("Please select a user to update!", "warning"); return; }
+        const data = getFormData();
+        if (!validateForm(data, false)) return;
+
+        $.ajax({
+            url: `${API}/${id}`,
+            type: "PUT",
+            contentType: "application/json",
+            data: JSON.stringify(data),
+            success: function () {
+                showToast("User updated successfully!", "success");
+                resetForm();
+                loadUsers();
+            },
+            error: function (xhr) {
+                showToast(xhr.responseText || "Failed to update user!", "danger");
+            }
+        });
+    }
+
+    // ── Delete ──
+    function deleteUser() {
+        const id = $("#userId").val();
+        if (!id) { showToast("Please select a user to delete!", "warning"); return; }
+        if (!confirm(`Are you sure you want to delete User ID: ${id}?`)) return;
+
+        $.ajax({
+            url: `${API}/${id}`,
+            type: "DELETE",
+            success: function () {
+                showToast("User deleted successfully!", "success");
+                resetForm();
+                loadUsers();
+            },
+            error: function (xhr) {
+                showToast(xhr.responseText || "Failed to delete user!", "danger");
+            }
+        });
+    }
+
+    // ── Reset form ──
+    function resetForm() {
+        $("#userId").val("");
+        $("#username").val("");
+        $("#fullName").val("");
+        $("#email").val("");
+        $("#password").val("");
+        $("#role").val("CUSTOMER");
+        $("#formTitle").text("Register New User");
+        $("#btnUpdate").prop("disabled", true);
+        $("#btnDelete").prop("disabled", true);
+        $("#selectedIdDisplay").html("");
+        $("tbody tr").removeClass("selected-row");
+    }
+
+    // ── Helpers ──
+    function getFormData() {
+        return {
+            username: $("#username").val().trim(),
+            fullName: $("#fullName").val().trim(),
+            email:    $("#email").val().trim(),
+            password: $("#password").val().trim(),
+            role:     $("#role").val()
+        };
+    }
+
+    function validateForm(data, requirePassword) {
+        if (!data.username) { showToast("Username is required!", "warning"); return false; }
+        if (!data.email)    { showToast("Email is required!", "warning"); return false; }
+        if (requirePassword && !data.password) { showToast("Password is required!", "warning"); return false; }
+        return true;
+    }
+
+    function logout() {
+        if (confirm("Are you sure you want to logout?")) {
+            window.location.href = "../index.html";
+        }
+    }
+
+    // ── Init ──
+    loadUsers();
+</script>
+</body>
+</html>
