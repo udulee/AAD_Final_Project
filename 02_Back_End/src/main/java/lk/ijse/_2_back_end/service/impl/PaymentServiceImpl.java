@@ -3,7 +3,6 @@ package lk.ijse._2_back_end.service.impl;
 import lk.ijse._2_back_end.dto.PaymentRequest;
 import lk.ijse._2_back_end.entity.InsurancePolicy;
 import lk.ijse._2_back_end.entity.Payment;
-import lk.ijse._2_back_end.repository.InsurancePolicyRepository;
 import lk.ijse._2_back_end.repository.PaymentRepository;
 import lk.ijse._2_back_end.service.PaymentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,13 +59,13 @@ public class PaymentServiceImpl implements PaymentService {
         existing.setPaidDate(dto.getPaidDate());
         existing.setPaymentStatus(dto.getPaymentStatus());
 
-        if (dto.getPolicyId() != null) {
-            InsurancePolicy policy = insurancePolicyRepository.findById(dto.getPolicyId())
-                    .orElseThrow(() -> new RuntimeException("Policy not found with ID: " + dto.getPolicyId()));
-            existing.setPolicy(policy);
-        } else {
-            existing.setPolicy(null);
-        }
+//        if (dto.getPolicyId() != null) {
+//            InsurancePolicy policy = insurancePolicyRepository.findById(dto.getPolicyId())
+//                    .orElseThrow(() -> new RuntimeException("Policy not found with ID: " + dto.getPolicyId()));
+//            existing.setPolicy(policy);
+//        } else {
+//        }
+           existing.setPolicy(null);
 
         paymentRepository.save(existing);
     }
@@ -94,11 +93,11 @@ public class PaymentServiceImpl implements PaymentService {
         payment.setPaidDate(dto.getPaidDate());
         payment.setPaymentStatus(dto.getPaymentStatus() != null ? dto.getPaymentStatus() : "PENDING");
 
-        if (dto.getPolicyId() != null) {
-            InsurancePolicy policy = insurancePolicyRepository.findById(dto.getPolicyId())
-                    .orElseThrow(() -> new RuntimeException("Policy not found with ID: " + dto.getPolicyId()));
-            payment.setPolicy(policy);
-        }
+//        if (dto.getPolicyId() != null) {
+//            InsurancePolicy policy = insurancePolicyRepository.findById(dto.getPolicyId())
+//                    .orElseThrow(() -> new RuntimeException("Policy not found with ID: " + dto.getPolicyId()));
+//            payment.setPolicy(policy);
+//        }
 
         return payment;
     }

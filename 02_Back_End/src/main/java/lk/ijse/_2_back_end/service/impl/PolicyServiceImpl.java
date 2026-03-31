@@ -85,12 +85,12 @@ public class PolicyServiceImpl implements PolicyService {
             existing.setVehicle(null);
         }
 
-        if (dto.getCustomerId() != null) {
-            User customer = userRepository.findById(dto.getCustomerId())
-                    .orElseThrow(() -> new RuntimeException("Customer not found: " + dto.getCustomerId()));
-            existing.setCustomer(customer);
+        if (dto.getUserId() != null) {
+            User customer = userRepository.findById(dto.getUserId())
+                    .orElseThrow(() -> new RuntimeException("Customer not found: " + dto.getUserId()));
+            existing.setUser(customer);
         } else {
-            existing.setCustomer(null);
+            existing.setUser(null);
         }
 
         policyRepository.save(existing);
@@ -128,8 +128,8 @@ public class PolicyServiceImpl implements PolicyService {
 
         if (policy.getVehicle() != null)
             dto.setVehicleNumber(policy.getVehicle().getVehicleNumber());
-        if (policy.getCustomer() != null)
-            dto.setCustomerId(policy.getCustomer().getUserId());
+        if (policy.getUser() != null)
+            dto.setUserId(policy.getUser().getUserId());
 
         return dto;
     }
@@ -152,10 +152,10 @@ public class PolicyServiceImpl implements PolicyService {
             policy.setVehicle(vehicle);
         }
 
-        if (dto.getCustomerId() != null) {
-            User customer = userRepository.findById(dto.getCustomerId())
-                    .orElseThrow(() -> new RuntimeException("Customer not found: " + dto.getCustomerId()));
-            policy.setCustomer(customer);
+        if (dto.getUserId() != null) {
+            User customer = userRepository.findById(dto.getUserId())
+                    .orElseThrow(() -> new RuntimeException("Customer not found: " + dto.getUserId()));
+            policy.setUser(customer);
         }
 
         return policy;

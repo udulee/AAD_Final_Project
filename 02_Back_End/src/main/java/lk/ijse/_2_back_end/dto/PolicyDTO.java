@@ -24,5 +24,5 @@ public class PolicyDTO {
 
     // Flattened FKs
     private String vehicleNumber;
-    private Long customerId;
+    private Long userId;
 }

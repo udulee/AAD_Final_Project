@@ -10,8 +10,6 @@ public class APIResponse<T>{
     private String message;
     private T data;
 
-    public APIResponse() {
-    }
 
     public APIResponse(int status, String message, T data) {
         this.status = status;

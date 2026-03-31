@@ -29,6 +29,9 @@ public class Vehicle {
     private String usageType;
 
     // Ownership Link
-    private Long customerId;
+    private Long ownerId;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 }

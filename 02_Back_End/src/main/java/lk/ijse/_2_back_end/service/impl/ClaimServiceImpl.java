@@ -8,6 +8,9 @@ import lk.ijse._2_back_end.repository.ClaimRepository;
 import lk.ijse._2_back_end.repository.UserRepository;
 import lk.ijse._2_back_end.repository.VehicleRepository;
 import lk.ijse._2_back_end.service.ClaimService;
+import lk.ijse._2_back_end.util.JwtUtil;
+import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +19,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 @Transactional
 public class ClaimServiceImpl implements ClaimService {
 
@@ -27,6 +31,9 @@ public class ClaimServiceImpl implements ClaimService {
 
     @Autowired
     private UserRepository userRepository;
+    private final JwtUtil jwtUtil;
+    private final ModelMapper modelMapper;
+
 
     // Register
     @Override

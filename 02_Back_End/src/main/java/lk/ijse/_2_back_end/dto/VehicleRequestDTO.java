@@ -1,7 +1,11 @@
 package lk.ijse._2_back_end.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@AllArgsConstructor
+@NoArgsConstructor
 @Data
 public class VehicleRequestDTO {
     // Basic Identification
@@ -21,38 +25,5 @@ public class VehicleRequestDTO {
     private String usageType;
 
     // Ownership Link
-    private Long customerId;
-
-    // Getters (Lombok should generate these, but being explicit for reliability)
-    public String getVehicleNumber() {
-        return vehicleNumber;
-    }
-
-    public String getMake() {
-        return make;
-    }
-
-    public String getModel() {
-        return model;
-    }
-
-    public String getVehicleType() {
-        return vehicleType;
-    }
-
-    public Integer getManufacturedYear() {
-        return manufacturedYear;
-    }
-
-    public Double getMarketValue() {
-        return marketValue;
-    }
-
-    public String getUsageType() {
-        return usageType;
-    }
-
-    public Long getCustomerId() {
-        return customerId;
-    }
+    private Long ownerId;
 }

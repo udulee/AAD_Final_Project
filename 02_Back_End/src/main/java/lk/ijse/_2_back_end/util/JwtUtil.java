@@ -1,6 +1,5 @@
 package lk.ijse._2_back_end.util;
 
-
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;

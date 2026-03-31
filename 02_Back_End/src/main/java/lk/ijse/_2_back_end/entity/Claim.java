@@ -37,4 +37,8 @@ public class Claim {
     @ManyToOne
     @JoinColumn(name = "approved_by")
     private User approvedBy;
+
+    @ManyToOne
+    @JoinColumn(name = "policy_id")
+    private Policy policy;
 }

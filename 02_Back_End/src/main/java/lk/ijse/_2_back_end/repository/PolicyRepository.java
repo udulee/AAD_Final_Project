@@ -9,6 +9,6 @@ import java.util.List;
 @Repository
 public interface PolicyRepository extends JpaRepository<Policy, Long> {
     boolean existsByPolicyNumber(String policyNumber);
-    List<Policy> findByCustomer_UserId(Long customerId);
+    List<Policy> findByUser_UserId(Long userId);
     List<Policy> findByVehicle_VehicleNumber(String vehicleNumber);
 }
