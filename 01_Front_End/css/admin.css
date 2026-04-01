@@ -1,0 +1,242 @@
+:root {
+    --primary: #2563eb;
+    --primary-light: #3b82f6;
+    --accent: #22c55e;
+    --info: #0ea5e9;
+    --danger: #ef4444;
+    --warning: #f59e0b;
+    --success: #10b981;
+    --dark: #1e293b;
+    --light: #f8fafc;
+    --border: #e2e8f0;
+
+    --primary: #4f46e5;
+    --primary-light: #6366f1;
+    --accent: #22c55e;
+
+
+}
+
+/* RESET */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+body {
+    background: var(--light);
+}
+
+/* LAYOUT */
+.layout {
+    display: flex;
+}
+
+/* SIDEBAR */
+.sidebar {
+    width: 250px;
+    background: var(--dark);
+    color: white;
+    min-height: 100vh;
+    padding: 20px 15px;
+}
+
+.sidebar-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 30px;
+}
+
+.sidebar-brand h2 {
+    font-size: 1.2rem;
+}
+
+.sidebar-nav .nav-item {
+    padding: 10px;
+    margin: 5px 0;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.sidebar-nav .nav-item:hover {
+    background: rgba(255,255,255,0.1);
+}
+
+.sidebar-nav .active {
+    background: var(--primary);
+}
+
+.nav-section-title {
+    font-size: 0.75rem;
+    opacity: 0.6;
+    margin-top: 15px;
+}
+
+/* MAIN */
+.main-content {
+    flex: 1;
+}
+
+/* TOPBAR */
+.topbar {
+    background: white;
+    padding: 15px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+}
+
+.topbar-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+/* PAGE */
+.page-content {
+    padding: 20px;
+}
+
+/* CARDS */
+.card {
+    background: white;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    margin-bottom: 20px;
+}
+
+.card-header {
+    padding: 15px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+}
+
+.card-body {
+    padding: 15px;
+}
+
+/* TABLE */
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 10px;
+    border-bottom: 1px solid var(--border);
+    text-align: left;
+}
+
+th {
+    background: #f1f5f9;
+    font-size: 0.85rem;
+}
+
+tr:hover {
+    background: #f9fafb;
+}
+
+/* BUTTONS */
+.btn {
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    font-size: 0.8rem;
+}
+
+.btn-primary { background: var(--primary); color: white; }
+.btn-success { background: var(--success); color: white; }
+.btn-danger { background: var(--danger); color: white; }
+.btn-warning { background: var(--warning); color: white; }
+
+.btn-outline {
+    background: transparent;
+    border: 1px solid var(--border);
+}
+
+/* BADGES */
+.badge {
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 0.7rem;
+    font-weight: bold;
+}
+
+.badge.ACTIVE { background: #dcfce7; color: #166534; }
+.badge.PENDING { background: #fef3c7; color: #92400e; }
+.badge.REJECTED { background: #fee2e2; color: #991b1b; }
+.badge.SUSPENDED { background: #fef9c3; color: #854d0e; }
+.badge.APPROVED { background: #dcfce7; color: #166534; }
+
+/* FORM */
+.form-control {
+    padding: 8px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    width: 100%;
+}
+
+/* STATS */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(180px,1fr));
+    gap: 15px;
+}
+
+.stat-card {
+    background: white;
+    padding: 15px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.stat-icon {
+    font-size: 20px;
+}
+
+/* ALERT */
+.alert {
+    padding: 10px;
+    border-radius: 6px;
+    margin-bottom: 10px;
+}
+
+.alert-success { background: #dcfce7; }
+.alert-danger { background: #fee2e2; }
+
+/* EMPTY */
+.empty-state {
+    text-align: center;
+    padding: 20px;
+    color: #94a3b8;
+}
+
+/* LOADER */
+.loading-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(255,255,255,0.6);
+    display: none;
+}
+
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #ccc;
+    border-top: 4px solid var(--primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 200px auto;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
