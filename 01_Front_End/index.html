@@ -268,9 +268,7 @@
 
     <p class="footer-note">Vehicle Management System &copy; 2025</p>
 </div>
-
 <script>
-    // Enter key support
     document.addEventListener('keydown', e => {
         if (e.key === 'Enter') handleLogin();
     });
@@ -290,24 +288,26 @@
             return;
         }
 
-        // Loading state
         btn.classList.add('loading');
 
-        // ── Simulate auth (replace with real API call) ──
+        // 🔥 Replace this with your Spring Boot API later
         setTimeout(() => {
             btn.classList.remove('loading');
 
-            // Demo credentials — admin/admin1234
             if (username === 'admin' && password === '1234') {
-                window.location.replace('dashboard.html');
+
+                // ✅ save login state (important)
+                localStorage.setItem("isLogged", "true");
+
+                // ✅ redirect to dashboard
+                window.location.replace('pages/dashboard.html');
+
             } else {
                 errorTxt.textContent = 'Invalid username or password.';
                 errorMsg.classList.add('show');
                 document.getElementById('password').value = '';
-                document.getElementById('password').focus();
             }
-        }, 900);
+        }, 800);
     }
-</script>
-</body>
+</script></body>
 </html>

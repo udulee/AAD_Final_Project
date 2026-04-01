@@ -1,359 +1,346 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Vehicle Management - VIMS</title>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>VIMS — Vehicle Management</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
     <link rel="stylesheet" href="../css/style.css">
     <style>
-        :root {
-            --bg: #0d0f14;
-            --surface: #161a23;
-            --surface2: #1e2433;
-            --border: #2a3045;
-            --accent: #4f8fff;
-            --accent2: #ff5f7e;
-            --accent3: #36d6a0;
-            --text: #e8eaf0;
-            --muted: #6b7592;
-            --danger: #ff4d6d;
-            --warn: #ffa94d;
+        *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+        :root{
+            --bg:#f5f7fb;--panel:#13161e;--panel2:#191d28;
+            --border:#232737;--border2:#2d3346;
+            --text:#eef0f6;--muted:#6b7591;--soft:#9ba3bf;
+            --blue:#6b7280;--blue-dim:#2d3346;
+            --green:#2ecc8b;--green-dim:#0e3328;
+            --amber:#f5a623;--amber-dim:#3d2a06;
+            --red:#ff4f6b;--red-dim:#3d0f18;
+            --purple:#a78bfa;--purple-dim:#2d1f5e;
+            --orange:#ff7849;--cyan:#22d3ee;
+            --r:12px;--r2:8px;--sidebar:220px;
+            --font-head:'Syne',sans-serif;
+            --font-mono:'DM Mono',monospace;
+
+            /* original DM Mono page vars */
+            --surface:#161a23;--surface2:#1e2433;
+            --accent:#4f8fff;--accent2:#ff5f7e;--accent3:#36d6a0;
+            --danger:#ff4d6d;--warn:#ffa94d;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body{font-family:var(--font-mono);background:var(--bg);color:var(--text);font-size:14px;min-height:100vh;overflow-x:hidden}
+        ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:99px}
+        .layout{display:flex;min-height:100vh}
 
-        body {
-            font-family: 'DM Mono', monospace;
-            background: var(--bg);
-            color: var(--text);
-            min-height: 100vh;
-            padding: 30px 20px;
+        /* ════════════════════════════
+           SIDEBAR  (dashboard style)
+        ════════════════════════════ */
+        .sidebar{
+            width:var(--sidebar);background:var(--panel);
+            border-right:1px solid var(--border);
+            display:flex;flex-direction:column;
+            padding:20px 12px;
+            position:fixed;top:0;left:0;bottom:0;z-index:20;
+            overflow-y:auto;
         }
-
-        .page-header { text-align: center; margin-bottom: 36px; }
-        .page-header h1 {
-            font-family: 'Syne', sans-serif;
-            font-size: 2rem; font-weight: 800; letter-spacing: -0.5px;
-            background: linear-gradient(135deg, var(--accent), var(--accent3));
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        .logo{display:flex;align-items:center;gap:10px;padding:4px 8px 20px;border-bottom:1px solid var(--border);margin-bottom:16px}
+        .logo-mark{
+            width:32px;height:32px;
+            background:linear-gradient(135deg,var(--blue),var(--purple));
+            border-radius:9px;display:flex;align-items:center;justify-content:center;
+            flex-shrink:0;box-shadow:0 0 16px rgba(79,142,255,.35);
         }
-        .page-header p { color: var(--muted); font-size: 0.78rem; margin-top: 4px; }
-
-        .container { max-width: 1280px; margin: auto; }
-
-        /* ── FORM CARD ── */
-        .form-card {
-            background: var(--surface); border: 1px solid var(--border);
-            border-radius: 14px; padding: 28px; margin-bottom: 28px;
+        .logo-mark svg{width:16px;height:16px;color:#fff}
+        .logo-text{
+            font-family:var(--font-head);font-weight:800;font-size:15px;
+            background:linear-gradient(90deg,#fff,var(--blue));
+            -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
         }
-
-        .form-title {
-            font-family: 'Syne', sans-serif; font-size: 0.85rem; font-weight: 700;
-            text-transform: uppercase; letter-spacing: 2px;
-            color: var(--accent); margin-bottom: 20px;
-            display: flex; align-items: center; gap: 8px;
+        .nav-section{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;padding:4px 10px 6px;margin-top:4px;font-family:var(--font-head)}
+        .nav-item{
+            display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:var(--r2);
+            color:var(--soft);font-size:13px;font-weight:500;cursor:pointer;transition:all .15s;
+            border:none;background:none;width:100%;text-align:left;position:relative;
+            font-family:var(--font-head);
         }
-        .form-title::before {
-            content: ''; width: 8px; height: 8px;
-            border-radius: 50%; background: currentColor; display: inline-block;
+        .nav-item svg{width:15px;height:15px;flex-shrink:0}
+        .nav-item:hover{background:var(--panel2);color:var(--text)}
+        .nav-item.active{background:var(--blue-dim);color:var(--blue)}
+        .nav-item.active::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:3px;height:16px;background:var(--blue);border-radius:0 3px 3px 0}
+        .nav-badge{margin-left:auto;background:var(--blue-dim);color:var(--blue);font-size:10px;font-weight:700;padding:2px 6px;border-radius:99px;min-width:18px;text-align:center}
+        .sb-bottom{margin-top:auto;border-top:1px solid var(--border);padding-top:14px}
+        .user-card{display:flex;align-items:center;gap:9px;padding:10px;border-radius:var(--r2);background:var(--panel2);border:1px solid var(--border);margin-bottom:8px}
+        .avatar{width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,var(--blue),var(--purple));display:flex;align-items:center;justify-content:center;font-family:var(--font-head);font-weight:700;font-size:12px;color:#fff;flex-shrink:0}
+        .user-info .uname{font-size:12px;font-weight:600;line-height:1.2;font-family:var(--font-head)}
+        .user-info .urole{font-size:10px;color:var(--muted);margin-top:1px}
+        .logout-btn{display:flex;align-items:center;gap:7px;width:100%;padding:8px 10px;border-radius:var(--r2);background:none;border:none;cursor:pointer;color:var(--muted);font-family:var(--font-head);font-size:12px;font-weight:500;transition:all .15s}
+        .logout-btn:hover{background:var(--red-dim);color:var(--red)}
+        .logout-btn svg{width:13px;height:13px}
+
+        /* ════════════════════════════
+           MAIN AREA
+        ════════════════════════════ */
+        .main{margin-left:var(--sidebar);flex:1;display:flex;flex-direction:column}
+
+        .topbar{
+            background:var(--panel);border-bottom:1px solid var(--border);
+            padding:14px 28px;display:flex;align-items:center;justify-content:space-between;
+            position:sticky;top:0;z-index:10;
         }
+        .page-title{font-family:var(--font-head);font-size:16px;font-weight:700}
+        .page-sub{font-size:11px;color:var(--muted);margin-top:2px}
+        .topbar-right{display:flex;gap:8px;align-items:center}
 
-        .form-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(175px, 1fr));
-            gap: 12px;
+        .content{padding:24px 28px}
+
+        /* ════════════════════════════
+           ORIGINAL VEHICLE PAGE STYLES
+        ════════════════════════════ */
+        .form-card{
+            background:var(--surface);border:1px solid var(--border);
+            border-radius:14px;padding:24px;margin-bottom:24px;
         }
-
-        .form-group { display: flex; flex-direction: column; gap: 5px; }
-        .form-group label {
-            font-size: 0.67rem; color: var(--muted);
-            text-transform: uppercase; letter-spacing: 1px;
+        .form-title{
+            font-family:var(--font-head);font-size:12px;font-weight:700;
+            text-transform:uppercase;letter-spacing:2px;
+            color:var(--accent);margin-bottom:18px;
+            display:flex;align-items:center;gap:8px;
         }
+        .form-title::before{content:'';width:8px;height:8px;border-radius:50%;background:currentColor;display:inline-block}
+        .form-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(175px,1fr));gap:12px}
+        .form-group{display:flex;flex-direction:column;gap:5px}
+        .form-group label{font-size:0.67rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
 
-        input, select {
-            background: var(--surface2); border: 1px solid var(--border);
-            border-radius: 8px; padding: 9px 12px; color: var(--text);
-            font-family: 'DM Mono', monospace; font-size: 0.82rem;
-            outline: none; transition: border-color 0.2s; width: 100%;
+        input,select{
+            background:var(--surface2);border:1px solid var(--border);
+            border-radius:8px;padding:9px 12px;color:var(--text);
+            font-family:var(--font-mono);font-size:0.82rem;
+            outline:none;transition:border-color 0.2s;width:100%;
         }
-        input:focus, select:focus { border-color: var(--accent); }
-        select option { background: var(--surface2); }
+        input:focus,select:focus{border-color:var(--accent)}
+        select option{background:var(--surface2)}
 
-        /* ── BUTTONS ── */
-        .form-actions {
-            margin-top: 22px; display: flex;
-            gap: 8px; flex-wrap: wrap; align-items: center;
+        .form-actions{margin-top:20px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+
+        .btn{
+            padding:9px 16px;border:none;border-radius:8px;
+            font-family:var(--font-mono);font-size:0.8rem;font-weight:500;
+            cursor:pointer;transition:transform .1s,opacity .2s;
+            display:inline-flex;align-items:center;gap:6px;letter-spacing:0.3px;
         }
+        .btn:hover:not(:disabled){opacity:.85;transform:translateY(-1px)}
+        .btn:active:not(:disabled){transform:translateY(0)}
+        .btn:disabled{opacity:.35;cursor:not-allowed}
+        .btn-register{background:var(--accent);color:#fff}
+        .btn-update{background:var(--warn);color:#111}
+        .btn-delete{background:var(--danger);color:#fff}
+        .btn-getall{background:var(--accent3);color:#111}
+        .btn-reset-db{background:#3d1a22;color:var(--danger);border:1px solid rgba(255,77,109,.3)}
+        .btn-clear{background:var(--surface2);color:var(--muted);border:1px solid var(--border)}
 
-        .btn {
-            padding: 10px 18px; border: none; border-radius: 8px;
-            font-family: 'DM Mono', monospace; font-size: 0.8rem; font-weight: 500;
-            cursor: pointer; transition: transform 0.1s, opacity 0.2s;
-            display: inline-flex; align-items: center; gap: 6px;
-            letter-spacing: 0.3px;
+        .sep{width:1px;height:28px;background:var(--border);margin:0 4px;flex-shrink:0}
+
+        .status-bar{display:flex;align-items:center;gap:7px;margin-left:auto;font-size:.73rem;color:var(--muted)}
+        .dot{width:7px;height:7px;border-radius:50%;background:var(--muted);flex-shrink:0}
+        .dot.loading{background:var(--warn);animation:blink .85s infinite}
+        .dot.ok{background:var(--accent3)}
+        .dot.error{background:var(--danger)}
+        @keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+
+        .table-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden}
+        .table-header{display:flex;justify-content:space-between;align-items:center;padding:14px 20px;border-bottom:1px solid var(--border)}
+        .table-header-left{display:flex;align-items:center;gap:10px}
+        .table-header-left span{font-family:var(--font-head);font-size:.82rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--muted)}
+        .badge{background:var(--accent);color:#fff;border-radius:20px;padding:2px 10px;font-size:.72rem}
+        .tbl-scroll{overflow-x:auto}
+
+        table{width:100%;border-collapse:collapse}
+        th{background:var(--surface2);color:var(--muted);font-size:.65rem;text-transform:uppercase;letter-spacing:1.5px;padding:11px 13px;text-align:left;font-weight:500;white-space:nowrap}
+        td{padding:11px 13px;font-size:.81rem;border-bottom:1px solid var(--border);white-space:nowrap}
+        tr:last-child td{border-bottom:none}
+        tr.selected td{background: rgba(0,0,0,0.05);}
+        tbody tr:hover{background: transparent;}
+
+        .vno{color:var(--accent);font-weight:500}
+        .pill{display:inline-block;padding:2px 8px;border-radius:4px;font-size:.7rem}
+        .p-petrol{background:rgba(255,95,126,.15);color:var(--accent2)}
+        .p-diesel{background:rgba(54,214,160,.15);color:var(--accent3)}
+        .p-personal{background:rgba(79,143,255,.15);color:var(--accent)}
+        .p-comm{background:rgba(255,169,77,.15);color:var(--warn)}
+        .p-type{background:rgba(107,117,146,.2);color:var(--muted)}
+        .act-cell{display:flex;gap:6px}
+        .btn-row-edit,.btn-row-del{padding:4px 10px;border-radius:5px;font-size:.71rem;cursor:pointer;font-family:var(--font-mono);transition:background .15s;border:1px solid}
+        .btn-row-edit{background:rgba(255,169,77,.13);color:var(--warn);border-color:rgba(255,169,77,.3)}
+        .btn-row-del{background:rgba(255,77,109,.11);color:var(--danger);border-color:rgba(255,77,109,.25)}
+        .btn-row-edit:hover{background:rgba(255,169,77,.27)}
+        .btn-row-del:hover{background:rgba(255,77,109,.27)}
+
+        .empty-state{text-align:center;padding:48px;color:var(--muted);font-size:.82rem;line-height:1.8}
+
+        /* Toast */
+        .toast{
+            position:fixed;bottom:26px;right:26px;
+            background:var(--surface2);border:1px solid var(--border);
+            border-radius:10px;padding:11px 18px;font-size:.81rem;color:var(--text);
+            transform:translateY(18px);opacity:0;transition:all .28s;
+            z-index:999;pointer-events:none;max-width:310px;line-height:1.5;
         }
-        .btn:hover:not(:disabled) { opacity: 0.85; transform: translateY(-1px); }
-        .btn:active:not(:disabled) { transform: translateY(0); }
-        .btn:disabled { opacity: 0.35; cursor: not-allowed; }
+        .toast.show{transform:translateY(0);opacity:1}
+        .toast.success{border-left:3px solid var(--accent3)}
+        .toast.warn{border-left:3px solid var(--warn)}
+        .toast.error{border-left:3px solid var(--danger)}
+        .toast.info{border-left:3px solid var(--accent)}
 
-        .btn-register { background: var(--accent);   color: #fff; }
-        .btn-update   { background: var(--warn);     color: #111; }
-        .btn-delete   { background: var(--danger);   color: #fff; }
-        .btn-getall   { background: var(--accent3);  color: #111; }
-        .btn-reset-db { background: #3d1a22;         color: var(--danger); border: 1px solid rgba(255,77,109,0.3); }
-        .btn-clear    { background: var(--surface2); color: var(--muted);  border: 1px solid var(--border); }
+        /* Modals */
+        .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.68);z-index:200;justify-content:center;align-items:center}
+        .overlay.on{display:flex}
+        .modal{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:30px 28px;max-width:370px;width:90%;text-align:center}
+        .modal-icon{font-size:2rem;margin-bottom:10px}
+        .modal h3{font-family:var(--font-head);font-size:1.05rem;margin-bottom:8px;color:var(--danger)}
+        .modal p{font-size:.81rem;color:var(--muted);margin-bottom:22px;line-height:1.6}
+        .modal-btns{display:flex;gap:10px;justify-content:center}
 
-        .sep { width: 1px; height: 28px; background: var(--border); margin: 0 4px; flex-shrink: 0; }
-
-        /* status */
-        .status-bar { display: flex; align-items: center; gap: 7px; margin-left: auto; font-size: 0.73rem; color: var(--muted); }
-        .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--muted); flex-shrink: 0; }
-        .dot.loading { background: var(--warn); animation: blink 0.85s infinite; }
-        .dot.ok      { background: var(--accent3); }
-        .dot.error   { background: var(--danger); }
-        @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
-
-        /* ── TABLE ── */
-        .table-card {
-            background: var(--surface); border: 1px solid var(--border);
-            border-radius: 14px; overflow: hidden;
-        }
-
-        .table-header {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 16px 22px; border-bottom: 1px solid var(--border);
-        }
-        .table-header-left { display: flex; align-items: center; gap: 10px; }
-        .table-header-left span {
-            font-family: 'Syne', sans-serif; font-size: 0.82rem; font-weight: 700;
-            text-transform: uppercase; letter-spacing: 2px; color: var(--muted);
-        }
-        .badge { background: var(--accent); color: #fff; border-radius: 20px; padding: 2px 10px; font-size: 0.72rem; }
-
-        .tbl-scroll { overflow-x: auto; }
-
-        table { width: 100%; border-collapse: collapse; }
-        th {
-            background: var(--surface2); color: var(--muted); font-size: 0.65rem;
-            text-transform: uppercase; letter-spacing: 1.5px; padding: 11px 13px;
-            text-align: left; font-weight: 500; white-space: nowrap;
-        }
-        td {
-            padding: 11px 13px; font-size: 0.81rem;
-            border-bottom: 1px solid var(--border); white-space: nowrap;
-        }
-        tr:last-child td { border-bottom: none; }
-        tr.selected td   { background: rgba(79,143,255,0.09); }
-        tbody tr:hover:not(.selected) td { background: rgba(79,143,255,0.03); cursor: pointer; }
-
-        .vno { color: var(--accent); font-weight: 500; }
-
-        .pill { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; }
-        .p-petrol   { background: rgba(255,95,126,0.15); color: var(--accent2); }
-        .p-diesel   { background: rgba(54,214,160,0.15); color: var(--accent3); }
-        .p-personal { background: rgba(79,143,255,0.15); color: var(--accent); }
-        .p-comm     { background: rgba(255,169,77,0.15);  color: var(--warn); }
-        .p-type     { background: rgba(107,117,146,0.2);  color: var(--muted); }
-
-        .act-cell { display: flex; gap: 6px; }
-        .btn-row-edit, .btn-row-del {
-            padding: 4px 10px; border-radius: 5px; font-size: 0.71rem;
-            cursor: pointer; font-family: 'DM Mono', monospace;
-            transition: background 0.15s; border: 1px solid;
-        }
-        .btn-row-edit { background: rgba(255,169,77,0.13); color: var(--warn);   border-color: rgba(255,169,77,0.3); }
-        .btn-row-del  { background: rgba(255,77,109,0.11); color: var(--danger); border-color: rgba(255,77,109,0.25); }
-        .btn-row-edit:hover { background: rgba(255,169,77,0.27); }
-        .btn-row-del:hover  { background: rgba(255,77,109,0.27); }
-
-        .empty-state { text-align: center; padding: 48px; color: var(--muted); font-size: 0.82rem; line-height: 1.8; }
-
-        /* ── TOAST ── */
-        .toast {
-            position: fixed; bottom: 26px; right: 26px;
-            background: var(--surface2); border: 1px solid var(--border);
-            border-radius: 10px; padding: 11px 18px; font-size: 0.81rem; color: var(--text);
-            transform: translateY(18px); opacity: 0; transition: all 0.28s;
-            z-index: 999; pointer-events: none; max-width: 310px; line-height: 1.5;
-        }
-        .toast.show { transform: translateY(0); opacity: 1; }
-        .toast.success { border-left: 3px solid var(--accent3); }
-        .toast.warn    { border-left: 3px solid var(--warn); }
-        .toast.error   { border-left: 3px solid var(--danger); }
-        .toast.info    { border-left: 3px solid var(--accent); }
-
-        /* ── MODAL ── */
-        .overlay {
-            display: none; position: fixed; inset: 0;
-            background: rgba(0,0,0,0.68); z-index: 200;
-            justify-content: center; align-items: center;
-        }
-        .overlay.on { display: flex; }
-        .modal {
-            background: var(--surface); border: 1px solid var(--border);
-            border-radius: 14px; padding: 30px 28px; max-width: 370px;
-            width: 90%; text-align: center;
-        }
-        .modal-icon { font-size: 2rem; margin-bottom: 10px; }
-        .modal h3 {
-            font-family: 'Syne', sans-serif; font-size: 1.05rem;
-            margin-bottom: 8px; color: var(--danger);
-        }
-        .modal p  { font-size: 0.81rem; color: var(--muted); margin-bottom: 22px; line-height: 1.6; }
-        .modal-btns { display: flex; gap: 10px; justify-content: center; }
-
-        /* spinner */
-        .spin {
-            display: inline-block; width: 12px; height: 12px;
-            border: 2px solid rgba(255,255,255,0.25);
-            border-top-color: currentColor;
-            border-radius: 50%; animation: spin 0.6s linear infinite;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
+        .spin{display:inline-block;width:12px;height:12px;border:2px solid rgba(255,255,255,.25);border-top-color:currentColor;border-radius:50%;animation:spin .6s linear infinite}
+        @keyframes spin{to{transform:rotate(360deg)}}
     </style>
 </head>
 <body>
+<div class="layout">
 
-<div class="container">
+    <!-- ════ SIDEBAR ════ -->
+    <aside class="sidebar">
+        <div class="logo">
+            <div class="logo-mark">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 17H3a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v5"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></svg>
+            </div>
+            <span class="logo-text">VIMS</span>
+        </div>
 
-    <div class="page-header">
-        <h1>VIMS — Vehicle Management</h1>
-        <p>Connected to <code style="color:var(--accent3)">localhost:8080/api/v1/vehicle</code></p>
-    </div>
+        <span class="nav-section">Main</span>
+        <button class="nav-item" onclick="location.href='dashboard.html'">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+            Dashboard
+        </button>
+        <button class="nav-item active" onclick="location.href='vehicles.html'">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 17H3a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v5"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg>
+            Vehicles
+            <span class="nav-badge" id="nav-count">0</span>
+        </button>
+        <button class="nav-item" onclick="location.href='policies.html'">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            Policies
+        </button>
+        <button class="nav-item" onclick="location.href='payments.html'">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+            Payments
+        </button>
+        <button class="nav-item" onclick="location.href='claims.html'">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            Claims
+        </button>
 
-    <!-- FORM -->
-    <div class="form-card">
-        <div class="form-title" id="formTitle">Register New Vehicle</div>
+        <span class="nav-section" style="margin-top:8px">Management</span>
+        <button class="nav-item" onclick="location.href='user.html'">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            Users
+        </button>
 
-        <div class="form-grid">
-            <div class="form-group">
-                <label>Vehicle Number *</label>
-                <input type="text" id="vehicleNumber" placeholder="e.g. WP-ABC-1234">
+        <div class="sb-bottom">
+            <div class="user-card">
+                <div class="avatar">A</div>
+                <div class="user-info">
+                    <div class="uname">Admin</div>
+                    <div class="urole">Administrator</div>
+                </div>
             </div>
-            <div class="form-group">
-                <label>Make</label>
-                <input type="text" id="make" placeholder="e.g. Toyota">
+            <button class="logout-btn" onclick="doLogout()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                Sign out
+            </button>
+        </div>
+    </aside>
+
+    <!-- ════ MAIN ════ -->
+    <div class="main">
+        <div class="topbar">
+            <div>
+                <div class="page-title">Vehicle Management</div>
+                <div class="page-sub">Connected to localhost:8080/api/v1/vehicle</div>
             </div>
-            <div class="form-group">
-                <label>Model</label>
-                <input type="text" id="model" placeholder="e.g. Corolla">
-            </div>
-            <div class="form-group">
-                <label>Vehicle Type</label>
-                <select id="vehicleType">
-                    <option>Car</option>
-                    <option>Bike</option>
-                    <option>Van</option>
-                    <option>Three-Wheel</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>Manufactured Year</label>
-                <input type="number" id="manufacturedYear" placeholder="e.g. 2020">
-            </div>
-            <div class="form-group">
-                <label>Market Value (LKR)</label>
-                <input type="number" id="marketValue" placeholder="e.g. 5000000">
-            </div>
-            <div class="form-group">
-                <label>Engine Number</label>
-                <input type="text" id="engineNumber" placeholder="Engine No">
-            </div>
-            <div class="form-group">
-                <label>Chassis Number</label>
-                <input type="text" id="chassisNumber" placeholder="Chassis No">
-            </div>
-            <div class="form-group">
-                <label>Fuel Type</label>
-                <select id="fuelType">
-                    <option>Petrol</option>
-                    <option>Diesel</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>Usage Type</label>
-                <select id="usageType">
-                    <option>Personal</option>
-                    <option>Commercial</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>Customer ID</label>
-                <input type="number" id="customerId" placeholder="Customer ID">
+            <div class="topbar-right">
+                <button class="btn btn-getall" id="btnGetAll" onclick="doGetAll()">⟳ Get All</button>
             </div>
         </div>
 
-        <!-- ── ACTION BUTTONS ── -->
-        <div class="form-actions">
+        <div class="content">
 
-            <!-- POST /api/v1/vehicle/register -->
-            <button class="btn btn-register" id="btnRegister" onclick="doRegister()">
-                Register
-            </button>
+            <!-- FORM -->
+            <div class="form-card">
+                <div class="form-title" id="formTitle">Register New Vehicle</div>
+                <div class="form-grid">
+                    <div class="form-group"><label>Vehicle Number *</label><input type="text" id="vehicleNumber" placeholder="e.g. WP-ABC-1234"/></div>
+                    <div class="form-group"><label>Make</label><input type="text" id="make" placeholder="e.g. Toyota"/></div>
+                    <div class="form-group"><label>Model</label><input type="text" id="model" placeholder="e.g. Corolla"/></div>
+                    <div class="form-group"><label>Vehicle Type</label>
+                        <select id="vehicleType"><option>Car</option><option>Bike</option><option>Van</option><option>Three-Wheel</option></select>
+                    </div>
+                    <div class="form-group"><label>Manufactured Year</label><input type="number" id="manufacturedYear" placeholder="e.g. 2020"/></div>
+                    <div class="form-group"><label>Market Value (LKR)</label><input type="number" id="marketValue" placeholder="e.g. 5000000"/></div>
+                    <div class="form-group"><label>Engine Number</label><input type="text" id="engineNumber" placeholder="Engine No"/></div>
+                    <div class="form-group"><label>Chassis Number</label><input type="text" id="chassisNumber" placeholder="Chassis No"/></div>
+                    <div class="form-group"><label>Fuel Type</label>
+                        <select id="fuelType"><option>Petrol</option><option>Diesel</option></select>
+                    </div>
+                    <div class="form-group"><label>Usage Type</label>
+                        <select id="usageType"><option>Personal</option><option>Commercial</option></select>
+                    </div>
+                    <div class="form-group"><label>Customer ID</label><input type="number" id="customerId" placeholder="Customer ID"/></div>
+                </div>
 
-            <!-- PUT /api/v1/vehicle/update/{vehicleNumber} -->
-            <button class="btn btn-update" id="btnUpdate" onclick="doUpdate()" disabled>
-                Update
-            </button>
-
-            <!-- DELETE /api/v1/vehicle/delete/{vehicleNumber} -->
-            <button class="btn btn-delete" id="btnDelete" onclick="doDeleteSelected()" disabled>
-                Delete
-            </button>
-
-            <div class="sep"></div>
-
-            <!-- GET /api/v1/vehicle/all -->
-            <button class="btn btn-getall" id="btnGetAll" onclick="doGetAll()">
-                Get All
-            </button>
-
-            <!-- DELETE /api/v1/vehicle/reset -->
-            <button class="btn btn-reset-db" id="btnResetDB" onclick="openResetModal()">
-                Reset All
-            </button>
-
-            <!-- clear form only -->
-            <button class="btn btn-clear" onclick="doClear()">
-                Clear
-            </button>
-
-            <div class="status-bar">
-                <div class="dot" id="dot"></div>
-                <span id="statusTxt">Idle</span>
+                <div class="form-actions">
+                    <button class="btn btn-register" id="btnRegister" onclick="doRegister()">Register</button>
+                    <button class="btn btn-update"   id="btnUpdate"   onclick="doUpdate()"   disabled>Update</button>
+                    <button class="btn btn-delete"   id="btnDelete"   onclick="doDeleteSelected()" disabled>Delete</button>
+                    <div class="sep"></div>
+                    <button class="btn btn-reset-db" id="btnResetDB"  onclick="openResetModal()">Reset All</button>
+                    <button class="btn btn-clear"    onclick="doClear()">Clear</button>
+                    <div class="status-bar">
+                        <div class="dot" id="dot"></div>
+                        <span id="statusTxt">Idle</span>
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>
 
-    <!-- TABLE -->
-    <div class="table-card">
-        <div class="table-header">
-            <div class="table-header-left">
-                <span>Registered Vehicles</span>
-                <span class="badge" id="badge">0</span>
+            <!-- TABLE -->
+            <div class="table-card">
+                <div class="table-header">
+                    <div class="table-header-left">
+                        <span>Registered Vehicles</span>
+                        <span class="badge" id="badge">0</span>
+                    </div>
+                </div>
+                <div class="tbl-scroll">
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>Vehicle No</th><th>Make</th><th>Model</th><th>Type</th>
+                            <th>Year</th><th>Value (LKR)</th><th>Engine No</th>
+                            <th>Chassis No</th><th>Fuel</th><th>Usage</th>
+                            <th>Cust. ID</th><th>Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody id="tBody">
+                        <tr><td colspan="12" class="empty-state">Click <strong>⟳ Get All</strong> to load vehicles.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
-        </div>
-        <div class="tbl-scroll">
-            <table>
-                <thead>
-                <tr>
-                    <th>Vehicle No</th><th>Make</th><th>Model</th><th>Type</th>
-                    <th>Year</th><th>Value (LKR)</th><th>Engine No</th>
-                    <th>Chassis No</th><th>Fuel</th><th>Usage</th>
-                    <th>Cust. ID</th><th>Actions</th>
-                </tr>
-                </thead>
-                <tbody id="tBody">
-                <tr><td colspan="12" class="empty-state">
-                    Click <strong>⟳ Get All</strong> to load vehicles from the server.
-                </td></tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
 
-<!-- ── DELETE ONE MODAL ── -->
+        </div><!-- /content -->
+    </div><!-- /main -->
+</div><!-- /layout -->
+
+<!-- Delete Modal -->
 <div class="overlay" id="delModal">
     <div class="modal">
         <div class="modal-icon">🗑</div>
@@ -366,7 +353,7 @@
     </div>
 </div>
 
-<!-- ── RESET ALL MODAL ── -->
+<!-- Reset All Modal -->
 <div class="overlay" id="resetModal">
     <div class="modal">
         <div class="modal-icon">⚠️</div>
@@ -379,327 +366,187 @@
     </div>
 </div>
 
+<!-- Logout Modal -->
+<div class="overlay" id="logoutModal">
+    <div class="modal">
+        <div class="modal-icon">👋</div>
+        <h3 style="color:var(--muted)">Sign Out?</h3>
+        <p>You will be redirected to the login page.</p>
+        <div class="modal-btns">
+            <button class="btn btn-clear" onclick="closeModal('logoutModal')">Cancel</button>
+            <button class="btn btn-register" onclick="location.href='login.html'">Sign Out</button>
+        </div>
+    </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
-    // Base URL
     const BASE = "http://localhost:8080/api/v1/vehicle";
-
-    // State
-    let vehicles      = [];
-    let selectedIndex = -1;
-    let deleteTarget  = null;   // index pending modal
-
-    //Field IDs (must match VehicleRequestDTO)
-    const FIELDS = [
-        "vehicleNumber","make","model","vehicleType",
-        "manufacturedYear","marketValue","engineNumber",
-        "chassisNumber","fuelType","usageType","customerId"
-    ];
-
-    //DOM shortcuts
-    const $ = id => document.getElementById(id);
+    let vehicles = [], selectedIndex = -1, deleteTarget = null;
+    const FIELDS = ["vehicleNumber","make","model","vehicleType","manufacturedYear","marketValue","engineNumber","chassisNumber","fuelType","usageType","customerId"];
+    const $  = id => document.getElementById(id);
     const ui = {
-        tBody:    $("tBody"),
-        badge:    $("badge"),
-        title:    $("formTitle"),
-        register: $("btnRegister"),
-        update:   $("btnUpdate"),
-        del:      $("btnDelete"),
-        getAll:   $("btnGetAll"),
-        resetDB:  $("btnResetDB"),
-        dot:      $("dot"),
-        status:   $("statusTxt"),
-        toast:    $("toast"),
+        tBody:$("tBody"), badge:$("badge"), title:$("formTitle"),
+        register:$("btnRegister"), update:$("btnUpdate"), del:$("btnDelete"),
+        getAll:$("btnGetAll"), resetDB:$("btnResetDB"),
+        dot:$("dot"), status:$("statusTxt"), toast:$("toast"),
+        navCount:$("nav-count")
     };
 
-    //Field helpers
-    function getFields() {
-        const o = {};
-        FIELDS.forEach(f => o[f] = $(f).value.trim());
-        return o;
-    }
-
-    function setFields(v) {
-        FIELDS.forEach(f => { const e = $(f); if(e) e.value = v[f] ?? ""; });
-    }
-
-    function clearFields() {
-        FIELDS.forEach(f => {
-            const e = $(f);
-            e.tagName === "SELECT" ? (e.selectedIndex = 0) : (e.value = "");
-        });
-    }
-
-    // Status & Toast
-    function setStatus(state, msg) {
-        ui.dot.className    = "dot " + state;
-        ui.status.textContent = msg;
-    }
+    function getFields(){const o={};FIELDS.forEach(f=>o[f]=$(f).value.trim());return o;}
+    function setFields(v){FIELDS.forEach(f=>{const e=$(f);if(e)e.value=v[f]??""});}
+    function clearFields(){FIELDS.forEach(f=>{const e=$(f);e.tagName==="SELECT"?(e.selectedIndex=0):(e.value="")});}
+    function setStatus(s,m){ui.dot.className="dot "+s;ui.status.textContent=m;}
 
     let toastTmr;
-    function toast(msg, type = "info") {
+    function toast(msg,type="info"){
         clearTimeout(toastTmr);
-        ui.toast.textContent = msg;
-        ui.toast.className   = `toast ${type} show`;
-        toastTmr = setTimeout(() => ui.toast.className = "toast", 3400);
+        ui.toast.textContent=msg;
+        ui.toast.className=`toast ${type} show`;
+        toastTmr=setTimeout(()=>ui.toast.className="toast",3400);
     }
 
-    //Modal helpers
-    function openModal(id)  { $(id).classList.add("on"); }
-    function closeModal(id) { $(id).classList.remove("on"); }
+    function openModal(id){$(id).classList.add("on")}
+    function closeModal(id){$(id).classList.remove("on")}
 
-    // Render table
-    function render(data) {
-        vehicles = Array.isArray(data) ? data : [];
-        ui.badge.textContent = vehicles.length;
-
-        if (!vehicles.length) {
-            ui.tBody.innerHTML =
-                '<tr><td colspan="12" class="empty-state">No vehicles found in the database.</td></tr>';
+    function render(data){
+        vehicles=Array.isArray(data)?data:[];
+        ui.badge.textContent=vehicles.length;
+        ui.navCount.textContent=vehicles.length;
+        if(!vehicles.length){
+            ui.tBody.innerHTML='<tr><td colspan="12" class="empty-state">No vehicles found in the database.</td></tr>';
             return;
         }
-
-        ui.tBody.innerHTML = vehicles.map((v, i) => `
-            <tr id="row-${i}" onclick="selectRow(${i})">
-                <td class="vno">${x(v.vehicleNumber)}</td>
-                <td>${x(v.make)}</td>
-                <td>${x(v.model)}</td>
-                <td><span class="pill p-type">${x(v.vehicleType)}</span></td>
-                <td>${x(v.manufacturedYear)}</td>
-                <td>${v.marketValue ? Number(v.marketValue).toLocaleString() : "—"}</td>
-                <td>${x(v.engineNumber)}</td>
-                <td>${x(v.chassisNumber)}</td>
-                <td><span class="pill ${v.fuelType==='Petrol'?'p-petrol':'p-diesel'}">${x(v.fuelType)}</span></td>
-                <td><span class="pill ${v.usageType==='Personal'?'p-personal':'p-comm'}">${x(v.usageType)}</span></td>
-                <td>${x(v.customerId)}</td>
-                <td>
-                    <div class="act-cell">
-                        <button class="btn-row-edit" onclick="event.stopPropagation();rowEdit(${i})">Edit</button>
-                        <button class="btn-row-del"  onclick="event.stopPropagation();rowDel(${i})">Delete</button>
-                    </div>
-                </td>
-            </tr>`).join('');
-
-        // restore highlight
-        if (selectedIndex >= 0 && selectedIndex < vehicles.length)
+        ui.tBody.innerHTML=vehicles.map((v,i)=>`
+    <tr id="row-${i}" onclick="selectRow(${i})">
+      <td class="vno">${x(v.vehicleNumber)}</td>
+      <td>${x(v.make)}</td><td>${x(v.model)}</td>
+      <td><span class="pill p-type">${x(v.vehicleType)}</span></td>
+      <td>${x(v.manufacturedYear)}</td>
+      <td>${v.marketValue?Number(v.marketValue).toLocaleString():"—"}</td>
+      <td>${x(v.engineNumber)}</td><td>${x(v.chassisNumber)}</td>
+      <td><span class="pill ${v.fuelType==="Petrol"?"p-petrol":"p-diesel"}">${x(v.fuelType)}</span></td>
+      <td><span class="pill ${v.usageType==="Personal"?"p-personal":"p-comm"}">${x(v.usageType)}</span></td>
+      <td>${x(v.customerId)}</td>
+      <td><div class="act-cell">
+        <button class="btn-row-edit" onclick="event.stopPropagation();rowEdit(${i})">Edit</button>
+        <button class="btn-row-del"  onclick="event.stopPropagation();rowDel(${i})">Delete</button>
+      </div></td>
+    </tr>`).join('');
+        if(selectedIndex>=0&&selectedIndex<vehicles.length)
             $(`row-${selectedIndex}`)?.classList.add("selected");
     }
 
-    // escape html
-    function x(v) {
-        return v == null ? "—" : String(v)
-            .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
-    }
+    function x(v){return v==null?"—":String(v).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
 
-    //Row select / deselect
-    function selectRow(i) {
-        if (selectedIndex === i) { doClear(); return; }
+    function selectRow(i){
+        if(selectedIndex===i){doClear();return;}
         $(`row-${selectedIndex}`)?.classList.remove("selected");
-        selectedIndex = i;
+        selectedIndex=i;
         $(`row-${i}`).classList.add("selected");
         setFields(vehicles[i]);
         setEditMode();
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        window.scrollTo({top:0,behavior:"smooth"});
     }
-
-    function rowEdit(i) { selectRow(i); }
-    function rowDel(i)  {
-        deleteTarget = i;
-        const v = vehicles[i];
-        $("delModalTxt").textContent =
-            `Remove vehicle "${v.vehicleNumber} — ${v.make||""} ${v.model||""}"? This cannot be undone.`;
+    function rowEdit(i){selectRow(i);}
+    function rowDel(i){
+        deleteTarget=i;
+        const v=vehicles[i];
+        $("delModalTxt").textContent=`Remove vehicle "${v.vehicleNumber} — ${v.make||""} ${v.model||""}"? This cannot be undone.`;
         openModal("delModal");
     }
-
-    // Mode helpers
-    function setEditMode() {
-        ui.title.textContent = `  Edit — ${vehicles[selectedIndex].vehicleNumber}`;
-        ui.title.style.color  = "var(--warn)";
-        ui.register.disabled  = true;
-        ui.update.disabled    = false;
-        ui.del.disabled       = false;
+    function setEditMode(){
+        ui.title.textContent=`Edit — ${vehicles[selectedIndex].vehicleNumber}`;
+        ui.title.style.color="var(--warn)";
+        ui.register.disabled=true;ui.update.disabled=false;ui.del.disabled=false;
     }
-
-    function setIdleMode() {
-        ui.title.textContent = "Register New Vehicle";
-        ui.title.style.color  = "var(--accent)";
-        ui.register.disabled  = false;
-        ui.update.disabled    = true;
-        ui.del.disabled       = true;
+    function setIdleMode(){
+        ui.title.textContent="Register New Vehicle";
+        ui.title.style.color="var(--accent)";
+        ui.register.disabled=false;ui.update.disabled=true;ui.del.disabled=true;
         $(`row-${selectedIndex}`)?.classList.remove("selected");
-        selectedIndex = -1;
+        selectedIndex=-1;
+    }
+    function busy(btn,html,on){btn.innerHTML=html;btn.disabled=on;}
+
+    async function doRegister(){
+        const data=getFields();
+        if(!data.vehicleNumber){toast("Vehicle Number is required.","error");return;}
+        busy(ui.register,'<span class="spin"></span> Saving…',true);
+        setStatus("loading","Registering…");
+        try{
+            const res=await fetch(`${BASE}/register`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(data)});
+            const json=await res.json();
+            if(res.ok){toast(`"${data.vehicleNumber}" registered ✓`,"success");setStatus("ok","Registered");clearFields();await doGetAll();}
+            else{toast(`Failed: ${json.message}`,"error");setStatus("error","Failed");}
+        }catch(e){toast("Network error: "+e.message,"error");setStatus("error","Network error");}
+        finally{busy(ui.register,"Register",false);}
     }
 
-    //Busy helper
-    function busy(btn, html, on) { btn.innerHTML = html; btn.disabled = on; }
-    //  API CALLS
-    // POST /api/v1/vehicle/register
-    async function doRegister() {
-        const data = getFields();
-        if (!data.vehicleNumber) { toast("Vehicle Number is required.", "error"); return; }
-
-        busy(ui.register, '<span class="spin"></span> Saving…', true);
-        setStatus("loading", "Registering…");
-
-        try {
-            const res = await fetch(`${BASE}/register`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(data)
-            });
-            const json = await res.json();           // APIResponse<Void>
-
-            if (res.ok) {
-                toast(`Vehicle "${data.vehicleNumber}" registered. ✓`, "success");
-                setStatus("ok", "Registered");
-                clearFields();
-                await doGetAll();
-            } else {
-                toast(`Register failed: ${json.message}`, "error");
-                setStatus("error", "Failed");
-            }
-        } catch(e) {
-            toast("Network error: " + e.message, "error");
-            setStatus("error", "Network error");
-        } finally {
-            busy(ui.register, " Register", false);
-        }
+    async function doGetAll(){
+        busy(ui.getAll,'<span class="spin" style="border-top-color:#111"></span> Loading…',true);
+        setStatus("loading","Loading…");
+        try{
+            const res=await fetch(`${BASE}/all`);
+            const json=await res.json();
+            if(res.ok){render(json.data);setStatus("ok",`${vehicles.length} record(s)`);toast(`Loaded ${vehicles.length} vehicle(s).`,"info");}
+            else{toast(`Get All failed: ${json.message}`,"error");setStatus("error","Failed");}
+        }catch(e){
+            toast("Network error: "+e.message,"error");setStatus("error","Network error");
+            ui.tBody.innerHTML=`<tr><td colspan="12" class="empty-state">⚠ Cannot reach server</td></tr>`;
+            ui.badge.textContent=0;
+        }finally{busy(ui.getAll,"⟳ Get All",false);}
     }
 
-    // GET /api/v1/vehicle/all
-    async function doGetAll() {
-        busy(ui.getAll, '<span class="spin" style="border-top-color:#111"></span> Loading…', true);
-        setStatus("loading", "Loading…");
-
-        try {
-            const res  = await fetch(`${BASE}/all`);
-            const json = await res.json();           // APIResponse<List<VehicleRequestDTO>>
-
-            if (res.ok) {
-                render(json.data);
-                setStatus("ok", `${vehicles.length} record(s)`);
-                toast(`Loaded ${vehicles.length} vehicle(s).`, "info");
-            } else {
-                toast(`Get All failed: ${json.message}`, "error");
-                setStatus("error", "Failed");
-                ui.tBody.innerHTML =
-                    `<tr><td colspan="12" class="empty-state">⚠ ${json.message}</td></tr>`;
-            }
-        } catch(e) {
-            toast("Network error: " + e.message, "error");
-            setStatus("error", "Network error");
-            ui.tBody.innerHTML =
-                `<tr><td colspan="12" class="empty-state">⚠ Cannot reach <strong>${BASE}/all</strong></td></tr>`;
-            ui.badge.textContent = 0;
-        } finally {
-            busy(ui.getAll, "⟳ Get All", false);
-        }
+    async function doUpdate(){
+        if(selectedIndex<0){toast("Select a row to update.","warn");return;}
+        const data=getFields();const vNo=vehicles[selectedIndex].vehicleNumber;
+        busy(ui.update,'<span class="spin" style="border-top-color:#111"></span> Updating…',true);
+        setStatus("loading","Updating…");
+        try{
+            const res=await fetch(`${BASE}/update/${encodeURIComponent(vNo)}`,{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify(data)});
+            const json=await res.json();
+            if(res.ok){toast(`"${vNo}" updated ✓`,"warn");setStatus("ok","Updated");doClear();await doGetAll();}
+            else{toast(`Update failed: ${json.message}`,"error");setStatus("error","Failed");}
+        }catch(e){toast("Network error: "+e.message,"error");setStatus("error","Network error");}
+        finally{busy(ui.update,"Update",false);}
     }
 
-    // PUT /api/v1/vehicle/update/{vehicleNumber}
-    async function doUpdate() {
-        if (selectedIndex < 0) { toast("Select a row to update.", "warn"); return; }
+    function doDeleteSelected(){if(selectedIndex<0){toast("Select a row to delete.","warn");return;}rowDel(selectedIndex);}
 
-        const data = getFields();
-        const vNo  = vehicles[selectedIndex].vehicleNumber;
-
-        busy(ui.update, '<span class="spin" style="border-top-color:#111"></span> Updating…', true);
-        setStatus("loading", "Updating…");
-
-        try {
-            const res  = await fetch(`${BASE}/update/${encodeURIComponent(vNo)}`, {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(data)
-            });
-            const json = await res.json();
-
-            if (res.ok) {
-                toast(`Vehicle "${vNo}" updated. ✓`, "warn");
-                setStatus("ok", "Updated");
-                doClear();
-                await doGetAll();
-            } else {
-                toast(`Update failed: ${json.message}`, "error");
-                setStatus("error", "Failed");
-            }
-        } catch(e) {
-            toast("Network error: " + e.message, "error");
-            setStatus("error", "Network error");
-        } finally {
-            busy(ui.update, "Update", false);
-        }
+    async function confirmDeleteOne(){
+        if(deleteTarget===null)return;
+        const vNo=vehicles[deleteTarget].vehicleNumber;
+        closeModal("delModal");setStatus("loading","Deleting…");
+        try{
+            const res=await fetch(`${BASE}/delete/${encodeURIComponent(vNo)}`,{method:"DELETE"});
+            const json=await res.json();
+            if(res.ok){toast(`"${vNo}" deleted.`,"error");setStatus("ok","Deleted");doClear();await doGetAll();}
+            else{toast(`Delete failed: ${json.message}`,"error");setStatus("error","Failed");}
+        }catch(e){toast("Network error: "+e.message,"error");setStatus("error","Network error");}
+        finally{deleteTarget=null;}
     }
 
-    // DELETE /api/v1/vehicle/delete/{vehicleNumber}  (header button)
-    function doDeleteSelected() {
-        if (selectedIndex < 0) { toast("Select a row to delete.", "warn"); return; }
-        rowDel(selectedIndex);
-    }
-
-    async function confirmDeleteOne() {
-        if (deleteTarget === null) return;
-        const vNo = vehicles[deleteTarget].vehicleNumber;
-        closeModal("delModal");
-        setStatus("loading", "Deleting…");
-
-        try {
-            const res  = await fetch(`${BASE}/delete/${encodeURIComponent(vNo)}`, { method: "DELETE" });
-            const json = await res.json();
-
-            if (res.ok) {
-                toast(`Vehicle "${vNo}" deleted.`, "error");
-                setStatus("ok", "Deleted");
-                doClear();
-                await doGetAll();
-            } else {
-                toast(`Delete failed: ${json.message}`, "error");
-                setStatus("error", "Failed");
-            }
-        } catch(e) {
-            toast("Network error: " + e.message, "error");
-            setStatus("error", "Network error");
-        } finally {
-            deleteTarget = null;
-        }
-    }
-
-    // DELETE /api/v1/vehicle/reset  (reset ALL)
-    function openResetModal() { openModal("resetModal"); }
-
-    async function confirmResetAll() {
+    function openResetModal(){openModal("resetModal");}
+    async function confirmResetAll(){
         closeModal("resetModal");
-        busy(ui.resetDB, '<span class="spin"></span> Resetting…', true);
-        setStatus("loading", "Resetting…");
-
-        try {
-            const res  = await fetch(`${BASE}/reset`, { method: "DELETE" });
-            const json = await res.json();
-
-            if (res.ok) {
-                toast("All vehicles deleted from database.", "error");
-                setStatus("ok", "Reset done");
-                doClear();
-                render([]);
-            } else {
-                toast(`Reset failed: ${json.message}`, "error");
-                setStatus("error", "Failed");
-            }
-        } catch(e) {
-            toast("Network error: " + e.message, "error");
-            setStatus("error", "Network error");
-        } finally {
-            busy(ui.resetDB, " Reset All", false);
-        }
+        busy(ui.resetDB,'<span class="spin"></span> Resetting…',true);
+        setStatus("loading","Resetting…");
+        try{
+            const res=await fetch(`${BASE}/reset`,{method:"DELETE"});
+            const json=await res.json();
+            if(res.ok){toast("All vehicles deleted.","error");setStatus("ok","Reset done");doClear();render([]);}
+            else{toast(`Reset failed: ${json.message}`,"error");setStatus("error","Failed");}
+        }catch(e){toast("Network error: "+e.message,"error");setStatus("error","Network error");}
+        finally{busy(ui.resetDB,"Reset All",false);}
     }
 
-    // Clear form + deselect row (local only, no API)
-    function doClear() {
-        clearFields();
-        setIdleMode();
-        setStatus("", "Idle");
-    }
+    function doClear(){clearFields();setIdleMode();setStatus("","Idle");}
+    function doLogout(){openModal("logoutModal");}
+
+    document.querySelectorAll('.overlay').forEach(el=>
+        el.addEventListener('click',e=>{if(e.target===el)el.classList.remove('on');}));
 </script>
 <script src="../js/jquery-3.7.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>VIMS — Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+        :root{
+            --bg:#0d0f14;
+            --panel:#13161e;
+            --panel2:#191d28;
+            --border:#232737;
+            --border2:#2d3346;
+            --text:#eef0f6;
+            --muted:#6b7591;
+            --soft:#9ba3bf;
+
+            --blue:#4f8eff;
+            --blue-dim:#1a2d5a;
+            --green:#2ecc8b;
+            --green-dim:#0e3328;
+            --amber:#f5a623;
+            --amber-dim:#3d2a06;
+            --red:#ff4f6b;
+            --red-dim:#3d0f18;
+            --purple:#a78bfa;
+            --purple-dim:#2d1f5e;
+            --orange:#ff7849;
+            --cyan:#22d3ee;
+
+            --r:12px;
+            --r2:8px;
+            --sidebar:220px;
+            --font-head:'Syne',sans-serif;
+            --font-body:'DM Sans',sans-serif;
+        }
+
+        body{font-family:var(--font-body);background:var(--bg);color:var(--text);font-size:14px;min-height:100vh;overflow-x:hidden}
+
+        /* ─── Scrollbar ─── */
+        ::-webkit-scrollbar{width:5px}
+        ::-webkit-scrollbar-track{background:transparent}
+        ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:99px}
+
+        /* ─── Layout ─── */
+        .layout{display:flex;min-height:100vh}
+
+        /* ─── Sidebar ─── */
+        .sidebar{
+            width:var(--sidebar);background:var(--panel);
+            border-right:1px solid var(--border);
+            display:flex;flex-direction:column;
+            padding:20px 12px;
+            position:fixed;top:0;left:0;bottom:0;z-index:20;
+        }
+        .logo{display:flex;align-items:center;gap:10px;padding:4px 8px 20px;border-bottom:1px solid var(--border);margin-bottom:16px}
+        .logo-mark{
+            width:32px;height:32px;
+            background:linear-gradient(135deg,var(--blue) 0%,var(--purple) 100%);
+            border-radius:9px;
+            display:flex;align-items:center;justify-content:center;
+            flex-shrink:0;
+            box-shadow:0 0 16px rgba(79,142,255,.35);
+        }
+        .logo-mark svg{width:16px;height:16px;color:#fff}
+        .logo-text{font-family:var(--font-head);font-weight:800;font-size:15px;letter-spacing:.01em;
+            background:linear-gradient(90deg,#fff 0%,var(--blue) 100%);
+            -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+
+        .nav-section{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;padding:4px 10px 6px;margin-top:4px}
+        .nav-item{
+            display:flex;align-items:center;gap:9px;
+            padding:9px 10px;border-radius:var(--r2);
+            color:var(--soft);font-size:13px;font-weight:500;
+            cursor:pointer;transition:all .15s;
+            border:none;background:none;width:100%;text-align:left;
+            position:relative;
+        }
+        .nav-item svg{width:15px;height:15px;flex-shrink:0}
+        .nav-item:hover{background:var(--panel2);color:var(--text)}
+        .nav-item.active{background:var(--blue-dim);color:var(--blue)}
+        .nav-item.active::before{
+            content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);
+            width:3px;height:16px;background:var(--blue);border-radius:0 3px 3px 0;
+        }
+        .nav-badge{margin-left:auto;background:var(--blue-dim);color:var(--blue);font-size:10px;font-weight:700;padding:2px 6px;border-radius:99px;min-width:18px;text-align:center}
+
+        .sb-bottom{margin-top:auto;border-top:1px solid var(--border);padding-top:14px}
+        .user-card{
+            display:flex;align-items:center;gap:9px;
+            padding:10px;border-radius:var(--r2);
+            background:var(--panel2);border:1px solid var(--border);
+            margin-bottom:8px;
+        }
+        .avatar{
+            width:30px;height:30px;border-radius:8px;
+            background:linear-gradient(135deg,var(--blue),var(--purple));
+            display:flex;align-items:center;justify-content:center;
+            font-family:var(--font-head);font-weight:700;font-size:12px;color:#fff;
+            flex-shrink:0;
+        }
+        .user-info .uname{font-size:12px;font-weight:600;line-height:1.2}
+        .user-info .urole{font-size:10px;color:var(--muted);margin-top:1px}
+        .logout-btn{
+            display:flex;align-items:center;gap:7px;
+            width:100%;padding:8px 10px;border-radius:var(--r2);
+            background:none;border:none;cursor:pointer;
+            color:var(--muted);font-family:var(--font-body);font-size:12px;font-weight:500;
+            transition:all .15s;
+        }
+        .logout-btn:hover{background:var(--red-dim);color:var(--red)}
+        .logout-btn svg{width:13px;height:13px}
+
+        /* ─── Main ─── */
+        .main{margin-left:var(--sidebar);flex:1;display:flex;flex-direction:column}
+
+        /* ─── Topbar ─── */
+        .topbar{
+            background:var(--panel);border-bottom:1px solid var(--border);
+            padding:14px 28px;
+            display:flex;align-items:center;justify-content:space-between;
+            position:sticky;top:0;z-index:10;
+        }
+        .page-title{font-family:var(--font-head);font-size:16px;font-weight:700}
+        .topbar-right{display:flex;gap:8px;align-items:center}
+
+        .btn{
+            display:inline-flex;align-items:center;gap:6px;
+            padding:8px 16px;border-radius:var(--r2);
+            font-family:var(--font-body);font-size:13px;font-weight:500;
+            cursor:pointer;border:none;transition:all .15s;
+            white-space:nowrap;
+        }
+        .btn svg{width:13px;height:13px;flex-shrink:0}
+        .btn-primary{background:var(--blue);color:#fff;box-shadow:0 0 18px rgba(79,142,255,.3)}
+        .btn-primary:hover{background:#6ba3ff;box-shadow:0 0 22px rgba(79,142,255,.4)}
+        .btn-ghost{background:transparent;color:var(--soft);border:1px solid var(--border2)}
+        .btn-ghost:hover{background:var(--panel2);color:var(--text);border-color:var(--border2)}
+        .btn-danger{background:transparent;color:var(--red);border:1px solid var(--red-dim);font-size:12px;padding:6px 12px}
+        .btn-danger:hover{background:var(--red-dim)}
+
+        /* ─── Content ─── */
+        .content{padding:24px 28px}
+
+        /* ─── Stats Grid ─── */
+        .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}
+        .stat-card{
+            background:var(--panel);border:1px solid var(--border);border-radius:var(--r);
+            padding:20px;position:relative;overflow:hidden;
+            cursor:default;transition:border-color .2s,transform .15s;
+        }
+        .stat-card:hover{transform:translateY(-2px)}
+        .stat-card::after{
+            content:'';position:absolute;inset:0;
+            border-radius:var(--r);opacity:0;
+            transition:opacity .2s;
+        }
+        .stat-card:hover::after{opacity:1}
+        .sc-blue::after{background:radial-gradient(circle at top right,rgba(79,142,255,.06),transparent 60%)}
+        .sc-green::after{background:radial-gradient(circle at top right,rgba(46,204,139,.06),transparent 60%)}
+        .sc-amber::after{background:radial-gradient(circle at top right,rgba(245,166,35,.06),transparent 60%)}
+        .sc-red::after{background:radial-gradient(circle at top right,rgba(255,79,107,.06),transparent 60%)}
+
+        .sc-icon{
+            width:36px;height:36px;border-radius:9px;
+            display:flex;align-items:center;justify-content:center;
+            margin-bottom:14px;font-size:16px;
+        }
+        .sc-icon svg{width:17px;height:17px}
+        .sc-blue .sc-icon{background:var(--blue-dim);color:var(--blue)}
+        .sc-green .sc-icon{background:var(--green-dim);color:var(--green)}
+        .sc-amber .sc-icon{background:var(--amber-dim);color:var(--amber)}
+        .sc-red .sc-icon{background:var(--red-dim);color:var(--red)}
+
+        .sc-label{font-size:11px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+        .sc-value{font-family:var(--font-head);font-size:30px;font-weight:700;line-height:1;margin-bottom:4px}
+        .sc-blue .sc-value{color:var(--blue)}
+        .sc-green .sc-value{color:var(--green)}
+        .sc-amber .sc-value{color:var(--amber)}
+        .sc-red .sc-value{color:var(--red)}
+        .sc-sub{font-size:11px;color:var(--muted)}
+
+        .sc-glow{
+            position:absolute;top:-18px;right:-18px;
+            width:80px;height:80px;border-radius:50%;
+            filter:blur(28px);opacity:.15;pointer-events:none;
+        }
+        .sc-blue .sc-glow{background:var(--blue)}
+        .sc-green .sc-glow{background:var(--green)}
+        .sc-amber .sc-glow{background:var(--amber)}
+        .sc-red .sc-glow{background:var(--red)}
+
+        /* ─── Table Card ─── */
+        .table-card{background:var(--panel);border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
+        .table-header{
+            display:flex;align-items:center;justify-content:space-between;
+            padding:16px 20px;border-bottom:1px solid var(--border);
+        }
+        .table-title{font-family:var(--font-head);font-size:14px;font-weight:700}
+        .table-tools{display:flex;gap:8px;align-items:center}
+
+        .search-wrap{position:relative}
+        .search-wrap input{
+            background:var(--panel2);border:1px solid var(--border);border-radius:var(--r2);
+            padding:8px 12px 8px 32px;
+            font-family:var(--font-body);font-size:13px;color:var(--text);
+            outline:none;width:200px;transition:border-color .15s,width .2s;
+        }
+        .search-wrap input:focus{border-color:var(--blue);width:230px}
+        .search-wrap input::placeholder{color:var(--muted)}
+        .search-wrap svg{position:absolute;left:9px;top:50%;transform:translateY(-50%);width:13px;height:13px;color:var(--muted);pointer-events:none}
+
+        table{width:100%;border-collapse:collapse}
+        thead tr{background:var(--panel2);border-bottom:1px solid var(--border)}
+        th{
+            padding:11px 16px;text-align:left;
+            font-size:11px;font-weight:600;color:var(--muted);
+            text-transform:uppercase;letter-spacing:.06em;white-space:nowrap;
+            font-family:var(--font-body);
+        }
+        tbody tr{border-bottom:1px solid var(--border);transition:background .1s}
+        tbody tr:last-child{border-bottom:none}
+        tbody tr:hover{background:rgba(255,255,255,.02)}
+        td{padding:12px 16px;font-size:13px;vertical-align:middle}
+        .vnum{font-family:var(--font-head);font-weight:700;font-size:13px;letter-spacing:.01em}
+        .make-model{display:flex;flex-direction:column;gap:1px}
+        .make{font-weight:600;font-size:13px}
+        .model{font-size:12px;color:var(--muted)}
+
+        /* Badges */
+        .badge{
+            display:inline-flex;align-items:center;gap:4px;
+            padding:3px 8px;border-radius:5px;
+            font-size:11px;font-weight:600;letter-spacing:.02em;
+            font-family:var(--font-body);
+        }
+        .badge::before{content:'';width:5px;height:5px;border-radius:50%;flex-shrink:0}
+        .b-car{background:rgba(79,142,255,.12);color:var(--blue)}.b-car::before{background:var(--blue)}
+        .b-van{background:rgba(167,139,250,.12);color:var(--purple)}.b-van::before{background:var(--purple)}
+        .b-truck{background:rgba(255,120,73,.12);color:var(--orange)}.b-truck::before{background:var(--orange)}
+        .b-moto{background:rgba(255,79,107,.12);color:var(--red)}.b-moto::before{background:var(--red)}
+        .b-bus{background:rgba(34,211,238,.12);color:var(--cyan)}.b-bus::before{background:var(--cyan)}
+        .b-private{background:rgba(79,142,255,.1);color:var(--blue)}.b-private::before{background:var(--blue)}
+        .b-commercial{background:rgba(245,166,35,.1);color:var(--amber)}.b-commercial::before{background:var(--amber)}
+        .b-government{background:rgba(46,204,139,.1);color:var(--green)}.b-government::before{background:var(--green)}
+
+        .year-chip{
+            font-size:12px;font-weight:600;color:var(--soft);
+            background:var(--panel2);padding:3px 8px;border-radius:5px;
+            font-family:var(--font-head);
+        }
+        .value-text{font-family:var(--font-head);font-size:12px;font-weight:600;color:var(--text)}
+        .value-label{font-size:10px;color:var(--muted)}
+
+        .action-btns{display:flex;gap:5px}
+        .act-btn{
+            display:inline-flex;align-items:center;gap:4px;
+            padding:5px 9px;border-radius:6px;
+            font-family:var(--font-body);font-size:11px;font-weight:600;
+            border:none;cursor:pointer;transition:all .15s;
+        }
+        .act-btn svg{width:11px;height:11px}
+        .act-edit{background:var(--blue-dim);color:var(--blue)}.act-edit:hover{background:rgba(79,142,255,.2)}
+        .act-del{background:var(--red-dim);color:var(--red)}.act-del:hover{background:rgba(255,79,107,.2)}
+
+        .empty-row{text-align:center;padding:52px 20px;color:var(--muted)}
+        .empty-row svg{width:36px;height:36px;margin:0 auto 10px;display:block;opacity:.2}
+        .empty-row p{font-size:13px}
+
+        /* ─── Modal Overlay ─── */
+        .overlay{
+            display:none;position:fixed;inset:0;
+            background:rgba(0,0,0,.6);backdrop-filter:blur(4px);
+            z-index:100;align-items:center;justify-content:center;
+            padding:20px;
+        }
+        .overlay.open{display:flex}
+
+        .modal{
+            background:var(--panel);border:1px solid var(--border2);
+            border-radius:16px;width:100%;max-width:480px;
+            max-height:90vh;overflow-y:auto;
+            animation:slideUp .22s ease;
+        }
+        @keyframes slideUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+        .modal-head{
+            display:flex;align-items:center;justify-content:space-between;
+            padding:20px 22px;border-bottom:1px solid var(--border);
+        }
+        .modal-title{font-family:var(--font-head);font-size:15px;font-weight:700}
+        .modal-close{
+            background:var(--panel2);border:1px solid var(--border);border-radius:7px;
+            cursor:pointer;color:var(--muted);padding:5px;
+            display:flex;transition:all .15s;
+        }
+        .modal-close:hover{background:var(--red-dim);color:var(--red);border-color:var(--red-dim)}
+        .modal-close svg{width:15px;height:15px}
+        .modal-body{padding:22px}
+
+        .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+        .fg{display:flex;flex-direction:column;gap:5px}
+        .fg.span2{grid-column:span 2}
+        .fg label{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+        .fg input,.fg select{
+            padding:10px 12px;border:1px solid var(--border2);border-radius:var(--r2);
+            background:var(--panel2);
+            font-family:var(--font-body);font-size:13px;color:var(--text);
+            outline:none;transition:border-color .15s;
+        }
+        .fg input:focus,.fg select:focus{border-color:var(--blue)}
+        .fg input::placeholder{color:var(--muted)}
+        .fg select option{background:var(--panel)}
+
+        .modal-foot{display:flex;justify-content:flex-end;gap:8px;padding:16px 22px;border-top:1px solid var(--border)}
+
+        /* ─── Confirm Modal ─── */
+        .confirm-modal{max-width:340px;text-align:center;padding:0}
+        .confirm-modal .modal-body{padding:28px 24px 0}
+        .confirm-icon{font-size:42px;margin-bottom:12px}
+        .confirm-title{font-family:var(--font-head);font-size:16px;font-weight:700;margin-bottom:6px}
+        .confirm-msg{font-size:13px;color:var(--muted);line-height:1.5;margin-bottom:4px}
+        .confirm-modal .modal-foot{justify-content:center;padding:20px 24px 24px;border:none}
+        .btn-confirm-del{
+            background:var(--red);color:#fff;
+            padding:9px 20px;border-radius:var(--r2);
+            font-family:var(--font-body);font-size:13px;font-weight:600;
+            border:none;cursor:pointer;transition:background .15s;
+        }
+        .btn-confirm-del:hover{background:#ff2245}
+        .btn-confirm-ok{
+            background:#374151;color:#fff;
+            padding:9px 20px;border-radius:var(--r2);
+            font-family:var(--font-body);font-size:13px;font-weight:600;
+            border:none;cursor:pointer;transition:background .15s;
+        }
+        .btn-confirm-ok:hover{background:#4b5563}
+
+        /* ─── Toast ─── */
+        .toast{
+            position:fixed;bottom:22px;right:22px;
+            display:flex;align-items:center;gap:9px;
+            padding:11px 16px;border-radius:10px;
+            font-size:13px;font-weight:500;font-family:var(--font-body);
+            transform:translateY(8px);opacity:0;
+            transition:all .22s cubic-bezier(.34,1.56,.64,1);
+            pointer-events:none;z-index:999;
+            box-shadow:0 8px 24px rgba(0,0,0,.4);
+        }
+        .toast.show{transform:translateY(0);opacity:1}
+        .toast.ok{background:var(--green);color:#fff}
+        .toast.err{background:var(--red);color:#fff}
+        .toast svg{width:14px;height:14px;flex-shrink:0}
+
+        /* ─── Animations ─── */
+        @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+        .stat-card{animation:fadeIn .3s ease both}
+        .stat-card:nth-child(1){animation-delay:.05s}
+        .stat-card:nth-child(2){animation-delay:.1s}
+        .stat-card:nth-child(3){animation-delay:.15s}
+        .stat-card:nth-child(4){animation-delay:.2s}
+        .table-card{animation:fadeIn .3s ease .25s both}
+    </style>
+</head>
+<body>
+<div class="layout">
+
+    <!-- ── Sidebar ── -->
+    <aside class="sidebar">
+        <div class="logo">
+            <div class="logo-mark">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <path d="M5 17H3a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v5"/>
+                    <circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/>
+                </svg>
+            </div>
+            <span class="logo-text">VIMS</span>
+        </div>
+
+        <span class="nav-section">Main</span>
+        <button class="nav-item active" onclick="location.href='dashboard.html'">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+            Dashboard
+            <span class="nav-badge" id="nav-count">0</span>
+        </button>
+        <button class="nav-item" onclick="location.href='vehicles.html'">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 17H3a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v5"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg>
+            Vehicles
+        </button>
+        <button class="nav-item" onclick="location.href='policies.html'">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+            Policies
+        </button>
+        <button class="nav-item" onclick="location.href='payments.html'">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+            Payments
+        </button>
+        <button class="nav-item" onclick="location.href='claims.html'">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            Claims
+        </button>
+
+        <span class="nav-section" style="margin-top:8px">Management</span>
+        <button class="nav-item" onclick="location.href='user.html'">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            Users
+        </button>
+
+        <div class="sb-bottom">
+            <div class="user-card">
+                <div class="avatar">A</div>
+                <div class="user-info">
+                    <div class="uname">Admin</div>
+                    <div class="urole">Administrator</div>
+                </div>
+            </div>
+            <button class="logout-btn" onclick="doLogout()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                Sign out
+            </button>
+        </div>
+    </aside>
+
+    <!-- ── Main ── -->
+    <div class="main">
+        <div class="topbar">
+            <span class="page-title">Dashboard</span>
+            <div class="topbar-right">
+                <button class="btn btn-ghost" onclick="fetchAll()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+                    Refresh
+                </button>
+                <button class="btn btn-primary" onclick="openAdd()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    Add Vehicle
+                </button>
+            </div>
+        </div>
+
+        <div class="content">
+            <!-- Stats -->
+            <div class="stats-grid">
+                <div class="stat-card sc-blue">
+                    <div class="sc-glow"></div>
+                    <div class="sc-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+                    </div>
+                    <div class="sc-label">Total Fleet</div>
+                    <div class="sc-value" id="s0">0</div>
+                    <div class="sc-sub">Registered vehicles</div>
+                </div>
+                <div class="stat-card sc-green">
+                    <div class="sc-glow"></div>
+                    <div class="sc-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                    </div>
+                    <div class="sc-label">Private</div>
+                    <div class="sc-value" id="s1">0</div>
+                    <div class="sc-sub">Usage type</div>
+                </div>
+                <div class="stat-card sc-amber">
+                    <div class="sc-glow"></div>
+                    <div class="sc-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 4v4h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+                    </div>
+                    <div class="sc-label">Commercial</div>
+                    <div class="sc-value" id="s2">0</div>
+                    <div class="sc-sub">Usage type</div>
+                </div>
+                <div class="stat-card sc-red">
+                    <div class="sc-glow"></div>
+                    <div class="sc-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                    </div>
+                    <div class="sc-label">Government</div>
+                    <div class="sc-value" id="s3">0</div>
+                    <div class="sc-sub">Usage type</div>
+                </div>
+            </div>
+
+            <!-- Table Card -->
+            <div class="table-card">
+                <div class="table-header">
+                    <span class="table-title">Vehicle Registry</span>
+                    <div class="table-tools">
+                        <div class="search-wrap">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                            <input type="text" id="srch" placeholder="Search vehicles…" oninput="filterVehicles()"/>
+                        </div>
+                        <button class="btn btn-danger" onclick="confirmReset()">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+                            Reset All
+                        </button>
+                    </div>
+                </div>
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Vehicle No.</th>
+                        <th>Make & Model</th>
+                        <th>Type</th>
+                        <th>Year</th>
+                        <th>Market Value</th>
+                        <th>Usage</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody id="tb"></tbody>
+                </table>
+            </div>
+        </div><!-- /content -->
+    </div><!-- /main -->
+</div><!-- /layout -->
+
+<!-- ── Vehicle Modal ── -->
+<div class="overlay" id="vm">
+    <div class="modal">
+        <div class="modal-head">
+            <span class="modal-title" id="modal-title">Add Vehicle</span>
+            <button class="modal-close" onclick="cls('vm')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="form-grid">
+                <div class="fg"><label>Vehicle Number *</label><input id="fn" placeholder="e.g. CAB-1234"/></div>
+                <div class="fg"><label>Make *</label><input id="fmk" placeholder="e.g. Toyota"/></div>
+                <div class="fg"><label>Model *</label><input id="fmd" placeholder="e.g. Corolla"/></div>
+                <div class="fg"><label>Type *</label>
+                    <select id="ft">
+                        <option value="">Select type…</option>
+                        <option>CAR</option><option>VAN</option><option>TRUCK</option>
+                        <option>MOTORCYCLE</option><option>BUS</option>
+                    </select>
+                </div>
+                <div class="fg"><label>Year *</label><input id="fy" type="number" placeholder="2020" min="1990" max="2025"/></div>
+                <div class="fg"><label>Market Value (LKR) *</label><input id="fv" type="number" placeholder="5000000"/></div>
+                <div class="fg span2"><label>Usage *</label>
+                    <select id="fu">
+                        <option value="">Select usage…</option>
+                        <option>PRIVATE</option><option>COMMERCIAL</option><option>GOVERNMENT</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="modal-foot">
+            <button class="btn btn-ghost" onclick="cls('vm')">Cancel</button>
+            <button class="btn btn-primary" id="save-btn" onclick="save()">Save Vehicle</button>
+        </div>
+    </div>
+</div>
+
+<!-- ── Confirm Modal ── -->
+<div class="overlay" id="cm">
+    <div class="modal confirm-modal">
+        <div class="modal-body">
+            <div class="confirm-icon" id="ci">🗑️</div>
+            <div class="confirm-title" id="ctitle">Delete Vehicle?</div>
+            <div class="confirm-msg" id="cmsg">This action cannot be undone.</div>
+        </div>
+        <div class="modal-foot">
+            <button class="btn btn-ghost" onclick="cls('cm')">Cancel</button>
+            <button class="btn-confirm-del" id="cact">Delete</button>
+        </div>
+    </div>
+</div>
+
+<!-- ── Toast ── -->
+<div class="toast" id="toast">
+    <svg id="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"></svg>
+    <span id="tmsg"></span>
+</div>
+
+<script>
+    const API = 'http://localhost:8080/api/v1/vehicle';
+    let vehicles = [], editMode = false, editNum = null;
+
+    fetchAll();
+
+    async function fetchAll() {
+        try {
+            const r = await fetch(`${API}/all`);
+            const d = await r.json();
+            vehicles = d.data || [];
+            renderTable(vehicles);
+            updateStats(vehicles);
+        } catch {
+            toast('Cannot connect to server', false);
+            renderEmpty();
+        }
+    }
+
+    function renderTable(list) {
+        if (!list.length) { renderEmpty(); return; }
+        const typeBadge = t => {
+            const map = { CAR:'b-car', VAN:'b-van', TRUCK:'b-truck', MOTORCYCLE:'b-moto', BUS:'b-bus' };
+            return `<span class="badge ${map[t]||'b-car'}">${t}</span>`;
+        };
+        const useBadge = u => {
+            const map = { PRIVATE:'b-private', COMMERCIAL:'b-commercial', GOVERNMENT:'b-government' };
+            return `<span class="badge ${map[u]||'b-private'}">${u}</span>`;
+        };
+        document.getElementById('tb').innerHTML = list.map(v => `
+    <tr>
+      <td><span class="vnum">${v.vehicleNumber}</span></td>
+      <td><div class="make-model"><span class="make">${v.make}</span><span class="model">${v.model}</span></div></td>
+      <td>${typeBadge(v.vehicleType)}</td>
+      <td><span class="year-chip">${v.manufacturedYear}</span></td>
+      <td>
+        <div class="value-text">LKR ${Number(v.marketValue).toLocaleString()}</div>
+      </td>
+      <td>${useBadge(v.usageType)}</td>
+      <td>
+        <div class="action-btns">
+          <button class="act-btn act-edit" onclick="openEdit('${v.vehicleNumber}')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            Edit
+          </button>
+          <button class="act-btn act-del" onclick="confirmDel('${v.vehicleNumber}')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+            Delete
+          </button>
+        </div>
+      </td>
+    </tr>`).join('');
+    }
+
+    function renderEmpty() {
+        document.getElementById('tb').innerHTML = `<tr><td colspan="7"><div class="empty-row">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 17H3a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v5"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg>
+    <p>No vehicles found</p></div></td></tr>`;
+    }
+
+    function updateStats(list) {
+        document.getElementById('s0').textContent = list.length;
+        document.getElementById('s1').textContent = list.filter(v => v.usageType === 'PRIVATE').length;
+        document.getElementById('s2').textContent = list.filter(v => v.usageType === 'COMMERCIAL').length;
+        document.getElementById('s3').textContent = list.filter(v => v.usageType === 'GOVERNMENT').length;
+        document.getElementById('nav-count').textContent = list.length;
+    }
+
+    function filterVehicles() {
+        const q = document.getElementById('srch').value.toLowerCase();
+        renderTable(vehicles.filter(v =>
+            v.vehicleNumber?.toLowerCase().includes(q) ||
+            v.make?.toLowerCase().includes(q) ||
+            v.model?.toLowerCase().includes(q)
+        ));
+    }
+
+    function openAdd() {
+        editMode = false; editNum = null; clearForm();
+        document.getElementById('modal-title').textContent = 'Add Vehicle';
+        document.getElementById('save-btn').textContent = 'Save Vehicle';
+        document.getElementById('fn').disabled = false;
+        document.getElementById('vm').classList.add('open');
+    }
+
+    function openEdit(num) {
+        const v = vehicles.find(x => x.vehicleNumber === num); if (!v) return;
+        editMode = true; editNum = num;
+        document.getElementById('fn').value = v.vehicleNumber;
+        document.getElementById('fmk').value = v.make;
+        document.getElementById('fmd').value = v.model;
+        document.getElementById('ft').value = v.vehicleType;
+        document.getElementById('fy').value = v.manufacturedYear;
+        document.getElementById('fv').value = v.marketValue;
+        document.getElementById('fu').value = v.usageType;
+        document.getElementById('fn').disabled = true;
+        document.getElementById('modal-title').textContent = 'Edit Vehicle';
+        document.getElementById('save-btn').textContent = 'Update';
+        document.getElementById('vm').classList.add('open');
+    }
+
+    async function save() {
+        const dto = {
+            vehicleNumber: document.getElementById('fn').value.trim(),
+            make: document.getElementById('fmk').value.trim(),
+            model: document.getElementById('fmd').value.trim(),
+            vehicleType: document.getElementById('ft').value,
+            manufacturedYear: +document.getElementById('fy').value,
+            marketValue: +document.getElementById('fv').value,
+            usageType: document.getElementById('fu').value
+        };
+        if (Object.values(dto).some(v => !v)) { toast('Please fill all fields', false); return; }
+        try {
+            const r = editMode
+                ? await fetch(`${API}/update/${editNum}`, { method:'PUT', headers:{'Content-Type':'application/json'}, body:JSON.stringify(dto) })
+                : await fetch(`${API}/register`, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(dto) });
+            const d = await r.json();
+            if (r.ok) { toast(editMode ? 'Vehicle updated!' : 'Vehicle added!', true); cls('vm'); fetchAll(); }
+            else toast(d.message || 'An error occurred', false);
+        } catch { toast('Server error', false); }
+    }
+
+    function confirmDel(num) {
+        document.getElementById('ci').textContent = '🗑️';
+        document.getElementById('ctitle').textContent = 'Delete Vehicle?';
+        document.getElementById('cmsg').textContent = `"${num}" will be permanently removed.`;
+        document.getElementById('cact').textContent = 'Delete';
+        document.getElementById('cact').style.background = 'var(--red)';
+        document.getElementById('cact').onclick = () => doDel(num);
+        document.getElementById('cm').classList.add('open');
+    }
+    async function doDel(num) {
+        try {
+            const r = await fetch(`${API}/delete/${num}`, { method:'DELETE' });
+            cls('cm');
+            if (r.ok) { toast('Vehicle deleted', true); fetchAll(); }
+            else toast('Failed to delete', false);
+        } catch { toast('Server error', false); }
+    }
+
+    function confirmReset() {
+        document.getElementById('ci').textContent = '⚠️';
+        document.getElementById('ctitle').textContent = 'Reset All Data?';
+        document.getElementById('cmsg').textContent = 'All vehicles will be permanently deleted. This cannot be undone.';
+        document.getElementById('cact').textContent = 'Reset All';
+        document.getElementById('cact').style.background = 'var(--red)';
+        document.getElementById('cact').onclick = doReset;
+        document.getElementById('cm').classList.add('open');
+    }
+    async function doReset() {
+        try {
+            const r = await fetch(`${API}/reset`, { method:'DELETE' });
+            cls('cm');
+            if (r.ok) { toast('All data cleared', true); fetchAll(); }
+            else toast('Failed to reset', false);
+        } catch { toast('Server error', false); }
+    }
+
+    function doLogout() {
+        document.getElementById('ci').textContent = '👋';
+        document.getElementById('ctitle').textContent = 'Sign Out?';
+        document.getElementById('cmsg').textContent = 'You will be redirected to the login page.';
+        document.getElementById('cact').textContent = 'Sign Out';
+        document.getElementById('cact').style.background = '#374151';
+        document.getElementById('cact').onclick = () => location.href = 'login.html';
+        document.getElementById('cm').classList.add('open');
+    }
+
+    function cls(id) { document.getElementById(id).classList.remove('open'); }
+    function clearForm() {
+        ['fn','fmk','fmd','fy','fv'].forEach(i => document.getElementById(i).value = '');
+        ['ft','fu'].forEach(i => document.getElementById(i).value = '');
+    }
+
+    let toastTimer;
+    function toast(msg, ok) {
+        const el = document.getElementById('toast');
+        document.getElementById('tmsg').textContent = msg;
+        document.getElementById('tico').innerHTML = ok
+            ? '<polyline points="20 6 9 17 4 12"/>'
+            : '<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>';
+        el.className = `toast show ${ok ? 'ok' : 'err'}`;
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => el.classList.remove('show'), 3000);
+    }
+
+    document.querySelectorAll('.overlay').forEach(el =>
+        el.addEventListener('click', e => { if (e.target === el) el.classList.remove('open'); })
+    );
+</script>
+<script src="../js/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../js/app.js"></script>
+</body>
+</html>
