@@ -8,10 +8,8 @@ import lk.ijse._2_back_end.repository.ClaimRepository;
 import lk.ijse._2_back_end.repository.UserRepository;
 import lk.ijse._2_back_end.repository.VehicleRepository;
 import lk.ijse._2_back_end.service.ClaimService;
-import lk.ijse._2_back_end.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,40 +17,40 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
+@RequiredArgsConstructor  // ✅ UserServiceImpl style
 @Transactional
 public class ClaimServiceImpl implements ClaimService {
 
-    @Autowired
-    private ClaimRepository claimRepository;
+    private final ClaimRepository claimRepository;      // ✅ all final — no @Autowired
+    private final VehicleRepository vehicleRepository;
+    private final UserRepository userRepository;
+    private final ModelMapper modelMapper;              // ✅ inject like UserServiceImpl
 
-    @Autowired
-    private VehicleRepository vehicleRepository;
-
-    @Autowired
-    private UserRepository userRepository;
-    private final JwtUtil jwtUtil;
-    private final ModelMapper modelMapper;
-
-
-    // Register
+    // ➕ Register Claim
     @Override
     public void registerClaim(ClaimSubmissionRequest dto) {
-        Claim claim = mapToEntity(dto);
-        claimRepository.save(claim);
+        claimRepository.save(mapToEntity(dto));
     }
 
-    // Get All
+    // 📋 Get All Claims
     @Override
     @Transactional(readOnly = true)
     public List<ClaimSubmissionRequest> getAllClaims() {
         return claimRepository.findAll()
                 .stream()
-                .map(this::mapToDTO)
+                .map((data) -> mapToDTO(data))          // ✅ UserServiceImpl stream style
                 .collect(Collectors.toList());
     }
 
-    // Update
+    // 🔍 Get Claim By ID
+    @Override
+    public ClaimSubmissionRequest getClaimById(Long claimId) {
+        Claim claim = claimRepository.findById(claimId)
+                .orElseThrow(() -> new RuntimeException("Claim not found with ID: " + claimId));
+        return mapToDTO(claim);
+    }
+
+    // ✏️ Update Claim
     @Override
     public void updateClaim(Long claimId, ClaimSubmissionRequest dto) {
         Claim existing = claimRepository.findById(claimId)
@@ -67,28 +65,22 @@ public class ClaimServiceImpl implements ClaimService {
         existing.setDocumentPath(dto.getDocumentPath());
         existing.setApprovedDate(dto.getApprovedDate());
 
-        // Update vehicle FK if provided
-        if (dto.getVehicleNumber() != null) {
-            Vehicle vehicle = vehicleRepository.findById(dto.getVehicleNumber())
-                    .orElseThrow(() -> new RuntimeException("Vehicle not found: " + dto.getVehicleNumber()));
-            existing.setVehicle(vehicle);
-        } else {
-            existing.setVehicle(null);
-        }
+        // Update vehicle FK
+        existing.setVehicle(dto.getVehicleNumber() != null
+                ? vehicleRepository.findById(dto.getVehicleNumber())
+                .orElseThrow(() -> new RuntimeException("Vehicle not found: " + dto.getVehicleNumber()))
+                : null);
 
-        // Update approvedBy FK if provided
-        if (dto.getApprovedBy() != null) {
-            User user = userRepository.findById(dto.getApprovedBy())
-                    .orElseThrow(() -> new RuntimeException("User not found with ID: " + dto.getApprovedBy()));
-            existing.setApprovedBy(user);
-        } else {
-            existing.setApprovedBy(null);
-        }
+        // Update approvedBy FK
+        existing.setApprovedBy(dto.getApprovedBy() != null
+                ? userRepository.findById(dto.getApprovedBy())
+                .orElseThrow(() -> new RuntimeException("User not found with ID: " + dto.getApprovedBy()))
+                : null);
 
         claimRepository.save(existing);
     }
 
-    // Delete
+    // ❌ Delete Claim
     @Override
     public void deleteClaim(Long claimId) {
         if (!claimRepository.existsById(claimId)) {
@@ -97,17 +89,18 @@ public class ClaimServiceImpl implements ClaimService {
         claimRepository.deleteById(claimId);
     }
 
-    // Reset All
+    // 🔄 Reset All Claims
     @Override
     public void resetClaims() {
         claimRepository.deleteAll();
     }
 
-    // Mapping helpers
+    // ── Mapping Helpers ──────────────────────────────────────────────────────
+    // ⚠️ ModelMapper.map() cannot resolve FK relationships (Vehicle → vehicleNumber, User → userId)
+    //    because DTO holds IDs but entity holds full objects — manual mapping is intentional here
 
     private Claim mapToEntity(ClaimSubmissionRequest dto) {
         Claim claim = new Claim();
-
         claim.setClaimDate(dto.getClaimDate());
         claim.setClaimStatus(dto.getClaimStatus());
         claim.setClaimAmount(dto.getClaimAmount());
@@ -117,7 +110,7 @@ public class ClaimServiceImpl implements ClaimService {
         claim.setDocumentPath(dto.getDocumentPath());
         claim.setApprovedDate(dto.getApprovedDate());
 
-        // Resolve vehicle FK
+        // Resolve Vehicle FK
         if (dto.getVehicleNumber() != null) {
             Vehicle vehicle = vehicleRepository.findById(dto.getVehicleNumber())
                     .orElseThrow(() -> new RuntimeException("Vehicle not found: " + dto.getVehicleNumber()));
@@ -136,7 +129,6 @@ public class ClaimServiceImpl implements ClaimService {
 
     private ClaimSubmissionRequest mapToDTO(Claim claim) {
         ClaimSubmissionRequest dto = new ClaimSubmissionRequest();
-
         dto.setClaimId(claim.getClaimId());
         dto.setClaimDate(claim.getClaimDate());
         dto.setClaimStatus(claim.getClaimStatus());
