@@ -4,89 +4,60 @@ import lk.ijse._2_back_end.dto.VehicleRequestDTO;
 import lk.ijse._2_back_end.entity.Vehicle;
 import lk.ijse._2_back_end.repository.VehicleRepository;
 import lk.ijse._2_back_end.service.VehicleService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor  // ✅ AuthServiceImpl style
 public class VehicleServiceImpl implements VehicleService {
 
-    @Autowired
-    private VehicleRepository vehicleRepository;
+    private final VehicleRepository vehicleRepository;  // ✅ final fields
+    private final ModelMapper modelMapper;               // ✅ ModelMapper like AuthServiceImpl
 
+    // ➕ Register Vehicle
     @Override
-    public void registerVehicle(VehicleRequestDTO dto) throws Exception {
-        Optional<Vehicle> existing = vehicleRepository.findById(dto.getVehicleNumber());
-        if (existing.isPresent()) {
-            throw new Exception("Vehicle with this number is already registered.");
+    public void registerVehicle(VehicleRequestDTO dto) {
+        if (vehicleRepository.findById(dto.getVehicleNumber()).isPresent()) {  // ✅ .isPresent() like AuthServiceImpl
+            throw new RuntimeException("Vehicle with this number is already registered.");  // ✅ RuntimeException like AuthServiceImpl
         }
-
-        Vehicle vehicle = mapToEntity(dto);
-        vehicleRepository.save(vehicle);
+        vehicleRepository.save(modelMapper.map(dto, Vehicle.class));  // ✅ modelMapper like AuthServiceImpl
     }
 
-
+    // 📋 Get All Vehicles
     @Override
     public List<VehicleRequestDTO> getAllVehicles() {
         return vehicleRepository.findAll()
                 .stream()
-                .map(this::mapToDTO)
+                .map((data) -> modelMapper.map(data, VehicleRequestDTO.class))  // ✅ modelMapper like AuthServiceImpl
                 .collect(Collectors.toList());
     }
 
-
+    // ✏️ Update Vehicle
     @Override
-    public void updateVehicle(String vehicleNumber, VehicleRequestDTO dto) throws Exception {
+    public void updateVehicle(String vehicleNumber, VehicleRequestDTO dto) {
         Vehicle vehicle = vehicleRepository.findById(vehicleNumber)
-                .orElseThrow(() -> new Exception("Vehicle not found: " + vehicleNumber));
+                .orElseThrow(() -> new RuntimeException("Vehicle not found: " + vehicleNumber));  // ✅ RuntimeException like AuthServiceImpl
 
-        vehicle.setMake(dto.getMake());
-        vehicle.setModel(dto.getModel());
-        vehicle.setVehicleType(dto.getVehicleType());
-        vehicle.setManufacturedYear(dto.getManufacturedYear());
-        vehicle.setMarketValue(dto.getMarketValue());
-        vehicle.setUsageType(dto.getUsageType());
-
+        modelMapper.map(dto, vehicle);  // ✅ map onto existing entity — preserves ID
         vehicleRepository.save(vehicle);
     }
 
+    // ❌ Delete Vehicle
     @Override
-    public void deleteVehicle(String vehicleNumber) throws Exception {
+    public void deleteVehicle(String vehicleNumber) {
         if (!vehicleRepository.existsById(vehicleNumber)) {
-            throw new Exception("Vehicle not found: " + vehicleNumber);
+            throw new RuntimeException("Vehicle not found: " + vehicleNumber);  // ✅ RuntimeException
         }
         vehicleRepository.deleteById(vehicleNumber);
     }
 
+    // 🔄 Reset All Vehicles
     @Override
     public void resetVehicles() {
         vehicleRepository.deleteAll();
-    }
-
-    private Vehicle mapToEntity(VehicleRequestDTO dto) {
-        Vehicle vehicle = new Vehicle();
-        vehicle.setVehicleNumber(dto.getVehicleNumber());
-        vehicle.setMake(dto.getMake());
-        vehicle.setModel(dto.getModel());
-        vehicle.setVehicleType(dto.getVehicleType());
-        vehicle.setManufacturedYear(dto.getManufacturedYear());
-        vehicle.setMarketValue(dto.getMarketValue());
-        vehicle.setUsageType(dto.getUsageType());
-        return vehicle;
-    }
-
-    private VehicleRequestDTO mapToDTO(Vehicle vehicle) {
-        VehicleRequestDTO dto = new VehicleRequestDTO();
-        dto.setVehicleNumber(vehicle.getVehicleNumber());
-        dto.setMake(vehicle.getMake());
-        dto.setModel(vehicle.getModel());
-        dto.setVehicleType(vehicle.getVehicleType());
-        dto.setManufacturedYear(vehicle.getManufacturedYear());
-        dto.setMarketValue(vehicle.getMarketValue());
-        dto.setUsageType(vehicle.getUsageType());
-        return dto;
     }
 }

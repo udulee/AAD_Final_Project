@@ -30,7 +30,10 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable) //rest api ekakt cross over ekat wge meka one na
                 .authorizeHttpRequests(
-                        auth->auth.requestMatchers("/api/v1/auth/**").permitAll() //"/api/v1/auth/**"rejister wenn login wenn
+                        auth->auth
+                                .requestMatchers("/api/v1/auth/*","/test/*").permitAll()
+                                .requestMatchers("/api/v1/auth/login").permitAll()
+                                .requestMatchers("/api/v1/vehicle/*").authenticated()
                                 .anyRequest().authenticated())
                 .sessionManagement(
                         session->session.sessionCreationPolicy
