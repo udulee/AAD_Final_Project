@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>VIMS Premium Calculator</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
+            font-family: 'Segoe UI', sans-serif;
+            padding: 24px 16px;
+            color: #e2e8f0;
+        }
+
+        /* Header */
+        .header { text-align: center; margin-bottom: 32px; }
+        .header .shield { font-size: 48px; margin-bottom: 8px; }
+        .header h1 {
+            font-size: 26px; font-weight: 800; letter-spacing: -0.5px;
+            background: linear-gradient(90deg, #818cf8, #c084fc);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .header p { color: #94a3b8; margin-top: 6px; font-size: 13px; }
+
+        .container { max-width: 640px; margin: 0 auto; }
+
+        /* Section Card */
+        .section-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 14px; padding: 20px; margin-bottom: 16px;
+        }
+        .section-title { font-size: 13px; font-weight: 700; color: #c7d2fe; }
+        .section-subtitle { font-size: 11px; color: #64748b; margin-top: 2px; margin-bottom: 14px; }
+
+        /* Vehicle Value Input */
+        .input-wrap { position: relative; }
+        .input-wrap .lkr-label {
+            position: absolute; left: 16px; top: 50%; transform: translateY(-50%);
+            color: #818cf8; font-weight: 700; font-size: 14px; pointer-events: none;
+        }
+        .value-input {
+            width: 100%; padding: 14px 16px 14px 60px;
+            background: rgba(255,255,255,0.05);
+            border: 1.5px solid rgba(129,140,248,0.3);
+            border-radius: 12px; color: #f1f5f9;
+            font-size: 20px; font-weight: 700; outline: none;
+            transition: border-color 0.2s;
+        }
+        .value-input:focus { border-color: #818cf8; }
+        .value-input::placeholder { color: #475569; }
+
+        /* Vehicle Type Grid */
+        .vehicle-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
+        }
+        .vehicle-btn {
+            padding: 12px 8px; border-radius: 12px; cursor: pointer;
+            background: rgba(255,255,255,0.04);
+            border: 1.5px solid rgba(255,255,255,0.08);
+            transition: all 0.2s; text-align: center;
+        }
+        .vehicle-btn .v-icon { font-size: 24px; }
+        .vehicle-btn .v-name { font-size: 11px; color: #94a3b8; margin-top: 4px; line-height: 1.3; }
+        .vehicle-btn .v-rate { font-size: 10px; color: #64748b; }
+        .vehicle-btn.selected {
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            border-color: #818cf8; transform: scale(1.03);
+        }
+        .vehicle-btn.selected .v-name { color: #e0e7ff; }
+        .vehicle-btn.selected .v-rate { color: #c7d2fe; }
+
+        /* Age Slider */
+        .age-slider { width: 100%; cursor: pointer; margin-top: 4px; }
+        .age-marks {
+            display: flex; justify-content: space-between;
+            font-size: 11px; color: #64748b; margin-top: 4px;
+        }
+        .age-badge {
+            margin-top: 12px; padding: 10px 16px; border-radius: 10px;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .age-badge .age-label { font-weight: 600; font-size: 13px; }
+        .age-badge .age-surcharge { color: #94a3b8; font-size: 12px; }
+
+        /* Risk Level */
+        .risk-grid { display: flex; gap: 10px; }
+        .risk-btn {
+            flex: 1; padding: 14px 8px; border-radius: 12px; cursor: pointer;
+            background: rgba(255,255,255,0.04);
+            border: 1.5px solid rgba(255,255,255,0.08);
+            transition: all 0.2s; text-align: center;
+        }
+        .risk-btn .r-icon { font-size: 20px; margin-bottom: 4px; }
+        .risk-btn .r-label { font-size: 12px; color: #94a3b8; font-weight: 600; }
+        .risk-btn .r-mult { font-size: 10px; color: #64748b; margin-top: 2px; }
+
+        /* Calculate Button */
+        .calc-btn {
+            width: 100%; padding: 16px; border: none; border-radius: 14px;
+            font-size: 16px; font-weight: 700; cursor: pointer;
+            letter-spacing: 0.5px; margin-bottom: 24px; transition: all 0.3s;
+            background: rgba(255,255,255,0.05); color: #475569;
+        }
+        .calc-btn.ready {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            color: #fff; box-shadow: 0 8px 32px rgba(79,70,229,0.4); cursor: pointer;
+        }
+        .calc-btn.ready:hover { transform: translateY(-1px); box-shadow: 0 12px 40px rgba(79,70,229,0.5); }
+
+        /* Results */
+        #results {
+            background: rgba(255,255,255,0.03);
+            border: 1.5px solid rgba(129,140,248,0.3);
+            border-radius: 16px; padding: 24px;
+            display: none; opacity: 0; transform: translateY(20px);
+            transition: all 0.4s ease;
+        }
+        #results.show { display: block; }
+        #results.animated { opacity: 1; transform: translateY(0); }
+        .results-title { color: #818cf8; font-size: 15px; font-weight: 700; margin-bottom: 20px; }
+
+        .breakdown-row {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .breakdown-row .row-label { font-size: 13px; color: #94a3b8; }
+        .breakdown-row .row-sub { font-size: 10px; color: #475569; }
+        .breakdown-row .row-value { font-size: 14px; font-weight: 700; color: #e2e8f0; }
+
+        .divider { height: 1px; background: rgba(255,255,255,0.08); margin: 16px 0; }
+
+        .final-box {
+            background: linear-gradient(135deg, rgba(79,70,229,0.2), rgba(124,58,237,0.2));
+            border: 1.5px solid rgba(129,140,248,0.5);
+            border-radius: 12px; padding: 20px; text-align: center;
+        }
+        .final-box .annual-label { font-size: 12px; color: #94a3b8; margin-bottom: 4px; }
+        .final-box .annual-amount {
+            font-size: 32px; font-weight: 900;
+            background: linear-gradient(90deg, #818cf8, #c084fc);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .final-box .monthly-label { font-size: 13px; color: #64748b; margin-top: 8px; }
+        .final-box .monthly-label strong { color: #a5b4fc; }
+
+        .disclaimer {
+            font-size: 11px; color: #475569; margin-top: 16px;
+            text-align: center; line-height: 1.5;
+        }
+
+        @media (max-width: 400px) {
+            .vehicle-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <div class="shield">🛡️</div>
+    <h1>VIMS Premium Calculator</h1>
+    <p>ඔබගේ වාහනයේ රක්ෂණ වාරිකය ගණනය කරන්න</p>
+</div>
+
+<div class="container">
+
+    <!-- 1. Vehicle Value -->
+    <div class="section-card">
+        <div class="section-title">1. Vehicle Value</div>
+        <div class="section-subtitle">වාහනයේ වර්තමාන වෙළඳපළ මිල (LKR)</div>
+        <div class="input-wrap">
+            <span class="lkr-label">LKR</span>
+            <input type="text" id="vehicleValue" class="value-input" placeholder="0" oninput="formatValue(this)" />
+        </div>
+    </div>
+
+    <!-- 2. Vehicle Type -->
+    <div class="section-card">
+        <div class="section-title">2. Vehicle Type</div>
+        <div class="section-subtitle">වාහනයේ වර්ගය තෝරන්න</div>
+        <div class="vehicle-grid" id="vehicleGrid">
+            <button class="vehicle-btn" data-id="car" data-rate="0.04" onclick="selectVehicle(this)">
+                <div class="v-icon">🚗</div>
+                <div class="v-name">Car</div>
+                <div class="v-rate">Base: 4.0%</div>
+            </button>
+            <button class="vehicle-btn" data-id="suv" data-rate="0.045" onclick="selectVehicle(this)">
+                <div class="v-icon">🚙</div>
+                <div class="v-name">SUV</div>
+                <div class="v-rate">Base: 4.5%</div>
+            </button>
+            <button class="vehicle-btn" data-id="van" data-rate="0.05" onclick="selectVehicle(this)">
+                <div class="v-icon">🚐</div>
+                <div class="v-name">Van</div>
+                <div class="v-rate">Base: 5.0%</div>
+            </button>
+            <button class="vehicle-btn" data-id="truck" data-rate="0.06" onclick="selectVehicle(this)">
+                <div class="v-icon">🚛</div>
+                <div class="v-name">Truck</div>
+                <div class="v-rate">Base: 6.0%</div>
+            </button>
+            <button class="vehicle-btn" data-id="motorcycle" data-rate="0.035" onclick="selectVehicle(this)">
+                <div class="v-icon">🏍️</div>
+                <div class="v-name">Motorcycle</div>
+                <div class="v-rate">Base: 3.5%</div>
+            </button>
+            <button class="vehicle-btn" data-id="tuk" data-rate="0.038" onclick="selectVehicle(this)">
+                <div class="v-icon">🛺</div>
+                <div class="v-name">Three Wheeler</div>
+                <div class="v-rate">Base: 3.8%</div>
+            </button>
+        </div>
+    </div>
+
+    <!-- 3. Vehicle Age -->
+    <div class="section-card">
+        <div class="section-title">3. Vehicle Age</div>
+        <div class="section-subtitle" id="ageSubtitle">වාහනයේ වයස: 3 වසර — Recent</div>
+        <div style="padding: 8px 0">
+            <input type="range" min="0" max="25" value="3" class="age-slider" id="ageSlider" oninput="updateAge(this.value)" />
+            <div class="age-marks">
+                <span>0</span><span>5</span><span>10</span><span>15</span><span>20</span><span>25</span>
+            </div>
+            <div class="age-badge" id="ageBadge" style="background: #84cc1618; border: 1px solid #84cc1640;">
+                <span class="age-label" id="ageLabel" style="color: #84cc16;">Recent</span>
+                <span class="age-surcharge" id="ageSurcharge">+10% age surcharge</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. Risk Level -->
+    <div class="section-card">
+        <div class="section-title">4. Risk Level</div>
+        <div class="section-subtitle">රියදුරා හා ප්‍රදේශය අනුව අවදානම් මට්ටම</div>
+        <div class="risk-grid">
+            <button class="risk-btn" data-id="low" data-mult="0.85" data-color="#22c55e" onclick="selectRisk(this)">
+                <div class="r-icon">🟢</div>
+                <div class="r-label" style="color:#94a3b8">Low Risk</div>
+                <div class="r-mult">×0.85</div>
+            </button>
+            <button class="risk-btn selected-risk" data-id="medium" data-mult="1.0" data-color="#f59e0b" onclick="selectRisk(this)"
+                    style="background:#f59e0b22; border-color:#f59e0b;">
+                <div class="r-icon">🟡</div>
+                <div class="r-label" style="color:#f59e0b">Medium Risk</div>
+                <div class="r-mult">×1.0</div>
+            </button>
+            <button class="risk-btn" data-id="high" data-mult="1.35" data-color="#ef4444" onclick="selectRisk(this)">
+                <div class="r-icon">🔴</div>
+                <div class="r-label" style="color:#94a3b8">High Risk</div>
+                <div class="r-mult">×1.35</div>
+            </button>
+        </div>
+    </div>
+
+    <!-- Calculate Button -->
+    <button class="calc-btn" id="calcBtn" onclick="calculatePremium()">
+        💰 Premium ගණනය කරන්න
+    </button>
+
+    <!-- Results -->
+    <div id="results">
+        <div class="results-title">📊 Premium Breakdown</div>
+        <div class="breakdown-row">
+            <div><div class="row-label">Base Premium</div></div>
+            <div class="row-value" id="resBase">—</div>
+        </div>
+        <div class="breakdown-row">
+            <div>
+                <div class="row-label" id="resAgeLabel">Age Multiplier</div>
+                <div class="row-sub">වයස් ආරෝපණය</div>
+            </div>
+            <div class="row-value" id="resAfterAge">—</div>
+        </div>
+        <div class="breakdown-row">
+            <div>
+                <div class="row-label" id="resRiskLabel">Risk Multiplier</div>
+                <div class="row-sub">අවදානම් ආරෝපණය</div>
+            </div>
+            <div class="row-value" id="resFinal">—</div>
+        </div>
+        <div class="divider"></div>
+        <div class="final-box">
+            <div class="annual-label">වාර්ෂික රක්ෂණ වාරිකය (Annual Premium)</div>
+            <div class="annual-amount" id="resAnnual">LKR 0</div>
+            <div class="monthly-label">Monthly: <strong id="resMonthly">LKR 0</strong> / month</div>
+        </div>
+        <p class="disclaimer">* මෙය estimate එකක් පමණයි. Final premium ඔබේ VIMS system හරහා confirm කරන්න.</p>
+    </div>
+
+</div>
+
+<script>
+    let selectedVehicleRate = null;
+    let selectedRiskMult = 1.0;
+    let vehicleAgeVal = 3;
+
+    function formatValue(input) {
+        const raw = input.value.replace(/[^0-9]/g, '');
+        input.value = raw.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        updateCalcBtn();
+    }
+
+    function selectVehicle(btn) {
+        document.querySelectorAll('.vehicle-btn').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+        selectedVehicleRate = parseFloat(btn.dataset.rate);
+        updateCalcBtn();
+    }
+
+    function updateCalcBtn() {
+        const val = document.getElementById('vehicleValue').value;
+        const btn = document.getElementById('calcBtn');
+        if (val && selectedVehicleRate !== null) {
+            btn.classList.add('ready');
+        } else {
+            btn.classList.remove('ready');
+        }
+    }
+
+    function getAgeMultiplier(age) {
+        if (age <= 2) return 1.0;
+        if (age <= 5) return 1.1;
+        if (age <= 10) return 1.25;
+        if (age <= 15) return 1.45;
+        return 1.65;
+    }
+
+    function getAgeInfo(age) {
+        if (age <= 2) return { label: 'Brand New', color: '#22c55e' };
+        if (age <= 5) return { label: 'Recent', color: '#84cc16' };
+        if (age <= 10) return { label: 'Moderate', color: '#f59e0b' };
+        if (age <= 15) return { label: 'Old', color: '#f97316' };
+        return { label: 'Very Old', color: '#ef4444' };
+    }
+
+    function updateAge(val) {
+        vehicleAgeVal = parseInt(val);
+        const info = getAgeInfo(vehicleAgeVal);
+        const mult = getAgeMultiplier(vehicleAgeVal);
+        const surcharge = Math.round((mult - 1) * 100);
+
+        document.getElementById('ageSubtitle').textContent =
+            `වාහනයේ වයස: ${vehicleAgeVal} වසර — ${info.label}`;
+
+        const badge = document.getElementById('ageBadge');
+        badge.style.background = info.color + '18';
+        badge.style.borderColor = info.color + '40';
+
+        const lbl = document.getElementById('ageLabel');
+        lbl.textContent = info.label;
+        lbl.style.color = info.color;
+
+        document.getElementById('ageSurcharge').textContent = `+${surcharge}% age surcharge`;
+
+        const slider = document.getElementById('ageSlider');
+        slider.style.accentColor = info.color;
+    }
+
+    function selectRisk(btn) {
+        document.querySelectorAll('.risk-btn').forEach(b => {
+            b.classList.remove('selected-risk');
+            b.style.background = 'rgba(255,255,255,0.04)';
+            b.style.borderColor = 'rgba(255,255,255,0.08)';
+            b.querySelector('.r-label').style.color = '#94a3b8';
+        });
+        const color = btn.dataset.color;
+        btn.style.background = color + '22';
+        btn.style.borderColor = color;
+        btn.querySelector('.r-label').style.color = color;
+        selectedRiskMult = parseFloat(btn.dataset.mult);
+    }
+
+    function formatLKR(val) {
+        return 'LKR ' + Math.round(val).toLocaleString('en-LK');
+    }
+
+    function calculatePremium() {
+        const rawVal = document.getElementById('vehicleValue').value.replace(/,/g, '');
+        const value = parseFloat(rawVal);
+        if (!value || value <= 0 || selectedVehicleRate === null) return;
+
+        const ageMult = getAgeMultiplier(vehicleAgeVal);
+        const basePremium = value * selectedVehicleRate;
+        const afterAge = basePremium * ageMult;
+        const finalPremium = afterAge * selectedRiskMult;
+        const monthly = finalPremium / 12;
+
+        document.getElementById('resBase').textContent = formatLKR(basePremium);
+        document.getElementById('resAgeLabel').textContent = `Age Multiplier (×${ageMult.toFixed(2)})`;
+        document.getElementById('resAfterAge').textContent = formatLKR(afterAge);
+        document.getElementById('resRiskLabel').textContent = `Risk Multiplier (×${selectedRiskMult})`;
+        document.getElementById('resFinal').textContent = formatLKR(finalPremium);
+        document.getElementById('resAnnual').textContent = formatLKR(finalPremium);
+        document.getElementById('resMonthly').textContent = formatLKR(monthly);
+
+        const results = document.getElementById('results');
+        results.classList.remove('animated');
+        results.style.display = 'block';
+        setTimeout(() => results.classList.add('animated'), 30);
+        results.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    // Init
+    updateAge(3);
+</script>
+
+</body>
+</html>
