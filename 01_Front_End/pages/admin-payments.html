@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <title>Policies - VIMS Admin</title>
+    <title>Payments - VIMS Admin</title>
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
     <link rel="stylesheet" href="../css/admin.css">
@@ -38,12 +38,22 @@
         .btn-logout{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:var(--r2);background:var(--red-dim);color:var(--red);border:1px solid rgba(255,79,107,.2);cursor:pointer;font-size:12px;font-weight:500;font-family:var(--font-body);transition:all .15s}
         .btn-logout:hover{background:var(--red);color:#fff}
         .page-content{padding:24px 28px}
+        /* Stats */
+        .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
+        .stat-card{background:var(--panel);border:1px solid var(--border);border-radius:var(--r);padding:18px 20px;position:relative;overflow:hidden;transition:transform .15s}
+        .stat-card:hover{transform:translateY(-2px)}
+        .sc-icon{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;margin-bottom:10px;font-size:15px}
+        .sc-label{font-size:11px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px}
+        .sc-value{font-family:var(--font-head);font-size:24px;font-weight:700;line-height:1}
+        .sg .sc-icon{background:var(--green-dim);color:var(--green)}.sg .sc-value{color:var(--green)}
+        .sa .sc-icon{background:var(--amber-dim);color:var(--amber)}.sa .sc-value{color:var(--amber)}
+        .sr .sc-icon{background:var(--red-dim);color:var(--red)}.sr .sc-value{color:var(--red)}
+        .sb .sc-icon{background:var(--blue-dim);color:var(--blue)}.sb .sc-value{color:var(--blue);font-size:16px}
+        /* Filter */
         .filter-bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
         .btn-f{padding:6px 14px;border-radius:var(--r2);border:1px solid var(--border2);background:var(--panel2);color:var(--soft);font-family:var(--font-body);font-size:12px;font-weight:500;cursor:pointer;transition:all .15s}
         .btn-f:hover,.btn-f.on{background:var(--blue-dim);color:var(--blue);border-color:var(--blue-dim)}
-        .btn-f.g:hover,.btn-f.g.on{background:var(--green-dim);color:var(--green);border-color:var(--green-dim)}
-        .btn-f.a:hover,.btn-f.a.on{background:var(--amber-dim);color:var(--amber);border-color:var(--amber-dim)}
-        .btn-f.r:hover,.btn-f.r.on{background:var(--red-dim);color:var(--red);border-color:var(--red-dim)}
+        /* Card / Table */
         .card{background:var(--panel);border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
         .card-hd{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--border)}
         .card-hd h3{font-family:var(--font-head);font-size:14px;font-weight:700;display:flex;align-items:center;gap:8px}
@@ -55,46 +65,18 @@
         tbody tr{border-bottom:1px solid var(--border);transition:background .1s}
         tbody tr:last-child{border-bottom:none}
         tbody tr:hover{background:rgba(79,142,255,.03)}
+        tbody tr.od{background:rgba(255,79,107,.04)}
         td{padding:11px 14px;font-size:13px;vertical-align:middle;white-space:nowrap}
         .badge{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:5px;font-size:11px;font-weight:600}
         .badge::before{content:'';width:5px;height:5px;border-radius:50%;flex-shrink:0}
         .bg{background:rgba(46,204,139,.12);color:var(--green)}.bg::before{background:var(--green)}
         .ba{background:rgba(245,166,35,.12);color:var(--amber)}.ba::before{background:var(--amber)}
         .br{background:rgba(255,79,107,.12);color:var(--red)}.br::before{background:var(--red)}
-        .bb{background:rgba(79,142,255,.12);color:var(--blue)}.bb::before{background:var(--blue)}
         .bx{background:rgba(107,117,146,.15);color:var(--muted)}.bx::before{background:var(--muted)}
-        .pno{font-family:var(--font-head);font-weight:700;color:var(--blue)}
-        .act-btn{padding:4px 10px;border-radius:6px;font-family:var(--font-body);font-size:11px;font-weight:600;border:none;cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:4px}
-        .act-btn i{font-size:10px}
-        .ab-g{background:var(--green-dim);color:var(--green)}.ab-g:hover{background:rgba(46,204,139,.2)}
-        .ab-r{background:var(--red-dim);color:var(--red)}.ab-r:hover{background:rgba(255,79,107,.2)}
-        .ab-a{background:var(--amber-dim);color:var(--amber)}.ab-a:hover{background:rgba(245,166,35,.2)}
-        .ab-b{background:var(--blue-dim);color:var(--blue)}.ab-b:hover{background:rgba(79,142,255,.2)}
+        .ref{font-family:var(--font-head);font-weight:600;font-size:12px;color:var(--soft)}
         .empty-state{text-align:center;padding:52px 20px;color:var(--muted)}
         .empty-state i{font-size:32px;margin-bottom:10px;display:block;opacity:.2}
         .cnt-badge{font-size:11px;background:var(--blue-dim);color:var(--blue);padding:2px 10px;border-radius:99px;font-weight:700}
-        /* Modal */
-        .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);z-index:100;align-items:center;justify-content:center;padding:20px}
-        .overlay.open{display:flex}
-        .modal{background:var(--panel);border:1px solid var(--border2);border-radius:16px;width:100%;max-width:420px;animation:su .2s ease}
-        @keyframes su{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-        .mhd{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border)}
-        .mtitle{font-family:var(--font-head);font-size:15px;font-weight:700}
-        .mclose{background:var(--panel2);border:1px solid var(--border);border-radius:7px;cursor:pointer;color:var(--muted);padding:5px;display:flex;transition:all .15s}
-        .mclose:hover{background:var(--red-dim);color:var(--red)}
-        .mbody{padding:18px 20px}
-        .mfoot{display:flex;justify-content:flex-end;gap:8px;padding:14px 20px;border-top:1px solid var(--border)}
-        .info-box{background:var(--panel2);border:1px solid var(--border);border-radius:var(--r2);padding:12px;margin-bottom:14px;font-size:12px;line-height:1.7;color:var(--soft)}
-        .fg{display:flex;flex-direction:column;gap:5px}
-        .fg label{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
-        .fg textarea{padding:9px 12px;border:1px solid var(--border2);border-radius:var(--r2);background:var(--panel2);font-family:var(--font-body);font-size:13px;color:var(--text);outline:none;resize:vertical;min-height:80px;transition:border-color .15s}
-        .fg textarea:focus{border-color:var(--blue)}
-        .btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:var(--r2);font-family:var(--font-body);font-size:13px;font-weight:500;cursor:pointer;border:none;transition:all .15s}
-        .btn-ghost{background:transparent;color:var(--soft);border:1px solid var(--border2)}.btn-ghost:hover{background:var(--panel2);color:var(--text)}
-        .btn-g{background:var(--green);color:#fff}.btn-g:hover{background:#26b87d}
-        .btn-r{background:var(--red);color:#fff}.btn-r:hover{background:#ff2245}
-        .btn-a{background:var(--amber);color:#111}.btn-a:hover{background:#f7b73a}
-        .btn-b{background:var(--blue);color:#fff}.btn-b:hover{background:#6ba3ff}
     </style>
 </head>
 <body>
@@ -110,9 +92,9 @@
             <div class="nav-section-title">Management</div>
             <div class="nav-item" onclick="location.href='admin-users.html'"><i class="fas fa-users"></i> Customers</div>
             <div class="nav-item" onclick="location.href='admin-vehicles.html'"><i class="fas fa-car"></i> Vehicles</div>
-            <div class="nav-item active"><i class="fas fa-file-contract"></i> Policies</div>
+            <div class="nav-item" onclick="location.href='admin-policies.html'"><i class="fas fa-file-contract"></i> Policies</div>
             <div class="nav-item" onclick="location.href='admin-claims.html'"><i class="fas fa-clipboard-list"></i> Claims</div>
-            <div class="nav-item" onclick="location.href='admin-payments.html'"><i class="fas fa-credit-card"></i> Payments</div>
+            <div class="nav-item active"><i class="fas fa-credit-card"></i> Payments</div>
             <div class="nav-section-title">Account</div>
             <div class="nav-item" onclick="location.href='profile.html'"><i class="fas fa-user-cog"></i> My Profile</div>
         </nav>
@@ -124,57 +106,58 @@
 
     <div class="main-content">
         <header class="topbar">
-            <div class="topbar-title">Policy Management</div>
+            <div class="topbar-title">Payment Monitoring</div>
             <div class="topbar-right">
                 <div class="user-badge"><div class="user-avatar">A</div><span>Admin</span></div>
                 <button class="btn-logout" onclick="showLogout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
             </div>
         </header>
         <div class="page-content">
-            <div class="filter-bar">
-                <button class="btn-f on" onclick="load(null,this)">All</button>
-                <button class="btn-f a" onclick="load('PENDING',this)">Pending</button>
-                <button class="btn-f g" onclick="load('ACTIVE',this)">Active</button>
-                <button class="btn-f a" onclick="load('SUSPENDED',this)">Suspended</button>
-                <button class="btn-f r" onclick="load('REJECTED',this)">Rejected</button>
-                <button class="btn-f" onclick="load('EXPIRED',this)">Expired</button>
-                <button class="btn-f r" onclick="load('CANCELLED',this)">Cancelled</button>
+
+            <!-- Stats -->
+            <div class="stats-grid">
+                <div class="stat-card sg">
+                    <div class="sc-icon"><i class="fas fa-check-circle"></i></div>
+                    <div class="sc-label">Paid</div>
+                    <div class="sc-value" id="sPaid">0</div>
+                </div>
+                <div class="stat-card sa">
+                    <div class="sc-icon"><i class="fas fa-clock"></i></div>
+                    <div class="sc-label">Pending</div>
+                    <div class="sc-value" id="sPending">0</div>
+                </div>
+                <div class="stat-card sr">
+                    <div class="sc-icon"><i class="fas fa-exclamation-triangle"></i></div>
+                    <div class="sc-label">Overdue</div>
+                    <div class="sc-value" id="sOverdue">0</div>
+                </div>
+                <div class="stat-card sb">
+                    <div class="sc-icon"><i class="fas fa-coins"></i></div>
+                    <div class="sc-label">Revenue Collected</div>
+                    <div class="sc-value" id="sRevenue">LKR 0</div>
+                </div>
             </div>
+
+            <div class="filter-bar">
+                <button class="btn-f on" onclick="filterStatus('ALL',this)">All</button>
+                <button class="btn-f" onclick="filterStatus('PAID',this)">Paid</button>
+                <button class="btn-f" onclick="filterStatus('PENDING',this)">Pending</button>
+                <button class="btn-f" onclick="filterStatus('OVERDUE',this)">Overdue</button>
+            </div>
+
             <div class="card">
                 <div class="card-hd">
-                    <h3><i class="fas fa-file-contract"></i> All Policies</h3>
+                    <h3><i class="fas fa-credit-card"></i> All Payments</h3>
                     <span class="cnt-badge" id="cnt">0</span>
                 </div>
                 <div class="tbl-wrap">
                     <table>
-                        <thead><tr><th>Policy #</th><th>Customer</th><th>Vehicle</th><th>Type</th><th>Coverage</th><th>Premium</th><th>NCB</th><th>Status</th><th>Start</th><th>End</th><th>Actions</th></tr></thead>
+                        <thead><tr><th>Reference</th><th>Customer</th><th>Policy</th><th>Install #</th><th>Amount</th><th>Penalty</th><th>Total</th><th>Due Date</th><th>Status</th><th>Method</th><th>Paid On</th></tr></thead>
                         <tbody id="tbody"><tr><td colspan="11"><div class="empty-state"><i class="fas fa-spinner fa-spin"></i><p>Loading…</p></div></td></tr></tbody>
                     </table>
                 </div>
             </div>
-        </div>
-    </div>
-</div>
 
-<!-- Action Modal -->
-<div class="overlay" id="actModal">
-    <div class="modal">
-        <div class="mhd">
-            <span class="mtitle" id="actTitle">Policy Action</span>
-            <button class="mclose" onclick="cls('actModal')"><i class="fas fa-times"></i></button>
-        </div>
-        <div class="mbody">
-            <div class="info-box" id="actInfo"></div>
-            <div class="fg">
-                <label>Note / Reason</label>
-                <textarea id="actNote" placeholder="Add reason…"></textarea>
-            </div>
-            <input type="hidden" id="actId"/>
-            <input type="hidden" id="actType"/>
-        </div>
-        <div class="mfoot">
-            <button class="btn btn-ghost" onclick="cls('actModal')">Cancel</button>
-            <button class="btn" id="actBtn" onclick="confirmAct()">Confirm</button>
         </div>
     </div>
 </div>
@@ -194,62 +177,50 @@
 
 <script>
     const API='http://localhost:8080';
+    let allPay=[];
     function fmtCur(v){return v?'LKR '+Number(v).toLocaleString():'—';}
     function fmtDate(d){return d?String(d).substring(0,10):'—';}
-    function badge(s){const m={ACTIVE:'bg',APPROVED:'bg',PAID:'bg',PENDING:'ba',PENDING_APPROVAL:'ba',SUBMITTED:'ba',SUSPENDED:'ba',REJECTED:'br',OVERDUE:'br',CANCELLED:'br',EXPIRED:'bx',SETTLED:'bb',UNDER_REVIEW:'bb'};return`<span class="badge ${m[s]||'bx'}">${(s||'—').replace(/_/g,' ')}</span>`;}
-    function cls(id){document.getElementById(id).classList.remove('open');}
+    function badge(s){const m={PAID:'bg',ACTIVE:'bg',PENDING:'ba',OVERDUE:'br',CANCELLED:'bx'};return`<span class="badge ${m[s]||'bx'}">${s||'—'}</span>`;}
     function showLogout(){document.getElementById('lmo').style.display='flex';}
 
-    async function load(status,btn){
-        if(btn){document.querySelectorAll('.btn-f').forEach(b=>b.classList.remove('on'));btn.classList.add('on');}
+    async function load(){
         try{
-            const url=status?`${API}/api/v1/admin/policies?status=${status}`:`${API}/api/v1/admin/policies`;
-            const r=await fetch(url);if(!r.ok)throw 0;
-            const list=(await r.json()).data||[];
-            document.getElementById('cnt').textContent=list.length;
-            if(!list.length){document.getElementById('tbody').innerHTML='<tr><td colspan="11"><div class="empty-state"><i class="fas fa-file-contract"></i><p>No policies found</p></div></td></tr>';return;}
-            document.getElementById('tbody').innerHTML=list.map(p=>`<tr>
-      <td><span class="pno">${p.policyNumber||'—'}</span></td>
-      <td>${p.customerName||'—'}</td>
-      <td>${p.vehicleRegistration||'—'}<br><small style="color:var(--muted)">${p.vehicleMakeModel||''}</small></td>
-      <td><small style="color:var(--soft)">${(p.policyType||'').replace(/_/g,' ')}</small></td>
-      <td>${fmtCur(p.coverageAmount)}</td>
-      <td style="font-family:var(--font-head);font-weight:700;color:var(--blue)">${fmtCur(p.finalPremium)}</td>
-      <td style="color:var(--green)">${(parseFloat(p.ncbDiscount||0)*100).toFixed(0)}%</td>
-      <td>${badge(p.status)}</td>
-      <td style="color:var(--muted);font-size:12px">${fmtDate(p.startDate)}</td>
-      <td style="color:var(--muted);font-size:12px">${fmtDate(p.endDate)}</td>
-      <td><div style="display:flex;gap:4px;flex-wrap:wrap">
-        ${p.status==='PENDING'?`<button class="act-btn ab-g" onclick="openAct(${p.id},'${p.policyNumber}','APPROVE')"><i class="fas fa-check"></i> Approve</button><button class="act-btn ab-r" onclick="openAct(${p.id},'${p.policyNumber}','REJECT')"><i class="fas fa-times"></i> Reject</button>`:''}
-        ${p.status==='ACTIVE'?`<button class="act-btn ab-a" onclick="openAct(${p.id},'${p.policyNumber}','SUSPEND')"><i class="fas fa-pause"></i> Suspend</button><button class="act-btn ab-r" onclick="openAct(${p.id},'${p.policyNumber}','CANCEL')"><i class="fas fa-ban"></i> Cancel</button>`:''}
-        ${p.status==='SUSPENDED'?`<button class="act-btn ab-g" onclick="openAct(${p.id},'${p.policyNumber}','REACTIVATE')"><i class="fas fa-play"></i> Reactivate</button>`:''}
-        ${!p.status||(!['PENDING','ACTIVE','SUSPENDED'].includes(p.status))?'<span style="color:var(--muted);font-size:11px">—</span>':''}
-      </div></td>
-    </tr>`).join('');
+            const r=await fetch(`${API}/api/v1/admin/payments`);if(!r.ok)throw 0;
+            allPay=(await r.json()).data||[];
+            const paid=allPay.filter(p=>p.status==='PAID');
+            document.getElementById('sPaid').textContent=paid.length;
+            document.getElementById('sPending').textContent=allPay.filter(p=>p.status==='PENDING').length;
+            document.getElementById('sOverdue').textContent=allPay.filter(p=>p.status==='OVERDUE').length;
+            document.getElementById('sRevenue').textContent=fmtCur(paid.reduce((s,p)=>s+parseFloat(p.amount||0),0));
+            render(allPay);
         }catch{document.getElementById('tbody').innerHTML='<tr><td colspan="11"><div class="empty-state"><i class="fas fa-wifi-slash"></i><p>Cannot connect to server</p></div></td></tr>';}
     }
 
-    function openAct(id,num,action){
-        document.getElementById('actId').value=id;
-        document.getElementById('actType').value=action;
-        document.getElementById('actNote').value='';
-        document.getElementById('actTitle').textContent=action+' Policy';
-        document.getElementById('actInfo').innerHTML=`<strong>Policy:</strong> ${num}<br><strong>Action:</strong> ${action}`;
-        const btn=document.getElementById('actBtn');
-        const cls2={APPROVE:'btn-g',REACTIVATE:'btn-g',REJECT:'btn-r',CANCEL:'btn-r',SUSPEND:'btn-a'}[action]||'btn-b';
-        btn.className=`btn ${cls2}`;btn.textContent='Confirm '+action;
-        document.getElementById('actModal').classList.add('open');
+    function filterStatus(s,btn){
+        document.querySelectorAll('.btn-f').forEach(b=>b.classList.remove('on'));btn.classList.add('on');
+        render(s==='ALL'?allPay:allPay.filter(p=>p.status===s));
     }
 
-    async function confirmAct(){
-        const id=document.getElementById('actId').value;
-        const action=document.getElementById('actType').value;
-        const note=document.getElementById('actNote').value;
-        cls('actModal');
-        try{
-            await fetch(`${API}/api/v1/admin/policies/${id}/action`,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({action,note})});
-            load(null,document.querySelector('.btn-f.on'));
-        }catch{alert('Server error');}
+    function render(list){
+        document.getElementById('cnt').textContent=list.length;
+        if(!list.length){document.getElementById('tbody').innerHTML='<tr><td colspan="11"><div class="empty-state"><i class="fas fa-credit-card"></i><p>No payments found</p></div></td></tr>';return;}
+        document.getElementById('tbody').innerHTML=list.map(p=>{
+            const total=parseFloat(p.amount||0)+parseFloat(p.penaltyAmount||0);
+            const od=p.status==='OVERDUE';
+            return`<tr class="${od?'od':''}">
+      <td><span class="ref">${p.paymentReference||'—'}</span></td>
+      <td>${p.customerName||'—'}</td>
+      <td style="color:var(--soft)">${p.policyNumber||'—'}</td>
+      <td style="text-align:center;color:var(--muted)">${p.installmentNumber||1}</td>
+      <td style="font-family:var(--font-head);font-weight:600">${fmtCur(p.amount)}</td>
+      <td style="color:var(--red)">${parseFloat(p.penaltyAmount||0)>0?fmtCur(p.penaltyAmount):'—'}</td>
+      <td style="font-family:var(--font-head);font-weight:700;color:var(--blue)">${fmtCur(total)}</td>
+      <td style="${od?'color:var(--red);font-weight:700':'color:var(--muted)'};font-size:12px">${fmtDate(p.dueDate)}</td>
+      <td>${badge(p.status)}</td>
+      <td style="color:var(--soft)">${p.status==='PAID'?(p.paymentMethod||'—'):'—'}</td>
+      <td style="color:var(--muted);font-size:12px">${p.paidAt?fmtDate(p.paidAt):'—'}</td>
+    </tr>`;
+        }).join('');
     }
 
     load();

@@ -1,43 +1,404 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-      <link rel="stylesheet" href="style.css">
-      <title>Admin - User Management</title>
-</head>
-<body>
-<div class="d-flex">
-    <nav class="sidebar col-md-2" id="adminSidebar"></nav> <main class="p-4 w-100">
-    <div class="d-flex justify-content-between">
-        <h4><i class="bi bi-people"></i> User Account Management</h4>
-        <button class="btn btn-dark" onclick="generateReport('users')">Download User Report</button>
-    </div>
-    <hr>
-    <div class="card p-3">
-        <table class="table table-hover">
-            <thead class="table-light">
-            <tr>
-                <th>User ID</th>
-                <th>Full Name</th>
-                <th>Email</th>
-                <th>Role</th>
-                <th>Status</th>
-                <th>Actions</th>
-            </tr>
-            </thead>
-            <tbody id="userTable">
-            </tbody>
-        </table>
-    </div>
-</main>
-</div>
-<script src="../js/jquery-3.7.1.min.js"></script>
-<script src="../js/admin.js"></script>
-</body>
-</html></title>
-</head>
-<body>
+    <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <title>Customers - VIMS Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+    <link rel="stylesheet" href="../css/admin.css">
+    <style>
+        *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+        :root{--bg:#0d0f14;--panel:#13161e;--panel2:#191d28;--border:#232737;--border2:#2d3346;--text:#eef0f6;--muted:#6b7591;--soft:#9ba3bf;--blue:#4f8eff;--blue-dim:#1a2d5a;--green:#2ecc8b;--green-dim:#0e3328;--amber:#f5a623;--amber-dim:#3d2a06;--red:#ff4f6b;--red-dim:#3d0f18;--purple:#a78bfa;--r:12px;--r2:8px;--sidebar:230px;--font-head:'Syne',sans-serif;--font-body:'DM Sans',sans-serif}
+        body{font-family:var(--font-body);background:var(--bg);color:var(--text);font-size:14px;min-height:100vh;overflow-x:hidden}
+        ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:99px}
+        .layout{display:flex;min-height:100vh}
 
+        /* ── Sidebar ── */
+        .sidebar{width:var(--sidebar);background:var(--panel);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:20px 12px;position:fixed;top:0;left:0;bottom:0;z-index:20;overflow-y:auto}
+        .sidebar-brand{display:flex;align-items:center;gap:12px;padding:6px 8px 20px;border-bottom:1px solid var(--border);margin-bottom:16px}
+        .brand-icon{width:36px;height:36px;background:linear-gradient(135deg,var(--blue),var(--purple));border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 0 16px rgba(79,142,255,.35);font-size:16px;color:#fff}
+        .brand-text h2{font-family:var(--font-head);font-weight:800;font-size:14px;background:linear-gradient(90deg,#fff,var(--blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+        .brand-text span{font-size:10px;color:var(--muted)}
+        .nav-section-title{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;padding:4px 10px 6px;margin-top:8px}
+        .nav-item{display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:var(--r2);color:var(--soft);font-size:13px;font-weight:500;cursor:pointer;transition:all .15s;position:relative;margin-bottom:2px}
+        .nav-item i{width:16px;text-align:center;flex-shrink:0;font-size:13px}
+        .nav-item:hover{background:var(--panel2);color:var(--text)}
+        .nav-item.active{background:var(--blue-dim);color:var(--blue)}
+        .nav-item.active::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:3px;height:16px;background:var(--blue);border-radius:0 3px 3px 0}
+        .sb-bottom{margin-top:auto;border-top:1px solid var(--border);padding-top:14px}
+        .user-card{display:flex;align-items:center;gap:9px;padding:10px;border-radius:var(--r2);background:var(--panel2);border:1px solid var(--border);margin-bottom:8px}
+        .avatar{width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,var(--blue),var(--purple));display:flex;align-items:center;justify-content:center;font-family:var(--font-head);font-weight:700;font-size:12px;color:#fff;flex-shrink:0}
+        .user-info .uname{font-size:12px;font-weight:600}.user-info .urole{font-size:10px;color:var(--muted);margin-top:1px}
+        .logout-btn{display:flex;align-items:center;gap:7px;width:100%;padding:8px 10px;border-radius:var(--r2);background:none;border:none;cursor:pointer;color:var(--muted);font-family:var(--font-body);font-size:12px;font-weight:500;transition:all .15s}
+        .logout-btn:hover{background:var(--red-dim);color:var(--red)}
+
+        /* ── Main ── */
+        .main-content{margin-left:var(--sidebar);flex:1;display:flex;flex-direction:column}
+        .topbar{background:var(--panel);border-bottom:1px solid var(--border);padding:14px 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
+        .topbar-title{font-family:var(--font-head);font-size:16px;font-weight:700}
+        .topbar-right{display:flex;gap:10px;align-items:center}
+        .user-badge{display:flex;align-items:center;gap:8px;background:var(--panel2);border:1px solid var(--border);padding:6px 12px;border-radius:var(--r2);font-size:13px}
+        .user-avatar{width:26px;height:26px;border-radius:7px;background:linear-gradient(135deg,var(--blue),var(--purple));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:11px;color:#fff}
+        .btn-logout{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:var(--r2);background:var(--red-dim);color:var(--red);border:1px solid rgba(255,79,107,.2);cursor:pointer;font-size:12px;font-weight:500;font-family:var(--font-body);transition:all .15s}
+        .btn-logout:hover{background:var(--red);color:#fff}
+        .page-content{padding:24px 28px}
+
+        /* ── Stats ── */
+        .stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:22px}
+        .stat-card{background:var(--panel);border:1px solid var(--border);border-radius:var(--r);padding:18px 20px;position:relative;overflow:hidden;transition:transform .15s}
+        .stat-card:hover{transform:translateY(-2px)}
+        .sc-icon{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;margin-bottom:10px;font-size:15px}
+        .sc-label{font-size:11px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px}
+        .sc-value{font-family:var(--font-head);font-size:28px;font-weight:700;line-height:1}
+        .sb .sc-icon{background:var(--blue-dim);color:var(--blue)}.sb .sc-value{color:var(--blue)}
+        .sg .sc-icon{background:var(--green-dim);color:var(--green)}.sg .sc-value{color:var(--green)}
+        .sr .sc-icon{background:var(--red-dim);color:var(--red)}.sr .sc-value{color:var(--red)}
+        .sc-glow{position:absolute;top:-18px;right:-18px;width:70px;height:70px;border-radius:50%;filter:blur(24px);opacity:.12;pointer-events:none}
+        .sb .sc-glow{background:var(--blue)}.sg .sc-glow{background:var(--green)}.sr .sc-glow{background:var(--red)}
+
+        /* ── Filter bar ── */
+        .filter-bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:18px}
+        .btn-f{padding:6px 14px;border-radius:var(--r2);border:1px solid var(--border2);background:var(--panel2);color:var(--soft);font-family:var(--font-body);font-size:12px;font-weight:500;cursor:pointer;transition:all .15s}
+        .btn-f:hover,.btn-f.on{background:var(--blue-dim);color:var(--blue);border-color:var(--blue-dim)}
+        .btn-f.g:hover,.btn-f.g.on{background:var(--green-dim);color:var(--green);border-color:var(--green-dim)}
+        .btn-f.r:hover,.btn-f.r.on{background:var(--red-dim);color:var(--red);border-color:var(--red-dim)}
+        .srch{flex:0 0 260px;padding:7px 12px;border:1px solid var(--border2);border-radius:var(--r2);background:var(--panel2);font-family:var(--font-body);font-size:13px;color:var(--text);outline:none;transition:border-color .15s;margin-left:auto}
+        .srch:focus{border-color:var(--blue)}.srch::placeholder{color:var(--muted)}
+
+        /* ── Card / Table ── */
+        .card{background:var(--panel);border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
+        .card-hd{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--border)}
+        .card-hd h3{font-family:var(--font-head);font-size:14px;font-weight:700;display:flex;align-items:center;gap:8px}
+        .card-hd h3 i{color:var(--blue)}
+        .tbl-wrap{overflow-x:auto}
+        table{width:100%;border-collapse:collapse}
+        thead tr{background:var(--panel2);border-bottom:1px solid var(--border)}
+        th{padding:10px 14px;text-align:left;font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}
+        tbody tr{border-bottom:1px solid var(--border);transition:background .1s}
+        tbody tr:last-child{border-bottom:none}
+        tbody tr:hover{background:rgba(79,142,255,.03)}
+        td{padding:11px 14px;font-size:13px;vertical-align:middle;white-space:nowrap}
+
+        /* Badges */
+        .badge{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:5px;font-size:11px;font-weight:600}
+        .badge::before{content:'';width:5px;height:5px;border-radius:50%;flex-shrink:0}
+        .bg{background:rgba(46,204,139,.12);color:var(--green)}.bg::before{background:var(--green)}
+        .br{background:rgba(255,79,107,.12);color:var(--red)}.br::before{background:var(--red)}
+        .ba{background:rgba(245,166,35,.12);color:var(--amber)}.ba::before{background:var(--amber)}
+        .bx{background:rgba(107,117,146,.15);color:var(--muted)}.bx::before{background:var(--muted)}
+
+        /* Action buttons */
+        .act-btn{padding:5px 11px;border-radius:6px;font-family:var(--font-body);font-size:11px;font-weight:600;border:none;cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:5px}
+        .act-btn i{font-size:10px}
+        .ab-a{background:var(--amber-dim);color:var(--amber)}.ab-a:hover{background:rgba(245,166,35,.2)}
+        .ab-g{background:var(--green-dim);color:var(--green)}.ab-g:hover{background:rgba(46,204,139,.2)}
+
+        /* Customer avatar */
+        .cust-ava{width:32px;height:32px;border-radius:9px;background:linear-gradient(135deg,var(--blue),var(--purple));display:flex;align-items:center;justify-content:center;font-family:var(--font-head);font-weight:700;font-size:13px;color:#fff;flex-shrink:0}
+        .cust-name{font-weight:600;font-size:13px}
+
+        .empty-state{text-align:center;padding:52px 20px;color:var(--muted)}
+        .empty-state i{font-size:32px;margin-bottom:10px;display:block;opacity:.2}
+        .empty-state p{font-size:13px}
+        .cnt-badge{font-size:11px;background:var(--blue-dim);color:var(--blue);padding:2px 10px;border-radius:99px;font-weight:700}
+
+        /* Confirm modal */
+        .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);z-index:100;align-items:center;justify-content:center;padding:20px}
+        .overlay.open{display:flex}
+        .modal{background:var(--panel);border:1px solid var(--border2);border-radius:16px;width:100%;max-width:340px;animation:su .2s ease}
+        @keyframes su{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+        .mhd{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border)}
+        .mtitle{font-family:var(--font-head);font-size:15px;font-weight:700}
+        .mclose{background:var(--panel2);border:1px solid var(--border);border-radius:7px;cursor:pointer;color:var(--muted);padding:5px;display:flex;transition:all .15s}
+        .mclose:hover{background:var(--red-dim);color:var(--red)}
+        .mbody{padding:20px;text-align:center}
+        .mfoot{display:flex;justify-content:center;gap:8px;padding:14px 20px;border-top:1px solid var(--border)}
+        .btn{display:inline-flex;align-items:center;gap:6px;padding:8px 18px;border-radius:var(--r2);font-family:var(--font-body);font-size:13px;font-weight:500;cursor:pointer;border:none;transition:all .15s}
+        .btn-ghost{background:transparent;color:var(--soft);border:1px solid var(--border2)}.btn-ghost:hover{background:var(--panel2);color:var(--text)}
+        .btn-warn{background:var(--amber);color:#111}.btn-warn:hover{background:#f7b73a}
+        .btn-success{background:var(--green);color:#fff}.btn-success:hover{background:#26b87d}
+
+        /* Toast */
+        .toast{position:fixed;bottom:22px;right:22px;display:flex;align-items:center;gap:9px;padding:11px 16px;border-radius:10px;font-size:13px;font-weight:500;transform:translateY(8px);opacity:0;transition:all .22s cubic-bezier(.34,1.56,.64,1);pointer-events:none;z-index:999;box-shadow:0 8px 24px rgba(0,0,0,.4)}
+        .toast.show{transform:translateY(0);opacity:1}
+        .toast.ok{background:var(--green);color:#fff}.toast.warn{background:var(--amber);color:#111}.toast.err{background:var(--red);color:#fff}
+
+        @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+        .stat-card{animation:fadeIn .3s ease both}
+        .stat-card:nth-child(1){animation-delay:.05s}.stat-card:nth-child(2){animation-delay:.1s}.stat-card:nth-child(3){animation-delay:.15s}
+    </style>
+</head>
+<body>
+<div class="layout">
+
+    <!-- ── Sidebar ── -->
+    <aside class="sidebar">
+        <div class="sidebar-brand">
+            <div class="brand-icon"><i class="fas fa-shield-alt"></i></div>
+            <div class="brand-text"><h2>VIMS Admin</h2><span>Management Console</span></div>
+        </div>
+        <nav>
+            <div class="nav-section-title">Overview</div>
+            <div class="nav-item" onclick="location.href='admin-dashboard.html'"><i class="fas fa-tachometer-alt"></i> Dashboard</div>
+            <div class="nav-section-title">Management</div>
+            <div class="nav-item active"><i class="fas fa-users"></i> Customers</div>
+            <div class="nav-item" onclick="location.href='admin-vehicles.html'"><i class="fas fa-car"></i> Vehicles</div>
+            <div class="nav-item" onclick="location.href='admin-policies.html'"><i class="fas fa-file-contract"></i> Policies</div>
+            <div class="nav-item" onclick="location.href='admin-claims.html'"><i class="fas fa-clipboard-list"></i> Claims</div>
+            <div class="nav-item" onclick="location.href='admin-payments.html'"><i class="fas fa-credit-card"></i> Payments</div>
+            <div class="nav-section-title">Account</div>
+            <div class="nav-item" onclick="location.href='profile.html'"><i class="fas fa-user-cog"></i> My Profile</div>
+        </nav>
+        <div class="sb-bottom">
+            <div class="user-card">
+                <div class="avatar">A</div>
+                <div class="user-info"><div class="uname">Admin</div><div class="urole">Administrator</div></div>
+            </div>
+            <button class="logout-btn" onclick="showLogout()"><i class="fas fa-sign-out-alt"></i> Sign Out</button>
+        </div>
+    </aside>
+
+    <!-- ── Main ── -->
+    <div class="main-content">
+        <header class="topbar">
+            <div class="topbar-title">Customer Management</div>
+            <div class="topbar-right">
+                <div class="user-badge"><div class="user-avatar">A</div><span>Admin</span></div>
+                <button class="btn-logout" onclick="showLogout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+            </div>
+        </header>
+
+        <div class="page-content">
+
+            <!-- Stats -->
+            <div class="stats-grid">
+                <div class="stat-card sb">
+                    <div class="sc-glow"></div>
+                    <div class="sc-icon"><i class="fas fa-users"></i></div>
+                    <div class="sc-label">Total Customers</div>
+                    <div class="sc-value" id="sTotal">0</div>
+                </div>
+                <div class="stat-card sg">
+                    <div class="sc-glow"></div>
+                    <div class="sc-icon"><i class="fas fa-user-check"></i></div>
+                    <div class="sc-label">Active</div>
+                    <div class="sc-value" id="sActive">0</div>
+                </div>
+                <div class="stat-card sr">
+                    <div class="sc-glow"></div>
+                    <div class="sc-icon"><i class="fas fa-user-slash"></i></div>
+                    <div class="sc-label">Suspended</div>
+                    <div class="sc-value" id="sSuspended">0</div>
+                </div>
+            </div>
+
+            <!-- Filter bar -->
+            <div class="filter-bar">
+                <button class="btn-f on" onclick="filterStatus('ALL',this)">All</button>
+                <button class="btn-f g" onclick="filterStatus('ACTIVE',this)">Active</button>
+                <button class="btn-f r" onclick="filterStatus('SUSPENDED',this)">Suspended</button>
+                <input type="text" id="srch" class="srch" placeholder="Search name or email…" oninput="doSearch()"/>
+            </div>
+
+            <!-- Table card -->
+            <div class="card">
+                <div class="card-hd">
+                    <h3><i class="fas fa-users"></i> All Customers</h3>
+                    <span class="cnt-badge" id="cnt">0</span>
+                </div>
+                <div class="tbl-wrap">
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>#</th><th>Name</th><th>Email</th><th>Phone</th>
+                            <th>NIC</th><th>Status</th><th>Joined</th><th>Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody id="tbody">
+                        <tr><td colspan="8"><div class="empty-state">
+                            <i class="fas fa-spinner fa-spin"></i><p>Loading customers…</p>
+                        </div></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- Confirm Action Modal -->
+<div class="overlay" id="confirmModal">
+    <div class="modal">
+        <div class="mhd">
+            <span class="mtitle" id="confirmTitle">Confirm Action</span>
+            <button class="mclose" onclick="cls('confirmModal')"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="mbody">
+            <div style="font-size:36px;margin-bottom:10px" id="confirmIcon">⚠️</div>
+            <div style="font-family:var(--font-head);font-size:14px;font-weight:700;margin-bottom:6px" id="confirmMsg">Are you sure?</div>
+            <div style="font-size:12px;color:var(--muted)" id="confirmSub">This action will update the customer status.</div>
+        </div>
+        <div class="mfoot">
+            <button class="btn btn-ghost" onclick="cls('confirmModal')">Cancel</button>
+            <button class="btn" id="confirmBtn" onclick="doAction()">Confirm</button>
+        </div>
+    </div>
+</div>
+
+<!-- Logout modal -->
+<div id="lmo" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);z-index:200;align-items:center;justify-content:center">
+    <div style="background:var(--panel);border:1px solid var(--border2);border-radius:16px;max-width:320px;width:90%;padding:28px;text-align:center">
+        <div style="font-size:38px;margin-bottom:8px">👋</div>
+        <div style="font-family:var(--font-head);font-size:15px;font-weight:700;margin-bottom:5px">Sign Out?</div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:20px">You will be redirected to the login page.</div>
+        <div style="display:flex;gap:8px;justify-content:center">
+            <button onclick="document.getElementById('lmo').style.display='none'" style="padding:8px 18px;border-radius:var(--r2);background:transparent;color:var(--soft);border:1px solid var(--border2);cursor:pointer;font-family:var(--font-body);font-size:13px">Cancel</button>
+            <button onclick="location.href='login.html'" style="padding:8px 18px;border-radius:var(--r2);background:#374151;color:#fff;border:none;cursor:pointer;font-family:var(--font-body);font-size:13px;font-weight:600">Sign Out</button>
+        </div>
+    </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"><i id="tico"></i><span id="tmsg"></span></div>
+
+<script>
+    const API = 'http://localhost:8080';
+    let allUsers = [], pendingId = null, pendingAction = null;
+
+    loadUsers();
+
+    async function loadUsers() {
+        try {
+            const r = await fetch(`${API}/api/v1/admin/users`);
+            if (!r.ok) throw new Error();
+            const j = await r.json();
+            allUsers = j.data || [];
+            updateStats(allUsers);
+            render(allUsers);
+        } catch {
+            document.getElementById('tbody').innerHTML = `<tr><td colspan="8"><div class="empty-state">
+      <i class="fas fa-wifi-slash"></i><p>Cannot connect to server</p></div></td></tr>`;
+            toast('Cannot connect to server', 'err');
+        }
+    }
+
+    function updateStats(list) {
+        document.getElementById('sTotal').textContent     = list.length;
+        document.getElementById('sActive').textContent    = list.filter(u => u.status === 'ACTIVE').length;
+        document.getElementById('sSuspended').textContent = list.filter(u => u.status === 'SUSPENDED').length;
+    }
+
+    function filterStatus(s, btn) {
+        document.querySelectorAll('.btn-f').forEach(b => b.classList.remove('on'));
+        btn.classList.add('on');
+        const q = document.getElementById('srch').value.toLowerCase();
+        let list = s === 'ALL' ? allUsers : allUsers.filter(u => u.status === s);
+        if (q) list = list.filter(u => (u.fullName||'').toLowerCase().includes(q) || (u.email||'').toLowerCase().includes(q));
+        render(list);
+    }
+
+    function doSearch() {
+        const q = document.getElementById('srch').value.toLowerCase();
+        const activeBtn = document.querySelector('.btn-f.on');
+        const status = activeBtn ? activeBtn.textContent.trim().toUpperCase() : 'ALL';
+        let list = status === 'ALL' ? allUsers : allUsers.filter(u => u.status === status);
+        if (q) list = list.filter(u => (u.fullName||'').toLowerCase().includes(q) || (u.email||'').toLowerCase().includes(q));
+        render(list);
+    }
+
+    function badge(s) {
+        const m = { ACTIVE:'bg', SUSPENDED:'br', PENDING:'ba' };
+        return `<span class="badge ${m[s]||'bx'}">${s||'—'}</span>`;
+    }
+    function fmtDate(d) { return d ? String(d).substring(0, 10) : '—'; }
+    function esc(v) { return v == null ? '—' : String(v).replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
+
+    function render(list) {
+        document.getElementById('cnt').textContent = list.length;
+        if (!list.length) {
+            document.getElementById('tbody').innerHTML = `<tr><td colspan="8"><div class="empty-state">
+      <i class="fas fa-users"></i><p>No customers found</p></div></td></tr>`;
+            return;
+        }
+        document.getElementById('tbody').innerHTML = list.map((u, i) => `
+    <tr>
+      <td style="color:var(--muted);font-size:12px">${i + 1}</td>
+      <td>
+        <div style="display:flex;align-items:center;gap:9px">
+          <div class="cust-ava">${(u.fullName||'?')[0].toUpperCase()}</div>
+          <span class="cust-name">${esc(u.fullName)}</span>
+        </div>
+      </td>
+      <td style="color:var(--soft)">${esc(u.email)}</td>
+      <td style="color:var(--muted)">${esc(u.phone)}</td>
+      <td style="font-family:var(--font-head);font-size:12px;color:var(--soft)">${esc(u.nicNumber)}</td>
+      <td>${badge(u.status)}</td>
+      <td style="color:var(--muted);font-size:12px">${fmtDate(u.createdAt)}</td>
+      <td>
+        ${u.status === 'ACTIVE'
+            ? `<button class="act-btn ab-a" onclick="prepAction(${u.id},'suspend','${esc(u.fullName)}')">
+               <i class="fas fa-ban"></i> Suspend
+             </button>`
+            : `<button class="act-btn ab-g" onclick="prepAction(${u.id},'activate','${esc(u.fullName)}')">
+               <i class="fas fa-check"></i> Activate
+             </button>`
+        }
+      </td>
+    </tr>`).join('');
+    }
+
+    function prepAction(id, action, name) {
+        pendingId = id;
+        pendingAction = action;
+        const isSuspend = action === 'suspend';
+        document.getElementById('confirmIcon').textContent = isSuspend ? '🚫' : '✅';
+        document.getElementById('confirmTitle').textContent = isSuspend ? 'Suspend Customer' : 'Activate Customer';
+        document.getElementById('confirmMsg').textContent = `${isSuspend ? 'Suspend' : 'Activate'} "${name}"?`;
+        document.getElementById('confirmSub').textContent = isSuspend
+            ? 'This customer will lose access to the system.'
+            : 'This customer will regain access to the system.';
+        const btn = document.getElementById('confirmBtn');
+        btn.className = `btn ${isSuspend ? 'btn-warn' : 'btn-success'}`;
+        btn.textContent = isSuspend ? 'Suspend' : 'Activate';
+        document.getElementById('confirmModal').classList.add('open');
+    }
+
+    async function doAction() {
+        if (!pendingId || !pendingAction) return;
+        cls('confirmModal');
+        try {
+            const r = await fetch(`${API}/api/v1/admin/users/${pendingId}/${pendingAction}`, {
+                method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({})
+            });
+            if (r.ok) {
+                toast(pendingAction === 'suspend' ? 'Customer suspended' : 'Customer activated',
+                    pendingAction === 'suspend' ? 'warn' : 'ok');
+                loadUsers();
+            } else {
+                toast('Action failed', 'err');
+            }
+        } catch {
+            toast('Server error', 'err');
+        } finally {
+            pendingId = null; pendingAction = null;
+        }
+    }
+
+    function cls(id) { document.getElementById(id).classList.remove('open'); }
+    function showLogout() { document.getElementById('lmo').style.display = 'flex'; }
+
+    let toastTimer;
+    function toast(msg, type = 'ok') {
+        clearTimeout(toastTimer);
+        document.getElementById('tmsg').textContent = msg;
+        const el = document.getElementById('toast');
+        el.className = `toast show ${type}`;
+        toastTimer = setTimeout(() => el.classList.remove('show'), 3200);
+    }
+</script>
+<script src="../js/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../js/admin.js"></script>
 </body>
 </html>

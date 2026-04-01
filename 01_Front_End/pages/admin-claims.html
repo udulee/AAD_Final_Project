@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <title>Policies - VIMS Admin</title>
+    <title>Claims - VIMS Admin</title>
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
     <link rel="stylesheet" href="../css/admin.css">
@@ -41,9 +41,6 @@
         .filter-bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
         .btn-f{padding:6px 14px;border-radius:var(--r2);border:1px solid var(--border2);background:var(--panel2);color:var(--soft);font-family:var(--font-body);font-size:12px;font-weight:500;cursor:pointer;transition:all .15s}
         .btn-f:hover,.btn-f.on{background:var(--blue-dim);color:var(--blue);border-color:var(--blue-dim)}
-        .btn-f.g:hover,.btn-f.g.on{background:var(--green-dim);color:var(--green);border-color:var(--green-dim)}
-        .btn-f.a:hover,.btn-f.a.on{background:var(--amber-dim);color:var(--amber);border-color:var(--amber-dim)}
-        .btn-f.r:hover,.btn-f.r.on{background:var(--red-dim);color:var(--red);border-color:var(--red-dim)}
         .card{background:var(--panel);border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
         .card-hd{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--border)}
         .card-hd h3{font-family:var(--font-head);font-size:14px;font-weight:700;display:flex;align-items:center;gap:8px}
@@ -63,7 +60,7 @@
         .br{background:rgba(255,79,107,.12);color:var(--red)}.br::before{background:var(--red)}
         .bb{background:rgba(79,142,255,.12);color:var(--blue)}.bb::before{background:var(--blue)}
         .bx{background:rgba(107,117,146,.15);color:var(--muted)}.bx::before{background:var(--muted)}
-        .pno{font-family:var(--font-head);font-weight:700;color:var(--blue)}
+        .cno{font-family:var(--font-head);font-weight:700;color:var(--blue)}
         .act-btn{padding:4px 10px;border-radius:6px;font-family:var(--font-body);font-size:11px;font-weight:600;border:none;cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:4px}
         .act-btn i{font-size:10px}
         .ab-g{background:var(--green-dim);color:var(--green)}.ab-g:hover{background:rgba(46,204,139,.2)}
@@ -73,10 +70,9 @@
         .empty-state{text-align:center;padding:52px 20px;color:var(--muted)}
         .empty-state i{font-size:32px;margin-bottom:10px;display:block;opacity:.2}
         .cnt-badge{font-size:11px;background:var(--blue-dim);color:var(--blue);padding:2px 10px;border-radius:99px;font-weight:700}
-        /* Modal */
         .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);z-index:100;align-items:center;justify-content:center;padding:20px}
         .overlay.open{display:flex}
-        .modal{background:var(--panel);border:1px solid var(--border2);border-radius:16px;width:100%;max-width:420px;animation:su .2s ease}
+        .modal{background:var(--panel);border:1px solid var(--border2);border-radius:16px;width:100%;max-width:480px;animation:su .2s ease}
         @keyframes su{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
         .mhd{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border)}
         .mtitle{font-family:var(--font-head);font-size:15px;font-weight:700}
@@ -85,16 +81,14 @@
         .mbody{padding:18px 20px}
         .mfoot{display:flex;justify-content:flex-end;gap:8px;padding:14px 20px;border-top:1px solid var(--border)}
         .info-box{background:var(--panel2);border:1px solid var(--border);border-radius:var(--r2);padding:12px;margin-bottom:14px;font-size:12px;line-height:1.7;color:var(--soft)}
-        .fg{display:flex;flex-direction:column;gap:5px}
+        .fg{display:flex;flex-direction:column;gap:5px;margin-bottom:12px}
         .fg label{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
-        .fg textarea{padding:9px 12px;border:1px solid var(--border2);border-radius:var(--r2);background:var(--panel2);font-family:var(--font-body);font-size:13px;color:var(--text);outline:none;resize:vertical;min-height:80px;transition:border-color .15s}
-        .fg textarea:focus{border-color:var(--blue)}
+        .fg input,.fg textarea{padding:9px 12px;border:1px solid var(--border2);border-radius:var(--r2);background:var(--panel2);font-family:var(--font-body);font-size:13px;color:var(--text);outline:none;transition:border-color .15s}
+        .fg input:focus,.fg textarea:focus{border-color:var(--blue)}
+        .fg textarea{resize:vertical;min-height:70px}
         .btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:var(--r2);font-family:var(--font-body);font-size:13px;font-weight:500;cursor:pointer;border:none;transition:all .15s}
         .btn-ghost{background:transparent;color:var(--soft);border:1px solid var(--border2)}.btn-ghost:hover{background:var(--panel2);color:var(--text)}
-        .btn-g{background:var(--green);color:#fff}.btn-g:hover{background:#26b87d}
-        .btn-r{background:var(--red);color:#fff}.btn-r:hover{background:#ff2245}
-        .btn-a{background:var(--amber);color:#111}.btn-a:hover{background:#f7b73a}
-        .btn-b{background:var(--blue);color:#fff}.btn-b:hover{background:#6ba3ff}
+        .btn-g{background:var(--green);color:#fff}.btn-r{background:var(--red);color:#fff}.btn-a{background:var(--amber);color:#111}.btn-b{background:var(--blue);color:#fff}
     </style>
 </head>
 <body>
@@ -110,8 +104,8 @@
             <div class="nav-section-title">Management</div>
             <div class="nav-item" onclick="location.href='admin-users.html'"><i class="fas fa-users"></i> Customers</div>
             <div class="nav-item" onclick="location.href='admin-vehicles.html'"><i class="fas fa-car"></i> Vehicles</div>
-            <div class="nav-item active"><i class="fas fa-file-contract"></i> Policies</div>
-            <div class="nav-item" onclick="location.href='admin-claims.html'"><i class="fas fa-clipboard-list"></i> Claims</div>
+            <div class="nav-item" onclick="location.href='admin-policies.html'"><i class="fas fa-file-contract"></i> Policies</div>
+            <div class="nav-item active"><i class="fas fa-clipboard-list"></i> Claims</div>
             <div class="nav-item" onclick="location.href='admin-payments.html'"><i class="fas fa-credit-card"></i> Payments</div>
             <div class="nav-section-title">Account</div>
             <div class="nav-item" onclick="location.href='profile.html'"><i class="fas fa-user-cog"></i> My Profile</div>
@@ -124,7 +118,7 @@
 
     <div class="main-content">
         <header class="topbar">
-            <div class="topbar-title">Policy Management</div>
+            <div class="topbar-title">Claims Management</div>
             <div class="topbar-right">
                 <div class="user-badge"><div class="user-avatar">A</div><span>Admin</span></div>
                 <button class="btn-logout" onclick="showLogout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
@@ -133,22 +127,21 @@
         <div class="page-content">
             <div class="filter-bar">
                 <button class="btn-f on" onclick="load(null,this)">All</button>
-                <button class="btn-f a" onclick="load('PENDING',this)">Pending</button>
-                <button class="btn-f g" onclick="load('ACTIVE',this)">Active</button>
-                <button class="btn-f a" onclick="load('SUSPENDED',this)">Suspended</button>
-                <button class="btn-f r" onclick="load('REJECTED',this)">Rejected</button>
-                <button class="btn-f" onclick="load('EXPIRED',this)">Expired</button>
-                <button class="btn-f r" onclick="load('CANCELLED',this)">Cancelled</button>
+                <button class="btn-f" onclick="load('SUBMITTED',this)">Submitted</button>
+                <button class="btn-f" onclick="load('UNDER_REVIEW',this)">Under Review</button>
+                <button class="btn-f" onclick="load('APPROVED',this)">Approved</button>
+                <button class="btn-f" onclick="load('REJECTED',this)">Rejected</button>
+                <button class="btn-f" onclick="load('SETTLED',this)">Settled</button>
             </div>
             <div class="card">
                 <div class="card-hd">
-                    <h3><i class="fas fa-file-contract"></i> All Policies</h3>
+                    <h3><i class="fas fa-clipboard-list"></i> All Claims</h3>
                     <span class="cnt-badge" id="cnt">0</span>
                 </div>
                 <div class="tbl-wrap">
                     <table>
-                        <thead><tr><th>Policy #</th><th>Customer</th><th>Vehicle</th><th>Type</th><th>Coverage</th><th>Premium</th><th>NCB</th><th>Status</th><th>Start</th><th>End</th><th>Actions</th></tr></thead>
-                        <tbody id="tbody"><tr><td colspan="11"><div class="empty-state"><i class="fas fa-spinner fa-spin"></i><p>Loading…</p></div></td></tr></tbody>
+                        <thead><tr><th>Claim #</th><th>Customer</th><th>Policy</th><th>Type</th><th>Incident</th><th>Claimed</th><th>Approved</th><th>Status</th><th>Submitted</th><th>Actions</th></tr></thead>
+                        <tbody id="tbody"><tr><td colspan="10"><div class="empty-state"><i class="fas fa-spinner fa-spin"></i><p>Loading…</p></div></td></tr></tbody>
                     </table>
                 </div>
             </div>
@@ -156,25 +149,28 @@
     </div>
 </div>
 
-<!-- Action Modal -->
-<div class="overlay" id="actModal">
+<!-- Process Modal -->
+<div class="overlay" id="claimModal">
     <div class="modal">
         <div class="mhd">
-            <span class="mtitle" id="actTitle">Policy Action</span>
-            <button class="mclose" onclick="cls('actModal')"><i class="fas fa-times"></i></button>
+            <span class="mtitle" id="cTitle">Process Claim</span>
+            <button class="mclose" onclick="cls('claimModal')"><i class="fas fa-times"></i></button>
         </div>
         <div class="mbody">
-            <div class="info-box" id="actInfo"></div>
-            <div class="fg">
-                <label>Note / Reason</label>
-                <textarea id="actNote" placeholder="Add reason…"></textarea>
+            <div class="info-box" id="cInfo"></div>
+            <div class="fg" id="approvedAmtDiv" style="display:none">
+                <label>Approved Amount (LKR) *</label>
+                <input type="number" id="approvedAmt" min="0" placeholder="0.00"/>
             </div>
-            <input type="hidden" id="actId"/>
-            <input type="hidden" id="actType"/>
+            <div class="fg">
+                <label>Admin Note</label>
+                <textarea id="cNote" placeholder="Reason for decision…"></textarea>
+            </div>
+            <input type="hidden" id="cId"/>
+            <input type="hidden" id="cAction"/>
         </div>
-        <div class="mfoot">
-            <button class="btn btn-ghost" onclick="cls('actModal')">Cancel</button>
-            <button class="btn" id="actBtn" onclick="confirmAct()">Confirm</button>
+        <div class="mfoot" id="cFoot">
+            <button class="btn btn-ghost" onclick="cls('claimModal')">Cancel</button>
         </div>
     </div>
 </div>
@@ -196,58 +192,77 @@
     const API='http://localhost:8080';
     function fmtCur(v){return v?'LKR '+Number(v).toLocaleString():'—';}
     function fmtDate(d){return d?String(d).substring(0,10):'—';}
-    function badge(s){const m={ACTIVE:'bg',APPROVED:'bg',PAID:'bg',PENDING:'ba',PENDING_APPROVAL:'ba',SUBMITTED:'ba',SUSPENDED:'ba',REJECTED:'br',OVERDUE:'br',CANCELLED:'br',EXPIRED:'bx',SETTLED:'bb',UNDER_REVIEW:'bb'};return`<span class="badge ${m[s]||'bx'}">${(s||'—').replace(/_/g,' ')}</span>`;}
+    function badge(s){const m={ACTIVE:'bg',APPROVED:'bg',PAID:'bg',SETTLED:'bg',PENDING:'ba',SUBMITTED:'ba',UNDER_REVIEW:'bb',REJECTED:'br',OVERDUE:'br',CANCELLED:'br',EXPIRED:'bx'};return`<span class="badge ${m[s]||'bx'}">${(s||'—').replace(/_/g,' ')}</span>`;}
     function cls(id){document.getElementById(id).classList.remove('open');}
     function showLogout(){document.getElementById('lmo').style.display='flex';}
 
     async function load(status,btn){
         if(btn){document.querySelectorAll('.btn-f').forEach(b=>b.classList.remove('on'));btn.classList.add('on');}
         try{
-            const url=status?`${API}/api/v1/admin/policies?status=${status}`:`${API}/api/v1/admin/policies`;
+            const url=status?`${API}/api/v1/admin/claims?status=${status}`:`${API}/api/v1/admin/claims`;
             const r=await fetch(url);if(!r.ok)throw 0;
             const list=(await r.json()).data||[];
             document.getElementById('cnt').textContent=list.length;
-            if(!list.length){document.getElementById('tbody').innerHTML='<tr><td colspan="11"><div class="empty-state"><i class="fas fa-file-contract"></i><p>No policies found</p></div></td></tr>';return;}
-            document.getElementById('tbody').innerHTML=list.map(p=>`<tr>
-      <td><span class="pno">${p.policyNumber||'—'}</span></td>
-      <td>${p.customerName||'—'}</td>
-      <td>${p.vehicleRegistration||'—'}<br><small style="color:var(--muted)">${p.vehicleMakeModel||''}</small></td>
-      <td><small style="color:var(--soft)">${(p.policyType||'').replace(/_/g,' ')}</small></td>
-      <td>${fmtCur(p.coverageAmount)}</td>
-      <td style="font-family:var(--font-head);font-weight:700;color:var(--blue)">${fmtCur(p.finalPremium)}</td>
-      <td style="color:var(--green)">${(parseFloat(p.ncbDiscount||0)*100).toFixed(0)}%</td>
-      <td>${badge(p.status)}</td>
-      <td style="color:var(--muted);font-size:12px">${fmtDate(p.startDate)}</td>
-      <td style="color:var(--muted);font-size:12px">${fmtDate(p.endDate)}</td>
+            if(!list.length){document.getElementById('tbody').innerHTML='<tr><td colspan="10"><div class="empty-state"><i class="fas fa-clipboard"></i><p>No claims found</p></div></td></tr>';return;}
+            document.getElementById('tbody').innerHTML=list.map(c=>`<tr>
+      <td><span class="cno">${c.claimNumber||'—'}</span></td>
+      <td>${c.customerName||'—'}</td>
+      <td style="color:var(--soft)">${c.policyNumber||'—'}</td>
+      <td><small style="color:var(--soft)">${(c.claimType||'').replace(/_/g,' ')}</small></td>
+      <td style="color:var(--muted);font-size:12px">${fmtDate(c.incidentDate)}</td>
+      <td style="font-family:var(--font-head);font-weight:700;color:var(--amber)">${fmtCur(c.claimAmount)}</td>
+      <td style="color:var(--green)">${c.approvedAmount?fmtCur(c.approvedAmount):'—'}</td>
+      <td>${badge(c.status)}</td>
+      <td style="color:var(--muted);font-size:12px">${fmtDate(c.submittedAt)}</td>
       <td><div style="display:flex;gap:4px;flex-wrap:wrap">
-        ${p.status==='PENDING'?`<button class="act-btn ab-g" onclick="openAct(${p.id},'${p.policyNumber}','APPROVE')"><i class="fas fa-check"></i> Approve</button><button class="act-btn ab-r" onclick="openAct(${p.id},'${p.policyNumber}','REJECT')"><i class="fas fa-times"></i> Reject</button>`:''}
-        ${p.status==='ACTIVE'?`<button class="act-btn ab-a" onclick="openAct(${p.id},'${p.policyNumber}','SUSPEND')"><i class="fas fa-pause"></i> Suspend</button><button class="act-btn ab-r" onclick="openAct(${p.id},'${p.policyNumber}','CANCEL')"><i class="fas fa-ban"></i> Cancel</button>`:''}
-        ${p.status==='SUSPENDED'?`<button class="act-btn ab-g" onclick="openAct(${p.id},'${p.policyNumber}','REACTIVATE')"><i class="fas fa-play"></i> Reactivate</button>`:''}
-        ${!p.status||(!['PENDING','ACTIVE','SUSPENDED'].includes(p.status))?'<span style="color:var(--muted);font-size:11px">—</span>':''}
+        <button class="act-btn ab-b" onclick="viewClaim(${c.id})"><i class="fas fa-eye"></i> View</button>
+        ${c.status==='SUBMITTED'?`<button class="act-btn ab-b" onclick="openProc(${c.id},'${c.claimNumber}','REVIEW',${c.claimAmount||0})"><i class="fas fa-search"></i> Review</button>`:''}
+        ${c.status==='UNDER_REVIEW'?`<button class="act-btn ab-g" onclick="openProc(${c.id},'${c.claimNumber}','APPROVE',${c.claimAmount||0})"><i class="fas fa-check"></i></button><button class="act-btn ab-r" onclick="openProc(${c.id},'${c.claimNumber}','REJECT',${c.claimAmount||0})"><i class="fas fa-times"></i></button>`:''}
+        ${c.status==='APPROVED'?`<button class="act-btn ab-g" onclick="openProc(${c.id},'${c.claimNumber}','SETTLE',${c.claimAmount||0})"><i class="fas fa-handshake"></i> Settle</button>`:''}
       </div></td>
     </tr>`).join('');
-        }catch{document.getElementById('tbody').innerHTML='<tr><td colspan="11"><div class="empty-state"><i class="fas fa-wifi-slash"></i><p>Cannot connect to server</p></div></td></tr>';}
+        }catch{document.getElementById('tbody').innerHTML='<tr><td colspan="10"><div class="empty-state"><i class="fas fa-wifi-slash"></i><p>Cannot connect to server</p></div></td></tr>';}
     }
 
-    function openAct(id,num,action){
-        document.getElementById('actId').value=id;
-        document.getElementById('actType').value=action;
-        document.getElementById('actNote').value='';
-        document.getElementById('actTitle').textContent=action+' Policy';
-        document.getElementById('actInfo').innerHTML=`<strong>Policy:</strong> ${num}<br><strong>Action:</strong> ${action}`;
-        const btn=document.getElementById('actBtn');
-        const cls2={APPROVE:'btn-g',REACTIVATE:'btn-g',REJECT:'btn-r',CANCEL:'btn-r',SUSPEND:'btn-a'}[action]||'btn-b';
-        btn.className=`btn ${cls2}`;btn.textContent='Confirm '+action;
-        document.getElementById('actModal').classList.add('open');
-    }
-
-    async function confirmAct(){
-        const id=document.getElementById('actId').value;
-        const action=document.getElementById('actType').value;
-        const note=document.getElementById('actNote').value;
-        cls('actModal');
+    async function viewClaim(id){
         try{
-            await fetch(`${API}/api/v1/admin/policies/${id}/action`,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({action,note})});
+            const r=await fetch(`${API}/api/v1/admin/claims/${id}`);if(!r.ok)throw 0;
+            const c=(await r.json()).data||{};
+            document.getElementById('cTitle').textContent='Claim Details';
+            document.getElementById('cId').value=id;document.getElementById('cAction').value='';
+            document.getElementById('approvedAmtDiv').style.display='none';
+            document.getElementById('cInfo').innerHTML=`<strong>${c.claimNumber}</strong> — ${badge(c.status)}<br>
+      <strong>Customer:</strong> ${c.customerName||'—'} | <strong>Policy:</strong> ${c.policyNumber||'—'}<br>
+      <strong>Type:</strong> ${(c.claimType||'').replace(/_/g,' ')} | <strong>Date:</strong> ${fmtDate(c.incidentDate)}<br>
+      <strong>Claimed:</strong> ${fmtCur(c.claimAmount)} | <strong>Approved:</strong> ${c.approvedAmount?fmtCur(c.approvedAmount):'Pending'}<br>
+      ${c.description?'<strong>Description:</strong> '+c.description+' <br>':''}
+      ${c.adminNote?'<strong>Note:</strong> '+c.adminNote:''}`;
+            document.getElementById('cFoot').innerHTML='<button class="btn btn-ghost" onclick="cls(\'claimModal\')">Close</button>';
+            document.getElementById('cNote').value='';
+            document.getElementById('claimModal').classList.add('open');
+        }catch{alert('Failed to load claim');}
+    }
+
+    function openProc(id,num,action,amt){
+        document.getElementById('cId').value=id;document.getElementById('cAction').value=action;document.getElementById('cNote').value='';
+        document.getElementById('cTitle').textContent=action+' Claim';
+        document.getElementById('cInfo').innerHTML=`<strong>Claim:</strong> ${num}<br><strong>Action:</strong> ${action}<br><strong>Claimed:</strong> ${fmtCur(amt)}`;
+        document.getElementById('approvedAmtDiv').style.display=action==='APPROVE'?'block':'none';
+        if(action==='APPROVE')document.getElementById('approvedAmt').value=amt;
+        const cls2={APPROVE:'btn-g',SETTLE:'btn-g',REJECT:'btn-r',REVIEW:'btn-b'}[action]||'btn-b';
+        document.getElementById('cFoot').innerHTML=`<button class="btn btn-ghost" onclick="cls('claimModal')">Cancel</button><button class="btn ${cls2}" onclick="processAct()">${action} CLAIM</button>`;
+        document.getElementById('claimModal').classList.add('open');
+    }
+
+    async function processAct(){
+        const id=document.getElementById('cId').value;
+        const action=document.getElementById('cAction').value;
+        const note=document.getElementById('cNote').value;
+        const approvedAmount=action==='APPROVE'?parseFloat(document.getElementById('approvedAmt').value):null;
+        if(action==='APPROVE'&&(!approvedAmount||approvedAmount<=0)){alert('Enter approved amount');return;}
+        cls('claimModal');
+        try{
+            await fetch(`${API}/api/v1/admin/claims/${id}/action`,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({action,note,approvedAmount})});
             load(null,document.querySelector('.btn-f.on'));
         }catch{alert('Server error');}
     }

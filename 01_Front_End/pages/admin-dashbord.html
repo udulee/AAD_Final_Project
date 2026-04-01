@@ -1,107 +1,144 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="../css/style.css">
-    <title>Admin Dashboard</title>
-    <title>Admin Panel - VIMS</title>
-    <style>
-        body { font-family: sans-serif; margin: 0; background: #f8fafc; }
-        .header { background: #1e293b; color: white; padding: 15px 40px; display: flex; justify-content: space-between; align-items: center; }
-        .sidebar { width: 250px; background: white; height: 100vh; position: fixed; border-right: 1px solid #e2e8f0; padding: 20px; }
-        .main-content { margin-left: 290px; padding: 30px; }
-        .admin-card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 25px; }
-        h3 { color: #334155; border-left: 4px solid #3b82f6; padding-left: 10px; }
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-        th, td { text-align: left; padding: 12px; border-bottom: 1px solid #edf2f7; }
-        th { background: #f1f5f9; }
-        .btn-approve { background: #10b981; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; }
-        .btn-report { background: #3b82f6; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; margin-right: 10px; }
-    </style>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Admin Dashboard - VIMS</title>
+    <link rel="stylesheet" href="../css/admin.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-<div class="header">
-    <h2>VIMS Administrator</h2>
-    <button onclick="localStorage.clear(); location.href='index.html'" style="background:#ef4444; color:white; border:none; padding:8px 15px; border-radius:5px; cursor:pointer;">Logout</button>
+<div id="loadingOverlay" class="loading-overlay"><div class="spinner"></div></div>
+<div class="layout">
+    <aside class="sidebar">
+        <div class="sidebar-brand"><i class="fas fa-shield-alt" style="font-size:1.8rem;color:var(--accent)"></i><div><h2>VIMS Admin</h2><span>Management Console</span></div></div>
+        <nav class="sidebar-nav">
+            <div class="nav-section-title">Overview</div>
+            <div class="nav-item active"><i class="fas fa-tachometer-alt"></i> Dashboard</div>
+            <div class="nav-section-title">Management</div>
+            <div class="nav-item" onclick="location.href='admin-users.html'"><i class="fas fa-users"></i> Customers</div>
+            <div class="nav-item"onclick="location.href='admin-vehicles.html'"><i class="fas fa-car"></i> Vehicles</div>
+            <div class="nav-item" onclick="location.href='admin-policies.html'"><i class="fas fa-file-contract"></i> Policies</div>
+            <div class="nav-item" onclick="location.href='admin-claims.html'"><i class="fas fa-clipboard-list"></i> Claims</div>
+            <div class="nav-item" onclick="location.href='admin-payments.html'"><i class="fas fa-credit-card"></i> Payments</div>
+            <div class="nav-section-title">Account</div>
+            <div class="nav-item" onclick="location.href='profile.html'"><i class="fas fa-user-cog"></i> My Profile</div>
+        </nav>
+        <div class="sidebar-footer"><div id="userDisplayName" style="font-weight:600"></div><div style="font-size:.75rem;opacity:.6">ADMINISTRATOR</div></div>
+    </aside>
+    <div class="main-content">
+        <header class="topbar">
+            <div class="topbar-title">Admin Dashboard</div>
+            <div class="topbar-right">
+                <div class="user-badge"><div class="user-avatar" id="userAvatar">A</div><span id="topbarUser"></span></div>
+                <button class="btn-logout btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+            </div>
+        </header>
+        <div class="page-content">
+            <div id="alertContainer"></div>
+            <div class="stats-grid">
+                <div class="stat-card"><div class="stat-icon blue"><i class="fas fa-users"></i></div><div class="stat-info"><h3 id="s-users">0</h3><p>Total Customers</p></div></div>
+                <div class="stat-card"><div class="stat-icon green"><i class="fas fa-file-contract"></i></div><div class="stat-info"><h3 id="s-active">0</h3><p>Active Policies</p></div></div>
+                <div class="stat-card"><div class="stat-icon yellow"><i class="fas fa-clock"></i></div><div class="stat-info"><h3 id="s-pending">0</h3><p>Pending Approvals</p></div></div>
+                <div class="stat-card"><div class="stat-icon orange"><i class="fas fa-clipboard-list"></i></div><div class="stat-info"><h3 id="s-claims">0</h3><p>Open Claims</p></div></div>
+                <div class="stat-card"><div class="stat-icon red"><i class="fas fa-exclamation-triangle"></i></div><div class="stat-info"><h3 id="s-overdue">0</h3><p>Overdue Payments</p></div></div>
+                <div class="stat-card"><div class="stat-icon purple"><i class="fas fa-coins"></i></div><div class="stat-info"><h3 id="s-revenue" style="font-size:1rem">LKR 0</h3><p>Total Revenue</p></div></div>
+                <div class="stat-card"><div class="stat-icon teal"><i class="fas fa-car"></i></div><div class="stat-info"><h3 id="s-vehicles">0</h3><p>Registered Vehicles</p></div></div>
+                <div class="stat-card"><div class="stat-icon orange"><i class="fas fa-ban"></i></div><div class="stat-info"><h3 id="s-susp">0</h3><p>Suspended Policies</p></div></div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+                <div class="card">
+                    <div class="card-header"><h3><i class="fas fa-clock" style="color:var(--warning)"></i> Pending Policy Approvals</h3>
+                        <a href="admin-policies.html" style="font-size:.82rem;color:var(--primary-light)">Manage →</a></div>
+                    <div class="card-body" style="padding:0">
+                        <table><thead><tr><th>Policy #</th><th>Customer</th><th>Type</th><th>Premium</th><th>Action</th></tr></thead>
+                            <tbody id="tPolicies"></tbody></table>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header"><h3><i class="fas fa-clipboard-list" style="color:var(--info)"></i> Submitted Claims</h3>
+                        <a href="admin-claims.html" style="font-size:.82rem;color:var(--primary-light)">Manage →</a></div>
+                    <div class="card-body" style="padding:0">
+                        <table><thead><tr><th>Claim #</th><th>Customer</th><th>Type</th><th>Amount</th><th>Action</th></tr></thead>
+                            <tbody id="tClaims"></tbody></table>
+                    </div>
+                </div>
+                <div class="card" style="grid-column:1/-1">
+                    <div class="card-header"><h3><i class="fas fa-exclamation-triangle" style="color:var(--danger)"></i> Overdue Payments</h3>
+                        <a href="admin-payments.html" style="font-size:.82rem;color:var(--primary-light)">View All →</a></div>
+                    <div class="card-body" style="padding:0">
+                        <table><thead><tr><th>Reference</th><th>Customer</th><th>Policy</th><th>Amount</th><th>Penalty</th><th>Due Date</th></tr></thead>
+                            <tbody id="tPayments"></tbody></table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
-<div class="sidebar">
-    <h4>Navigation</h4>
-    <p>• Policy Approvals</p>
-    <p>• Claim Reviews</p>
-    <p>• Financial Reports</p>
-    <p>• User Management</p>
-</div>
-
-<div class="main-content">
-    <div class="admin-card">
-        <h3>Pending Policy Applications</h3>
-        <table>
-            <thead>
-            <tr>
-                <th>Customer</th>
-                <th>Vehicle No</th>
-                <th>Type</th>
-                <th>Action</th>
-            </tr>
-            </thead>
-            <tbody id="policyList">
-            </tbody>
-        </table>
-    </div>
-
-    <div class="admin-card">
-        <h3>Claim Requests</h3>
-        <table>
-            <thead>
-            <tr>
-                <th>Policy ID</th>
-                <th>Reason</th>
-                <th>Status</th>
-                <th>Action</th>
-            </tr>
-            </thead>
-            <tbody id="claimList">
-            </tbody>
-        </table>
-    </div>
-
-    <div class="admin-card">
-        <h3>Generate System Reports</h3>
-        <button class="btn-report" onclick="downloadReport('PDF')">Download PDF Report</button>
-        <button class="btn-report" onclick="downloadReport('JSON')" style="background:#64748b;">View JSON Data</button>
-    </div>
-</div>
 <script src="../js/jquery-3.7.1.min.js"></script>
-<script src="app.js"></script>
-
-
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../js/admin.js"></script>
 <script>
-    const token = localStorage.getItem('token');
+    const user = requireAuth('ADMIN');
+    if (user) { initSidebar(user); loadDashboard(); }
+    function go(p) { window.location.href='/html/'+p; }
 
-    // Function to load data from Backend
-    async function loadAdminData() {
-        // Fetch Pending Policies
-        const pRes = await fetch('/api/admin/policies/pending', {
-            headers: {'Authorization': 'Bearer ' + token}
-        });
-        const policies = await pRes.json();
-        // Render logic here...
+    async function loadDashboard() {
+        try {
+            const [dash,pols,clms,pays] = await Promise.allSettled([
+                Api.get('/api/v1/admin/reports/dashboard'),
+                Api.get('/api/v1/admin/policies?status=PENDING'),
+                Api.get('/api/v1/admin/claims?status=SUBMITTED'),
+                Api.get('/api/v1/admin/payments'),
+            ]);
+            if (dash.status==='fulfilled') {
+                const d=dash.value.data||{};
+                document.getElementById('s-users').textContent=d.totalUsers||0;
+                document.getElementById('s-active').textContent=d.activePolicies||0;
+                document.getElementById('s-pending').textContent=d.pendingPolicies||0;
+                document.getElementById('s-claims').textContent=(d.pendingClaims||0)+(d.underReviewClaims||0);
+                document.getElementById('s-overdue').textContent=d.overduePayments||0;
+                document.getElementById('s-vehicles').textContent=d.totalVehicles||0;
+                document.getElementById('s-susp').textContent=d.suspendedPolicies||0;
+                document.getElementById('s-revenue').textContent=formatCurrency(d.totalRevenue||0);
+            }
+            const pending=(pols.status==='fulfilled'?pols.value.data||[]:[]).slice(0,5);
+            const tb1=document.getElementById('tPolicies');
+            tb1.innerHTML=pending.length?pending.map(p=>`
+        <tr><td><strong>${p.policyNumber}</strong></td><td>${p.customerName}</td>
+        <td><small>${p.policyType.replace(/_/g,' ')}</small></td><td>${formatCurrency(p.finalPremium)}</td>
+        <td style="white-space:nowrap">
+          <button class="btn btn-success btn-sm" onclick="quickAction(${p.id},'APPROVE')"><i class="fas fa-check"></i></button>
+          <button class="btn btn-danger btn-sm" onclick="quickAction(${p.id},'REJECT')"><i class="fas fa-times"></i></button>
+        </td></tr>`).join('')
+                :'<tr><td colspan="5"><div class="empty-state" style="padding:24px"><i class="fas fa-check-circle"></i><p>No pending approvals</p></div></td></tr>';
 
-        // Fetch Claims
-        const cRes = await fetch('/api/admin/claims/pending', {
-            headers: {'Authorization': 'Bearer ' + token}
-        });
-        const claims = await cRes.json();
-        // Render logic here...
+            const claims=(clms.status==='fulfilled'?clms.value.data||[]:[]).slice(0,5);
+            const tb2=document.getElementById('tClaims');
+            tb2.innerHTML=claims.length?claims.map(c=>`
+        <tr><td><strong>${c.claimNumber}</strong></td><td>${c.customerName}</td>
+        <td><small>${c.claimType.replace(/_/g,' ')}</small></td><td>${formatCurrency(c.claimAmount)}</td>
+        <td><button class="btn btn-primary btn-sm" onclick="go('admin-claims.html')"><i class="fas fa-search"></i> Review</button></td></tr>`).join('')
+                :'<tr><td colspan="5"><div class="empty-state" style="padding:24px"><i class="fas fa-check-circle"></i><p>No submitted claims</p></div></td></tr>';
+
+            const overdue=(pays.status==='fulfilled'?(pays.value.data||[]).filter(p=>p.status==='OVERDUE'):[]).slice(0,5);
+            const tb3=document.getElementById('tPayments');
+            tb3.innerHTML=overdue.length?overdue.map(p=>`
+        <tr style="background:#fff5f5"><td><small>${p.paymentReference}</small></td><td>${p.customerName}</td>
+        <td>${p.policyNumber}</td><td>${formatCurrency(p.amount)}</td>
+        <td style="color:red">${formatCurrency(p.penaltyAmount)}</td>
+        <td style="color:red;font-weight:bold">${formatDate(p.dueDate)}</td></tr>`).join('')
+                :'<tr><td colspan="6"><div class="empty-state" style="padding:24px"><i class="fas fa-check-circle"></i><p>No overdue payments</p></div></td></tr>';
+        } catch(e) { showAlert(e.message,'danger'); }
     }
 
-    async function downloadReport(type) {
-        window.open(`/api/admin/reports?format=${type}`, '_blank');
+    async function quickAction(id,action) {
+        const note=action==='REJECT'?prompt('Rejection reason (optional):')||'':'';
+        try {
+            await Api.patch('/api/v1/admin/policies/'+id+'/action',{action,note});
+            showAlert('Policy '+action.toLowerCase()+'d','success'); loadDashboard();
+        } catch(e) { showAlert(e.message,'danger'); }
     }
-
-    window.onload = loadAdminData;
 </script>
-<script src="../js/jquery-3.7.1.min.js"></script>
 </body>
 </html>
