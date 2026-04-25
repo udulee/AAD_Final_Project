@@ -207,7 +207,7 @@
 <body>
 <div class="layout">
 
-    <!-- ════ SIDEBAR ════ -->
+    <!-- SIDEBAR -->
     <aside class="sidebar">
         <div class="logo">
             <div class="logo-mark">
@@ -260,7 +260,7 @@
         </div>
     </aside>
 
-    <!-- ════ MAIN ════ -->
+    <!-- MAIN -->
     <div class="main">
         <div class="topbar">
             <div>
@@ -382,6 +382,9 @@
 <div class="toast" id="toast"></div>
 
 <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        doGetAll()
+    });
     const BASE = "http://localhost:8080/api/v1/vehicle";
     let vehicles = [], selectedIndex = -1, deleteTarget = null;
     const FIELDS = ["vehicleNumber","make","model","vehicleType","manufacturedYear","marketValue","engineNumber","chassisNumber","fuelType","usageType","customerId"];
@@ -516,18 +519,39 @@
     function doDeleteSelected(){if(selectedIndex<0){toast("Select a row to delete.","warn");return;}rowDel(selectedIndex);}
 
     async function confirmDeleteOne(){
-        if(deleteTarget===null)return;
-        const vNo=vehicles[deleteTarget].vehicleNumber;
-        closeModal("delModal");setStatus("loading","Deleting…");
-        try{
-            const res=await fetch(`${BASE}/delete/${encodeURIComponent(vNo)}`,{method:"DELETE"});
-            const json=await res.json();
-            if(res.ok){toast(`"${vNo}" deleted.`,"error");setStatus("ok","Deleted");doClear();await doGetAll();}
-            else{toast(`Delete failed: ${json.message}`,"error");setStatus("error","Failed");}
-        }catch(e){toast("Network error: "+e.message,"error");setStatus("error","Network error");}
-        finally{deleteTarget=null;}
-    }
+        if(deleteTarget === null) return;
 
+        const vNo = vehicles[deleteTarget].vehicleNumber;
+
+        closeModal("delModal");
+        setStatus("loading","Deleting…");
+
+        try{
+            const res = await fetch(`${BASE}/delete/${encodeURIComponent(vNo)}`,{
+                method:"DELETE"
+            });
+
+            const json = await res.json();
+
+            if(res.ok){
+                toast(`"${vNo}" deleted.`,"error");
+                setStatus("ok","Deleted");
+                doClear();
+                await doGetAll();
+            }
+            else{
+                toast(`Delete failed: ${json.message}`,"error");
+                setStatus("error","Failed");
+            }
+        }
+        catch(e){
+            toast("Network error: " + e.message,"error");
+            setStatus("error","Network error");
+        }
+        finally{
+            deleteTarget = null;
+        }
+    }
     function openResetModal(){openModal("resetModal");}
     async function confirmResetAll(){
         closeModal("resetModal");

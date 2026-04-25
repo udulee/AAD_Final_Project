@@ -12,50 +12,45 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor  // ✅ AuthServiceImpl style
+@RequiredArgsConstructor
 public class VehicleServiceImpl implements VehicleService {
 
-    private final VehicleRepository vehicleRepository;  // ✅ final fields
-    private final ModelMapper modelMapper;               // ✅ ModelMapper like AuthServiceImpl
+    private final VehicleRepository vehicleRepository;
+    private final ModelMapper modelMapper;
 
-    // ➕ Register Vehicle
     @Override
     public void registerVehicle(VehicleRequestDTO dto) {
-        if (vehicleRepository.findById(dto.getVehicleNumber()).isPresent()) {  // ✅ .isPresent() like AuthServiceImpl
-            throw new RuntimeException("Vehicle with this number is already registered.");  // ✅ RuntimeException like AuthServiceImpl
+        if (vehicleRepository.findById(dto.getVehicleNumber()).isPresent()) {  // .isPresent() like AuthServiceImpl
+            throw new RuntimeException("Vehicle with this number is already registered.");  // RuntimeException like AuthServiceImpl
         }
-        vehicleRepository.save(modelMapper.map(dto, Vehicle.class));  // ✅ modelMapper like AuthServiceImpl
+        vehicleRepository.save(modelMapper.map(dto, Vehicle.class));  // modelMapper like AuthServiceImpl
     }
 
-    // 📋 Get All Vehicles
     @Override
     public List<VehicleRequestDTO> getAllVehicles() {
         return vehicleRepository.findAll()
                 .stream()
-                .map((data) -> modelMapper.map(data, VehicleRequestDTO.class))  // ✅ modelMapper like AuthServiceImpl
+                .map((data) -> modelMapper.map(data, VehicleRequestDTO.class))  // modelMapper like AuthServiceImpl
                 .collect(Collectors.toList());
     }
 
-    // ✏️ Update Vehicle
     @Override
     public void updateVehicle(String vehicleNumber, VehicleRequestDTO dto) {
         Vehicle vehicle = vehicleRepository.findById(vehicleNumber)
-                .orElseThrow(() -> new RuntimeException("Vehicle not found: " + vehicleNumber));  // ✅ RuntimeException like AuthServiceImpl
+                .orElseThrow(() -> new RuntimeException("Vehicle not found: " + vehicleNumber));  // RuntimeException like AuthServiceImpl
 
-        modelMapper.map(dto, vehicle);  // ✅ map onto existing entity — preserves ID
+        modelMapper.map(dto, vehicle);  // map onto existing entity — preserves ID
         vehicleRepository.save(vehicle);
     }
 
-    // ❌ Delete Vehicle
     @Override
     public void deleteVehicle(String vehicleNumber) {
         if (!vehicleRepository.existsById(vehicleNumber)) {
-            throw new RuntimeException("Vehicle not found: " + vehicleNumber);  // ✅ RuntimeException
+            throw new RuntimeException("Vehicle not found: " + vehicleNumber);  // RuntimeException
         }
         vehicleRepository.deleteById(vehicleNumber);
     }
 
-    // 🔄 Reset All Vehicles
     @Override
     public void resetVehicles() {
         vehicleRepository.deleteAll();

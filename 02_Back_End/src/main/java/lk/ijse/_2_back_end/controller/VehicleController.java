@@ -12,13 +12,13 @@ import java.util.List;
 
 @RestController
 @RequestMapping("api/v1/vehicle")
-@CrossOrigin
-@RequiredArgsConstructor  // ✅ replaces @Autowired
+@CrossOrigin(origins = "http://localhost:63342")
+@RequiredArgsConstructor  // replaces @Autowired
 public class VehicleController {
 
-    private final VehicleService vehicleService;  // ✅ final + constructor injection
+    private final VehicleService vehicleService;  // final + constructor injection
 
-    // ➕ Register Vehicle
+    //  Register Vehicle
     @PostMapping("register")
     public ResponseEntity<APIResponse> registerVehicle(@RequestBody VehicleRequestDTO dto) {
         try {
@@ -31,7 +31,7 @@ public class VehicleController {
         }
     }
 
-    // 📋 Get All Vehicles
+    // Get All Vehicles
     @GetMapping("all")
     public ResponseEntity<APIResponse> getAllVehicles() {
         try {
@@ -43,7 +43,7 @@ public class VehicleController {
         }
     }
 
-    // ✏️ Update Vehicle
+    // Update Vehicle
     @PutMapping("update/{vehicleNumber}")
     public ResponseEntity<APIResponse> updateVehicle(
             @PathVariable String vehicleNumber,
@@ -57,7 +57,7 @@ public class VehicleController {
         }
     }
 
-    // ❌ Delete Vehicle
+    // Delete Vehicle
     @DeleteMapping("delete/{vehicleNumber}")
     public ResponseEntity<APIResponse> deleteVehicle(@PathVariable String vehicleNumber) {
         try {
@@ -69,7 +69,7 @@ public class VehicleController {
         }
     }
 
-    // 🔄 Reset All Vehicles
+    // Reset All Vehicles
     @DeleteMapping("reset")
     public ResponseEntity<APIResponse> resetVehicles() {
         try {

@@ -8,12 +8,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 public class VehicleRequestDTO {
-    // Basic Identification
+    //  Identification
     private String vehicleNumber;
     private String make;
     private String model;
 
-    // Premium Calculation Factors
+    // Premium Calculation
     private String vehicleType;
     private Integer manufacturedYear;
     private Double marketValue;
