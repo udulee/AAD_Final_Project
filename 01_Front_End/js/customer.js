@@ -1,5 +1,5 @@
 async function registerVehicle() {
-    // 1. LocalStorage eken token eka gannawa
+    // LocalStorage eken token eka gannawa
     const token = localStorage.getItem('token');
 
     if (!token) {
@@ -8,14 +8,14 @@ async function registerVehicle() {
         return;
     }
 
-    // 2. Form eken data gannawa
+    // Form eken data gannawa
     const vehicleData = {
         vehicleNo: document.getElementById('vehicleNo').value,
         vehicleType: document.getElementById('vehicleType').value
     };
 
     try {
-        // 3. Backend API ekata POST request ekak yawannawa
+        //Backend API ekata POST request ekak yawannawa
         const response = await fetch('/api/customer/vehicles', {
             method: 'POST',
             headers: {
