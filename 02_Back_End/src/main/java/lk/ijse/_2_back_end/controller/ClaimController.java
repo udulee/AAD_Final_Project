@@ -11,27 +11,28 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("api/v1/claim")   // ✅ no leading slash — AuthController style
+@RequestMapping("api/v1/claim")
 @CrossOrigin
-@RequiredArgsConstructor          // ✅ no @Autowired
+@RequiredArgsConstructor
 public class ClaimController {
 
-    private final ClaimService claimService;  // ✅ final field
+    private final ClaimService claimService;
 
-    // ➕ Register Claim
     @PostMapping("register")
-    public ResponseEntity<APIResponse> registerClaim(@RequestBody ClaimSubmissionRequest dto) {
+    public ResponseEntity<APIResponse> registerClaim(
+            @RequestBody ClaimSubmissionRequest dto) {
         try {
             claimService.registerClaim(dto);
             return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(new APIResponse(201, "Claim registered successfully", null));
+                    .body(new APIResponse(201,
+                            "Claim registered successfully. " +
+                                    "A notification email has been sent to the vehicle owner.", null));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
                     .body(new APIResponse(409, e.getMessage(), null));
         }
     }
 
-    // 📋 Get All Claims
     @GetMapping("all")
     public ResponseEntity<APIResponse> getAllClaims() {
         try {
@@ -43,32 +44,32 @@ public class ClaimController {
         }
     }
 
-    // 🔍 Get Claim By ID
     @GetMapping("{claimId}")
     public ResponseEntity<APIResponse> getClaimById(@PathVariable Long claimId) {
         try {
-            return ResponseEntity.ok(new APIResponse(200, "Success", claimService.getClaimById(claimId)));
+            return ResponseEntity.ok(new APIResponse(200, "Success",
+                    claimService.getClaimById(claimId)));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new APIResponse(404, e.getMessage(), null));
         }
     }
 
-    // ✏️ Update Claim
     @PutMapping("update/{claimId}")
     public ResponseEntity<APIResponse> updateClaim(
             @PathVariable Long claimId,
             @RequestBody ClaimSubmissionRequest dto) {
         try {
             claimService.updateClaim(claimId, dto);
-            return ResponseEntity.ok(new APIResponse(200, "Claim updated", null));
+            return ResponseEntity.ok(new APIResponse(200,
+                    "Claim updated. " +
+                            "If the status changed, a notification email has been sent.", null));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new APIResponse(404, e.getMessage(), null));
         }
     }
 
-    // ❌ Delete Claim
     @DeleteMapping("delete/{claimId}")
     public ResponseEntity<APIResponse> deleteClaim(@PathVariable Long claimId) {
         try {
@@ -80,7 +81,6 @@ public class ClaimController {
         }
     }
 
-    // 🔄 Reset All Claims
     @DeleteMapping("reset")
     public ResponseEntity<APIResponse> resetClaims() {
         try {

@@ -23,8 +23,7 @@ public class AuthController {
     @PostMapping("signin")
     public ResponseEntity<APIResponse> loginUser(@RequestBody AuthDTO authDTO) {
         return ResponseEntity.ok(new APIResponse(
-                200,"OK",authService.authenticate(authDTO)
-        ));
+                200, "OK", authService.authenticate(authDTO)));
     }
 }
 

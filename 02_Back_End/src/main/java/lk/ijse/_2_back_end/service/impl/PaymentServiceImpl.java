@@ -22,14 +22,12 @@ public class PaymentServiceImpl implements PaymentService {
 //    @Autowired
 //    private InsurancePolicyRepository insurancePolicyRepository;
 
-    // ── Register ──
     @Override
     public void registerPayment(PaymentRequest dto) {
         Payment payment = mapToEntity(dto);
         paymentRepository.save(payment);
     }
 
-    // ── Get All ──
     @Override
     @Transactional(readOnly = true)
     public List<PaymentRequest> getAllPayments() {
@@ -39,7 +37,6 @@ public class PaymentServiceImpl implements PaymentService {
                 .collect(Collectors.toList());
     }
 
-    // ── Get By ID ──
     @Override
     @Transactional(readOnly = true)
     public PaymentRequest getPaymentById(Long id) {
@@ -48,7 +45,6 @@ public class PaymentServiceImpl implements PaymentService {
         return mapToDTO(payment);
     }
 
-    // ── Update ──
     @Override
     public void updatePayment(Long id, PaymentRequest dto) {
         Payment existing = paymentRepository.findById(id)
@@ -70,7 +66,6 @@ public class PaymentServiceImpl implements PaymentService {
         paymentRepository.save(existing);
     }
 
-    // ── Delete ──
     @Override
     public void deletePayment(Long id) {
         if (!paymentRepository.existsById(id)) {
@@ -79,13 +74,11 @@ public class PaymentServiceImpl implements PaymentService {
         paymentRepository.deleteById(id);
     }
 
-    // ── Reset All ──
     @Override
     public void resetPayments() {
         paymentRepository.deleteAll();
     }
 
-    // ── DTO → Entity ──
     private Payment mapToEntity(PaymentRequest dto) {
         Payment payment = new Payment();
         payment.setAmount(dto.getAmount());

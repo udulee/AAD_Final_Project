@@ -33,11 +33,11 @@ public class SecurityConfig {
                         auth->auth
                                 .requestMatchers("/api/v1/auth/*","/test/*").permitAll()
                                 .requestMatchers("/api/v1/auth/login").permitAll()
-                                .requestMatchers("/api/v1/vehicle/*").authenticated()
-                                .anyRequest().authenticated())
+                                .requestMatchers("/api/v1/vehicle/*").permitAll()
+                                .anyRequest().permitAll())
                 .sessionManagement(
                         session->session.sessionCreationPolicy
-                                (SessionCreationPolicy.STATELESS)) //stateless kiynne eka krl iwr unm eka ain wenaw wge ekk eka aln inne n
+                                (SessionCreationPolicy.STATELESS)) //stateless kiynne eka krl iwr unm eka ain wenaw wge ekk eka aln inne na
                 .authenticationProvider(authenticateProvider())
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();

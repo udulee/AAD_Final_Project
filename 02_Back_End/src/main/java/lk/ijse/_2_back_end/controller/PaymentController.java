@@ -17,7 +17,6 @@ public class PaymentController {
     @Autowired
     private PaymentService paymentService;
 
-    // POST /api/v1/payments
     @PostMapping
     public ResponseEntity<?> registerPayment(@RequestBody PaymentRequest dto) {
         try {
@@ -28,7 +27,6 @@ public class PaymentController {
         }
     }
 
-    // GET /api/v1/payments
     @GetMapping
     public ResponseEntity<?> getAllPayments() {
         try {
@@ -39,7 +37,6 @@ public class PaymentController {
         }
     }
 
-    // GET /api/v1/payments/{id}
     @GetMapping("/{id}")
     public ResponseEntity<?> getPaymentById(@PathVariable Long id) {
         try {
@@ -49,7 +46,6 @@ public class PaymentController {
         }
     }
 
-    // PUT /api/v1/payments/{id}
     @PutMapping("/{id}")
     public ResponseEntity<?> updatePayment(@PathVariable Long id, @RequestBody PaymentRequest dto) {
         try {
@@ -60,7 +56,6 @@ public class PaymentController {
         }
     }
 
-    // DELETE /api/v1/payments/{id}
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deletePayment(@PathVariable Long id) {
         try {
@@ -71,7 +66,6 @@ public class PaymentController {
         }
     }
 
-    // DELETE /api/v1/payments/reset
     @DeleteMapping("/reset")
     public ResponseEntity<?> resetPayments() {
         try {

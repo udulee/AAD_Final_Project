@@ -10,7 +10,7 @@ public interface ClaimService {
 
     List<ClaimSubmissionRequest> getAllClaims();
 
-    // 🔍 Get Claim By ID
+    // Get Claim By ID
     ClaimSubmissionRequest getClaimById(Long claimId);
 
     void updateClaim(Long claimId, ClaimSubmissionRequest dto);

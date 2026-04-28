@@ -7,7 +7,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/policies")
@@ -17,8 +19,8 @@ public class PolicyController {
     @Autowired
     private PolicyService policyService;
 
-    // POST /api/v1/policies
-    @PostMapping
+    //  CREATE
+    @PostMapping("/save")
     public ResponseEntity<?> registerPolicy(@RequestBody PolicyDTO dto) {
         try {
             policyService.registerPolicy(dto);
@@ -28,7 +30,7 @@ public class PolicyController {
         }
     }
 
-    // GET /api/v1/policies
+    // READ ALL
     @GetMapping
     public ResponseEntity<?> getAllPolicies() {
         try {
@@ -39,17 +41,18 @@ public class PolicyController {
         }
     }
 
-    // GET /api/v1/policies/{id}
+    // READ BY ID
     @GetMapping("/{id}")
-    public ResponseEntity<?> getPolicyById(@PathVariable Long id) {
-        try {
-            return ResponseEntity.ok(policyService.getPolicyById(id));
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
+    public void getPolicyById(@PathVariable Long id) {
+        policyService.getPolicyById();
+//        try {
+//            return ResponseEntity.ok(policyService.getPolicyById());
+//        } catch (RuntimeException e) {
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+//        }
     }
 
-    // PUT /api/v1/policies/{id}
+    //  UPDATE
     @PutMapping("/{id}")
     public ResponseEntity<?> updatePolicy(@PathVariable Long id, @RequestBody PolicyDTO dto) {
         try {
@@ -60,7 +63,7 @@ public class PolicyController {
         }
     }
 
-    // DELETE /api/v1/policies/{id}
+    //  DELETE
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deletePolicy(@PathVariable Long id) {
         try {
@@ -71,13 +74,31 @@ public class PolicyController {
         }
     }
 
-    // DELETE /api/v1/policies/reset
+    // ✅ RESET
     @DeleteMapping("/reset")
     public ResponseEntity<?> resetPolicies() {
         try {
             policyService.resetPolicies();
             return ResponseEntity.ok("All policies reset successfully!");
         } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+    // 🔥 NEW DASHBOARD API (IMPORTANT)
+    @GetMapping("/dashboard")
+    public ResponseEntity<?> getDashboard() {
+        try {
+//            Map<String, > data = new HashMap<>();
+//
+//            data.put("totalRevenue", policyService.getPolicyById());
+//            data.put("totalPolicies", policyService.getTotalPolicies());
+//            data.put("activePolicies", policyService.getActivePolicies());
+//            data.put("suspendedPolicies", policyService.getSuspendedPolicies());
+
+          //  return ResponseEntity.ok(data);
+return null;
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }

@@ -8,8 +8,9 @@ import lk.ijse._2_back_end.repository.ClaimRepository;
 import lk.ijse._2_back_end.repository.UserRepository;
 import lk.ijse._2_back_end.repository.VehicleRepository;
 import lk.ijse._2_back_end.service.ClaimService;
+import lk.ijse._2_back_end.service.EmailService;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,44 +18,84 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor  // ✅ UserServiceImpl style
+@RequiredArgsConstructor
 @Transactional
+@Slf4j
 public class ClaimServiceImpl implements ClaimService {
 
-    private final ClaimRepository claimRepository;      // ✅ all final — no @Autowired
+    private final ClaimRepository   claimRepository;
     private final VehicleRepository vehicleRepository;
-    private final UserRepository userRepository;
-    private final ModelMapper modelMapper;              // ✅ inject like UserServiceImpl
+    private final UserRepository    userRepository;
+    private final EmailService      emailService;   // injected
 
-    // ➕ Register Claim
+    // Register
     @Override
     public void registerClaim(ClaimSubmissionRequest dto) {
-        claimRepository.save(mapToEntity(dto));
+
+        Claim claim = new Claim();
+        claim.setClaimDate(dto.getClaimDate());
+        claim.setClaimStatus(dto.getClaimStatus());
+        claim.setClaimAmount(dto.getClaimAmount());
+        claim.setIncidentDate(dto.getIncidentDate());
+        claim.setIncidentLocation(dto.getIncidentLocation());
+        claim.setDescription(dto.getDescription());
+        claim.setDocumentPath(dto.getDocumentPath());
+        claim.setApprovedDate(dto.getApprovedDate());
+
+        Vehicle vehicle = null;
+        if (dto.getVehicleNumber() != null) {
+            vehicle = vehicleRepository.findById(dto.getVehicleNumber())
+                    .orElseThrow(() -> new RuntimeException(
+                            "Vehicle not found: " + dto.getVehicleNumber()));
+            claim.setVehicle(vehicle);
+        }
+
+        if (dto.getApprovedBy() != null) {
+            User user = userRepository.findById(dto.getApprovedBy())
+                    .orElseThrow(() -> new RuntimeException(
+                            "User not found with ID: " + dto.getApprovedBy()));
+            claim.setApprovedBy(user);
+        }
+
+        Claim saved = claimRepository.save(claim);
+
+        // Send email to vehicle owner
+        if (vehicle != null && vehicle.getUser() != null) {
+            User owner = vehicle.getUser();
+            tryEmail(owner, saved.getClaimId(), saved.getClaimStatus(),
+                    "registered", dto.getVehicleNumber());
+        }
     }
 
-    // 📋 Get All Claims
+    // Get All
     @Override
     @Transactional(readOnly = true)
     public List<ClaimSubmissionRequest> getAllClaims() {
         return claimRepository.findAll()
                 .stream()
-                .map((data) -> mapToDTO(data))          // ✅ UserServiceImpl stream style
+                .map(this::mapToDTO)
                 .collect(Collectors.toList());
     }
 
-    // 🔍 Get Claim By ID
+    // Get By ID
     @Override
+    @Transactional(readOnly = true)
     public ClaimSubmissionRequest getClaimById(Long claimId) {
         Claim claim = claimRepository.findById(claimId)
-                .orElseThrow(() -> new RuntimeException("Claim not found with ID: " + claimId));
+                .orElseThrow(() -> new RuntimeException(
+                        "Claim not found with ID: " + claimId));
         return mapToDTO(claim);
     }
 
-    // ✏️ Update Claim
+    // Update
     @Override
     public void updateClaim(Long claimId, ClaimSubmissionRequest dto) {
+
         Claim existing = claimRepository.findById(claimId)
-                .orElseThrow(() -> new RuntimeException("Claim not found with ID: " + claimId));
+                .orElseThrow(() -> new RuntimeException(
+                        "Claim not found with ID: " + claimId));
+
+        String oldStatus = existing.getClaimStatus();   // track status change
 
         existing.setClaimDate(dto.getClaimDate());
         existing.setClaimStatus(dto.getClaimStatus());
@@ -66,67 +107,70 @@ public class ClaimServiceImpl implements ClaimService {
         existing.setApprovedDate(dto.getApprovedDate());
 
         // Update vehicle FK
-        existing.setVehicle(dto.getVehicleNumber() != null
-                ? vehicleRepository.findById(dto.getVehicleNumber())
-                .orElseThrow(() -> new RuntimeException("Vehicle not found: " + dto.getVehicleNumber()))
-                : null);
+        Vehicle vehicle = null;
+        if (dto.getVehicleNumber() != null) {
+            vehicle = vehicleRepository.findById(dto.getVehicleNumber())
+                    .orElseThrow(() -> new RuntimeException(
+                            "Vehicle not found: " + dto.getVehicleNumber()));
+        }
+        existing.setVehicle(vehicle);
 
         // Update approvedBy FK
         existing.setApprovedBy(dto.getApprovedBy() != null
                 ? userRepository.findById(dto.getApprovedBy())
-                .orElseThrow(() -> new RuntimeException("User not found with ID: " + dto.getApprovedBy()))
+                .orElseThrow(() -> new RuntimeException(
+                        "User not found with ID: " + dto.getApprovedBy()))
                 : null);
 
         claimRepository.save(existing);
+
+        // Email owner only when status actually changed
+        boolean statusChanged = dto.getClaimStatus() != null
+                && !dto.getClaimStatus().equals(oldStatus);
+
+        if (statusChanged && vehicle != null && vehicle.getUser() != null) {
+            tryEmail(vehicle.getUser(), claimId,
+                    dto.getClaimStatus(), "updated", dto.getVehicleNumber());
+        }
     }
 
-    // ❌ Delete Claim
+    // Delete
     @Override
     public void deleteClaim(Long claimId) {
-        if (!claimRepository.existsById(claimId)) {
+        if (!claimRepository.existsById(claimId))
             throw new RuntimeException("Claim not found with ID: " + claimId);
-        }
         claimRepository.deleteById(claimId);
     }
 
-    // 🔄 Reset All Claims
+    // Reset
     @Override
     public void resetClaims() {
         claimRepository.deleteAll();
     }
 
-    // ── Mapping Helpers ──────────────────────────────────────────────────────
-    // ⚠️ ModelMapper.map() cannot resolve FK relationships (Vehicle → vehicleNumber, User → userId)
-    //    because DTO holds IDs but entity holds full objects — manual mapping is intentional here
+    // Private helpers
 
-    private Claim mapToEntity(ClaimSubmissionRequest dto) {
-        Claim claim = new Claim();
-        claim.setClaimDate(dto.getClaimDate());
-        claim.setClaimStatus(dto.getClaimStatus());
-        claim.setClaimAmount(dto.getClaimAmount());
-        claim.setIncidentDate(dto.getIncidentDate());
-        claim.setIncidentLocation(dto.getIncidentLocation());
-        claim.setDescription(dto.getDescription());
-        claim.setDocumentPath(dto.getDocumentPath());
-        claim.setApprovedDate(dto.getApprovedDate());
+    /* Fire-and-forget email; never lets an SMTP failure bubble up. */
+    private void tryEmail(User owner, Long claimId,
+                          String status, String action, String vehicleNo) {
+        try {
+            String email    = owner.getEmail();
+            String fullName = owner.getFullName() != null
+                    ? owner.getFullName() : owner.getUsername();
 
-        // Resolve Vehicle FK
-        if (dto.getVehicleNumber() != null) {
-            Vehicle vehicle = vehicleRepository.findById(dto.getVehicleNumber())
-                    .orElseThrow(() -> new RuntimeException("Vehicle not found: " + dto.getVehicleNumber()));
-            claim.setVehicle(vehicle);
+            if (email == null || email.isBlank()) {
+                log.warn("Owner of vehicle {} has no email — skipping notification", vehicleNo);
+                return;
+            }
+            emailService.sendClaimStatusEmail(email, fullName, status, claimId);
+            log.info("Claim {} email ({}) sent to {} for claim #{}",
+                    action, status, email, claimId);
+        } catch (Exception ex) {
+            log.error("Email notification failed for claim #{}: {}", claimId, ex.getMessage());
         }
-
-        // Resolve approvedBy FK
-        if (dto.getApprovedBy() != null) {
-            User user = userRepository.findById(dto.getApprovedBy())
-                    .orElseThrow(() -> new RuntimeException("User not found with ID: " + dto.getApprovedBy()));
-            claim.setApprovedBy(user);
-        }
-
-        return claim;
     }
 
+    /* Maps a Claim entity → DTO, flattening FK references. */
     private ClaimSubmissionRequest mapToDTO(Claim claim) {
         ClaimSubmissionRequest dto = new ClaimSubmissionRequest();
         dto.setClaimId(claim.getClaimId());
@@ -139,9 +183,17 @@ public class ClaimServiceImpl implements ClaimService {
         dto.setDocumentPath(claim.getDocumentPath());
         dto.setApprovedDate(claim.getApprovedDate());
 
-        // Flatten FKs to IDs
-        if (claim.getVehicle() != null)
+        if (claim.getVehicle() != null) {
             dto.setVehicleNumber(claim.getVehicle().getVehicleNumber());
+
+            // Expose owner contact for UI display
+            if (claim.getVehicle().getOwnerId() != null) {
+                User owner = claim.getVehicle().getUser();
+                dto.setOwnerEmail(owner.getEmail());
+                dto.setOwnerName(owner.getFullName() != null
+                        ? owner.getFullName() : owner.getUsername());
+            }
+        }
 
         if (claim.getApprovedBy() != null)
             dto.setApprovedBy(claim.getApprovedBy().getUserId());

@@ -23,7 +23,6 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     private final ModelMapper modelMapper;
     private final LazyInitializationExcludeFilter eagerJpaMetamodelCacheCleanup;
 
-    // 🔐 Spring Security login
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
@@ -37,13 +36,11 @@ public class UserServiceImpl implements UserDetailsService, UserService {
                 .build();
     }
 
-    // ➕ Create User
     @Override
     public void createUser(UserDTO dto) {
         userRepository.save(modelMapper.map(dto,User.class));
     }
 
-    // 📋 Get All Users
     @Override
     public List<UserDTO> getAllUsers() {
         return userRepository.findAll()
@@ -52,7 +49,6 @@ public class UserServiceImpl implements UserDetailsService, UserService {
                 .collect(Collectors.toList());
     }
 
-    // 🔍 Get User By ID
     @Override
     public UserDTO getUserById(Long userId) {
 
@@ -62,7 +58,6 @@ public class UserServiceImpl implements UserDetailsService, UserService {
         return modelMapper.map(user,UserDTO.class);
     }
 
-    // ✏️ Update User
     @Override
     public void updateUser(Long userId, UserDTO dto) {
 
@@ -72,7 +67,6 @@ public class UserServiceImpl implements UserDetailsService, UserService {
         userRepository.save(modelMapper.map( dto,User.class));
     }
 
-    // ❌ Delete User
     @Override
     public void deleteUser(Long userId) {
 

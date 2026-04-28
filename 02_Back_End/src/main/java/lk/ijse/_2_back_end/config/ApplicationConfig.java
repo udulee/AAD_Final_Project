@@ -1,5 +1,6 @@
 package lk.ijse._2_back_end.config;
 
+import lk.ijse._2_back_end.entity.User;
 import lk.ijse._2_back_end.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -15,17 +16,27 @@ import java.util.List;
 @Configuration
 @RequiredArgsConstructor
 public class ApplicationConfig {
+
     private final UserRepository userRepository;
 
     @Bean
     public UserDetailsService userDetailsService() {
+
         return username -> userRepository.findByUsername(username)
-                .map(user -> new org.springframework.security.core.userdetails.User(
-                        user.getUsername(),
-                        user.getPassword(),
-                        List.of(new SimpleGrantedAuthority("ROLE_"+user.getRole().name()))
-                )).orElseThrow(
-                        ()->new UsernameNotFoundException("user name not found")
+                .map(user -> {
+
+                    String roleName = (user.getRole() != null)
+                            ? user.getRole().name()
+                            : "USER";
+
+                    return new org.springframework.security.core.userdetails.User(
+                            user.getUsername(),
+                            user.getPassword(),
+                            List.of(new SimpleGrantedAuthority("ROLE_" + roleName))
+                    );
+                })
+                .orElseThrow(() ->
+                        new UsernameNotFoundException("Username not found: " + username)
                 );
     }
 

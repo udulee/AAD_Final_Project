@@ -17,14 +17,14 @@ import java.util.List;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long userId;  // ← id → userId (ClaimServiceImpl match කරන්න)
+    private Long userId;  // id /userId
 
     @Column(unique = true, nullable = false)
     private String username;
     private String password;
     private String fullName;
     private String email;
-    private  Role role; // ← "ADMIN" / "CUSTOMER" කියලා වෙන් කරන්න
+    private  Role role; // ← "ADMIN" / "CUSTOMER"
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     List<Vehicle> vehicleList;

@@ -17,7 +17,6 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    // POST /api/v1/users
     @PostMapping
     public ResponseEntity<?> createUser(@RequestBody UserDTO dto) {
         try {
@@ -30,7 +29,6 @@ public class UserController {
         }
     }
 
-    // GET /api/v1/users
     @GetMapping
     public ResponseEntity<?> getAllUsers() {
         try {
@@ -42,7 +40,6 @@ public class UserController {
         }
     }
 
-    // GET /api/v1/users/{id}
     @GetMapping("/{id}")
     public ResponseEntity<?> getUserById(@PathVariable Long id) {
         try {
@@ -54,7 +51,6 @@ public class UserController {
         }
     }
 
-    // PUT /api/v1/users/{id}
     @PutMapping("/{id}")
     public ResponseEntity<?> updateUser(@PathVariable Long id,
                                         @RequestBody UserDTO dto) {
@@ -67,7 +63,6 @@ public class UserController {
         }
     }
 
-    // DELETE /api/v1/users/{id}
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteUser(@PathVariable Long id) {
         try {

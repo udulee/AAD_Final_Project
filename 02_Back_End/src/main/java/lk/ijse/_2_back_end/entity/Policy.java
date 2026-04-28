@@ -33,7 +33,7 @@ public class Policy {
     private LocalDate createdDate;
     private LocalDate updatedDate;
 
-    // 🔗 Relationships
+    // Relationships
     @ManyToOne
     @JoinColumn(name = "vehicle_id")
     private Vehicle vehicle;

@@ -1,40 +1,37 @@
 package lk.ijse._2_back_end.controller;
 
+import lk.ijse._2_back_end.dto.ReportDTO;
+import lk.ijse._2_back_end.service.PdfService;
 import lk.ijse._2_back_end.service.ReportService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.*;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/reports")
+@RequestMapping("/api/v1/report")
+@CrossOrigin
 @RequiredArgsConstructor
 public class ReportController {
 
     private final ReportService reportService;
+    private final PdfService pdfService;
 
-    // Total policies
-    @GetMapping("/total-policies")
-    public ResponseEntity<?> getTotalPolicies() {
-        return ResponseEntity.ok(reportService.getTotalPolicies());
+    // GET /api/v1/report dashboard data
+    @GetMapping
+    public ResponseEntity<ReportDTO> getReport() {
+        return ResponseEntity.ok(reportService.generateReport());
     }
 
-    // Active vs Suspended
-    @GetMapping("/policy-status")
-    public ResponseEntity<?> getPolicyStatus() {
-        return ResponseEntity.ok(reportService.getPolicyStatus());
-    }
+    // GET /api/v1/report/download PDF
+    @GetMapping("/pdf")
+    public ResponseEntity<byte[]> downloadPdf() {
+        ReportDTO report   = reportService.generateReport();
+        byte[]    pdfBytes = pdfService.generateReportPdf(report);
 
-    // Total revenue
-    @GetMapping("/revenue")
-    public ResponseEntity<?> getRevenue() {
-        return ResponseEntity.ok(reportService.getTotalRevenue());
-    }
-
-    // Claims report
-    @GetMapping("/claims")
-    public ResponseEntity<?> getClaimsReport() {
-        return ResponseEntity.ok(reportService.getClaimsReport());
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION,
+                        "attachment; filename=VIMS_Report.pdf")
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(pdfBytes);
     }
 }

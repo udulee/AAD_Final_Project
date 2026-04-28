@@ -25,7 +25,11 @@ public class ClaimSubmissionRequest {
 
     private LocalDate approvedDate;
 
-    // Foreign key references (IDs only — not full objects)
+    // Foreign key references
     private String vehicleNumber;   // Vehicle FK
     private Long approvedBy;        // User FK (userId)
+
+    // ── Read-only: populated by mapToDTO, never sent by client ──
+    private String ownerEmail;      // Vehicle owner's email  (for display)
+    private String ownerName;       // Vehicle owner's name   (for display)
 }
