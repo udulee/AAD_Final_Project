@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="si">
+<html lang="en">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -162,7 +162,7 @@
 <div class="header">
     <div class="shield">🛡️</div>
     <h1>VIMS Premium Calculator</h1>
-    <p>ඔබගේ වාහනයේ රක්ෂණ වාරිකය ගණනය කරන්න</p>
+    <p>Calculate your vehicle insurance premium instantly</p>
 </div>
 
 <div class="container">
@@ -170,7 +170,7 @@
     <!-- 1. Vehicle Value -->
     <div class="section-card">
         <div class="section-title">1. Vehicle Value</div>
-        <div class="section-subtitle">වාහනයේ වර්තමාන වෙළඳපළ මිල (LKR)</div>
+        <div class="section-subtitle">Current market value of the vehicle (LKR)</div>
         <div class="input-wrap">
             <span class="lkr-label">LKR</span>
             <input type="text" id="vehicleValue" class="value-input" placeholder="0" oninput="formatValue(this)" />
@@ -180,7 +180,7 @@
     <!-- 2. Vehicle Type -->
     <div class="section-card">
         <div class="section-title">2. Vehicle Type</div>
-        <div class="section-subtitle">වාහනයේ වර්ගය තෝරන්න</div>
+        <div class="section-subtitle">Select the type of vehicle</div>
         <div class="vehicle-grid" id="vehicleGrid">
             <button class="vehicle-btn" data-id="car" data-rate="0.04" onclick="selectVehicle(this)">
                 <div class="v-icon">🚗</div>
@@ -218,7 +218,7 @@
     <!-- 3. Vehicle Age -->
     <div class="section-card">
         <div class="section-title">3. Vehicle Age</div>
-        <div class="section-subtitle" id="ageSubtitle">වාහනයේ වයස: 3 වසර — Recent</div>
+        <div class="section-subtitle" id="ageSubtitle">Vehicle age: 3 years — Recent</div>
         <div style="padding: 8px 0">
             <input type="range" min="0" max="25" value="3" class="age-slider" id="ageSlider" oninput="updateAge(this.value)" />
             <div class="age-marks">
@@ -234,7 +234,7 @@
     <!-- 4. Risk Level -->
     <div class="section-card">
         <div class="section-title">4. Risk Level</div>
-        <div class="section-subtitle">රියදුරා හා ප්‍රදේශය අනුව අවදානම් මට්ටම</div>
+        <div class="section-subtitle">Risk level based on driver profile and area</div>
         <div class="risk-grid">
             <button class="risk-btn" data-id="low" data-mult="0.85" data-color="#22c55e" onclick="selectRisk(this)">
                 <div class="r-icon">🟢</div>
@@ -257,7 +257,7 @@
 
     <!-- Calculate Button -->
     <button class="calc-btn" id="calcBtn" onclick="calculatePremium()">
-        💰 Premium ගණනය කරන්න
+        💰 Calculate Premium
     </button>
 
     <!-- Results -->
@@ -270,24 +270,24 @@
         <div class="breakdown-row">
             <div>
                 <div class="row-label" id="resAgeLabel">Age Multiplier</div>
-                <div class="row-sub">වයස් ආරෝපණය</div>
+                <div class="row-sub">Age surcharge applied</div>
             </div>
             <div class="row-value" id="resAfterAge">—</div>
         </div>
         <div class="breakdown-row">
             <div>
                 <div class="row-label" id="resRiskLabel">Risk Multiplier</div>
-                <div class="row-sub">අවදානම් ආරෝපණය</div>
+                <div class="row-sub">Risk surcharge applied</div>
             </div>
             <div class="row-value" id="resFinal">—</div>
         </div>
         <div class="divider"></div>
         <div class="final-box">
-            <div class="annual-label">වාර්ෂික රක්ෂණ වාරිකය (Annual Premium)</div>
+            <div class="annual-label">Annual Insurance Premium</div>
             <div class="annual-amount" id="resAnnual">LKR 0</div>
             <div class="monthly-label">Monthly: <strong id="resMonthly">LKR 0</strong> / month</div>
         </div>
-        <p class="disclaimer">* මෙය estimate එකක් පමණයි. Final premium ඔබේ VIMS system හරහා confirm කරන්න.</p>
+        <p class="disclaimer">* This is an estimate only. Please confirm the final premium through your.</p>
     </div>
 
 </div>
@@ -343,7 +343,7 @@
         const surcharge = Math.round((mult - 1) * 100);
 
         document.getElementById('ageSubtitle').textContent =
-            `වාහනයේ වයස: ${vehicleAgeVal} වසර — ${info.label}`;
+            `Vehicle age: ${vehicleAgeVal} year(s) — ${info.label}`;
 
         const badge = document.getElementById('ageBadge');
         badge.style.background = info.color + '18';

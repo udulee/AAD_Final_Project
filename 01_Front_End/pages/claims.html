@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>VIMS — Claims</title>
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet"/>
-    <link rel="stylesheet" href="../css/style.css">
     <style>
         *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
         :root{
@@ -17,7 +16,7 @@
             --amber:#f5a623;--amber-dim:#3d2a06;
             --red:#ff4f6b;--red-dim:#3d0f18;
             --purple:#a78bfa;--purple-dim:#2d1f5e;
-            --orange:#ff7849;--cyan:#22d3ee;
+            --teal:#2dd4bf;--teal-dim:#0d3330;
             --r:12px;--r2:8px;--sidebar:220px;
             --font-head:'Syne',sans-serif;--font-body:'DM Sans',sans-serif;
         }
@@ -25,7 +24,7 @@
         ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:99px}
         .layout{display:flex;min-height:100vh}
 
-        /* ── Sidebar ── */
+        /* Sidebar */
         .sidebar{width:var(--sidebar);background:var(--panel);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:20px 12px;position:fixed;top:0;left:0;bottom:0;z-index:20;overflow-y:auto}
         .logo{display:flex;align-items:center;gap:10px;padding:4px 8px 20px;border-bottom:1px solid var(--border);margin-bottom:16px}
         .logo-mark{width:32px;height:32px;background:linear-gradient(135deg,var(--blue),var(--purple));border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 0 16px rgba(79,142,255,.35)}
@@ -47,14 +46,14 @@
         .logout-btn:hover{background:var(--red-dim);color:var(--red)}
         .logout-btn svg{width:13px;height:13px}
 
-        /* ── Main ── */
+        /* Main */
         .main{margin-left:var(--sidebar);flex:1;display:flex;flex-direction:column}
         .topbar{background:var(--panel);border-bottom:1px solid var(--border);padding:14px 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
         .page-title{font-family:var(--font-head);font-size:16px;font-weight:700}
         .topbar-right{display:flex;gap:8px;align-items:center}
         .content{padding:24px 28px}
 
-        /* ── Buttons ── */
+        /* Buttons */
         .btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:var(--r2);font-family:var(--font-body);font-size:13px;font-weight:500;cursor:pointer;border:none;transition:all .15s;white-space:nowrap}
         .btn svg{width:13px;height:13px;flex-shrink:0}
         .btn:disabled{opacity:.35;cursor:not-allowed}
@@ -69,30 +68,33 @@
         .act-del{background:var(--red-dim);color:var(--red)}.act-del:hover{background:rgba(255,79,107,.2)}
         .sep{width:1px;height:24px;background:var(--border2);margin:0 2px;flex-shrink:0}
 
-        /* ── Stats ── */
+        /* Stats */
         .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px}
-        .stat-card{background:var(--panel);border:1px solid var(--border);border-radius:var(--r);padding:18px 20px;position:relative;overflow:hidden;transition:transform .15s}
+        .stat-card{background:var(--panel);border:1px solid var(--border);border-radius:var(--r);padding:18px 20px;position:relative;overflow:hidden;transition:transform .15s;animation:fadeIn .3s ease both}
         .stat-card:hover{transform:translateY(-2px)}
         .sc-icon{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;margin-bottom:12px}
         .sc-icon svg{width:17px;height:17px}
-        .sc-blue .sc-icon{background:var(--blue-dim);color:var(--blue)}
-        .sc-amber .sc-icon{background:var(--amber-dim);color:var(--amber)}
-        .sc-green .sc-icon{background:var(--green-dim);color:var(--green)}
-        .sc-red .sc-icon{background:var(--red-dim);color:var(--red)}
+        .sc-blue .sc-icon{background:var(--blue-dim);color:var(--blue)}.sc-amber .sc-icon{background:var(--amber-dim);color:var(--amber)}.sc-green .sc-icon{background:var(--green-dim);color:var(--green)}.sc-red .sc-icon{background:var(--red-dim);color:var(--red)}
         .sc-label{font-size:11px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
         .sc-value{font-family:var(--font-head);font-size:28px;font-weight:700;line-height:1}
         .sc-blue .sc-value{color:var(--blue)}.sc-amber .sc-value{color:var(--amber)}.sc-green .sc-value{color:var(--green)}.sc-red .sc-value{color:var(--red)}
         .sc-glow{position:absolute;top:-18px;right:-18px;width:80px;height:80px;border-radius:50%;filter:blur(28px);opacity:.12;pointer-events:none}
         .sc-blue .sc-glow{background:var(--blue)}.sc-amber .sc-glow{background:var(--amber)}.sc-green .sc-glow{background:var(--green)}.sc-red .sc-glow{background:var(--red)}
+        .stat-card:nth-child(1){animation-delay:.05s}.stat-card:nth-child(2){animation-delay:.1s}.stat-card:nth-child(3){animation-delay:.15s}.stat-card:nth-child(4){animation-delay:.2s}
 
-        /* ── Form Card ── */
-        .form-card{background:var(--panel);border:1px solid var(--border);border-radius:var(--r);padding:22px;margin-bottom:22px}
+        /* Email info banner — shown when a row is selected */
+        .email-banner{display:none;align-items:center;gap:10px;background:var(--teal-dim);border:1px solid rgba(45,212,191,.2);border-radius:var(--r2);padding:10px 14px;margin-bottom:14px;font-size:12px;color:var(--teal)}
+        .email-banner.visible{display:flex}
+        .email-banner svg{width:14px;height:14px;flex-shrink:0}
+        .email-banner strong{color:#fff}
+
+        /* Form */
+        .form-card{background:var(--panel);border:1px solid var(--border);border-radius:var(--r);padding:22px;margin-bottom:22px;animation:fadeIn .3s ease .22s both}
         .form-card-title{font-family:var(--font-head);font-size:13px;font-weight:700;margin-bottom:18px;display:flex;align-items:center;gap:8px;color:var(--blue)}
         .form-card-title::before{content:'';width:8px;height:8px;border-radius:50%;background:var(--blue);display:inline-block;flex-shrink:0}
         .form-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:12px}
         .fg{display:flex;flex-direction:column;gap:5px}
         .fg.span2{grid-column:span 2}
-        .fg.span3{grid-column:span 3}
         .fg label{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
         .fg input,.fg select,.fg textarea{padding:9px 12px;border:1px solid var(--border2);border-radius:var(--r2);background:var(--panel2);font-family:var(--font-body);font-size:13px;color:var(--text);outline:none;transition:border-color .15s;width:100%}
         .fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--blue)}
@@ -101,15 +103,13 @@
         .fg textarea{resize:vertical;min-height:72px}
         .fg input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(.5)}
         .form-actions{margin-top:18px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-
-        /* Status dot */
         .status-pill{display:flex;align-items:center;gap:6px;margin-left:auto;font-size:11px;color:var(--muted)}
         .dot{width:7px;height:7px;border-radius:50%;background:var(--muted);flex-shrink:0}
         .dot.ok{background:var(--green)}.dot.err{background:var(--red)}.dot.loading{background:var(--amber);animation:blink .8s infinite}
         @keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
 
-        /* ── Table ── */
-        .table-card{background:var(--panel);border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
+        /* Table */
+        .table-card{background:var(--panel);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;animation:fadeIn .3s ease .3s both}
         .table-header{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--border)}
         .table-title{font-family:var(--font-head);font-size:14px;font-weight:700}
         .tbl-count{font-size:11px;background:var(--blue-dim);color:var(--blue);padding:2px 8px;border-radius:99px;font-weight:700}
@@ -124,22 +124,22 @@
         td{padding:11px 14px;font-size:13px;vertical-align:middle;white-space:nowrap}
         .cid{font-family:var(--font-head);font-weight:700;color:var(--blue)}
         .action-btns{display:flex;gap:5px}
-
-        /* Status badges */
         .status-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:5px;font-size:11px;font-weight:600}
         .status-badge::before{content:'';width:5px;height:5px;border-radius:50%;flex-shrink:0}
         .s-pending{background:rgba(245,166,35,.12);color:var(--amber)}.s-pending::before{background:var(--amber)}
         .s-approved{background:rgba(46,204,139,.12);color:var(--green)}.s-approved::before{background:var(--green)}
         .s-rejected{background:rgba(255,79,107,.12);color:var(--red)}.s-rejected::before{background:var(--red)}
         .s-paid{background:rgba(79,142,255,.12);color:var(--blue)}.s-paid::before{background:var(--blue)}
-
         .veh-chip{background:var(--panel2);color:var(--soft);padding:2px 8px;border-radius:5px;font-size:11px;font-weight:600;font-family:var(--font-head)}
-
+        /* ── NEW: email chip in table ── */
+        .email-chip{display:inline-flex;align-items:center;gap:4px;background:var(--teal-dim);color:var(--teal);padding:2px 8px;border-radius:5px;font-size:10px;font-weight:500;max-width:160px;overflow:hidden;text-overflow:ellipsis}
+        .email-chip svg{width:10px;height:10px;flex-shrink:0}
+        .no-email{color:var(--muted);font-size:11px}
         .empty-row{text-align:center;padding:52px 20px;color:var(--muted)}
         .empty-row svg{width:36px;height:36px;margin:0 auto 10px;display:block;opacity:.2}
         .empty-row p{font-size:13px}
 
-        /* ── Modals ── */
+        /* Modals */
         .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);z-index:100;align-items:center;justify-content:center;padding:20px}
         .overlay.open{display:flex}
         .modal{background:var(--panel);border:1px solid var(--border2);border-radius:16px;width:100%;max-width:380px;animation:slideUp .2s ease}
@@ -155,28 +155,19 @@
         .confirm-title{font-family:var(--font-head);font-size:15px;font-weight:700;text-align:center;margin-bottom:6px}
         .confirm-msg{font-size:12px;color:var(--muted);text-align:center;line-height:1.6}
 
-        /* ── Toast ── */
-        .toast{position:fixed;bottom:22px;right:22px;display:flex;align-items:center;gap:9px;padding:11px 16px;border-radius:10px;font-size:13px;font-weight:500;transform:translateY(8px);opacity:0;transition:all .22s cubic-bezier(.34,1.56,.64,1);pointer-events:none;z-index:999;box-shadow:0 8px 24px rgba(0,0,0,.4)}
+        /* Toast */
+        .toast{position:fixed;bottom:22px;right:22px;display:flex;align-items:center;gap:9px;padding:11px 16px;border-radius:10px;font-size:13px;font-weight:500;transform:translateY(8px);opacity:0;transition:all .22s cubic-bezier(.34,1.56,.64,1);pointer-events:none;z-index:999;box-shadow:0 8px 24px rgba(0,0,0,.4);max-width:340px}
         .toast.show{transform:translateY(0);opacity:1}
         .toast.ok{background:var(--green);color:#fff}.toast.err{background:var(--red);color:#fff}.toast.info{background:var(--blue);color:#fff}.toast.warn{background:var(--amber);color:#111}
         .toast svg{width:14px;height:14px;flex-shrink:0}
-
-        /* Spinner */
         .spin{display:inline-block;width:11px;height:11px;border:2px solid rgba(255,255,255,.25);border-top-color:currentColor;border-radius:50%;animation:spin .6s linear infinite}
         @keyframes spin{to{transform:rotate(360deg)}}
-
-        /* Anim */
         @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
-        .stat-card{animation:fadeIn .3s ease both}
-        .stat-card:nth-child(1){animation-delay:.05s}.stat-card:nth-child(2){animation-delay:.1s}
-        .stat-card:nth-child(3){animation-delay:.15s}.stat-card:nth-child(4){animation-delay:.2s}
-        .form-card,.table-card{animation:fadeIn .3s ease .22s both}
     </style>
 </head>
 <body>
 <div class="layout">
-
-    <!-- ── Sidebar ── -->
+    <!-- Sidebar -->
     <aside class="sidebar">
         <div class="logo">
             <div class="logo-mark">
@@ -184,7 +175,6 @@
             </div>
             <span class="logo-text">VIMS</span>
         </div>
-
         <span class="nav-section">Main</span>
         <button class="nav-item" onclick="location.href='dashboard.html'">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
@@ -202,23 +192,21 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
             Payments
         </button>
-        <button class="nav-item active" onclick="location.href='claims.html'">
+        <button class="nav-item active">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
             Claims
             <span class="nav-badge" id="nav-count">0</span>
         </button>
-
         <span class="nav-section" style="margin-top:8px">Management</span>
         <button class="nav-item" onclick="location.href='user.html'">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
             Users
         </button>
-
         <div class="sb-bottom">
             <div class="user-card">
                 <div class="avatar">A</div>
                 <div class="user-info">
-                    <div class="uname">Admin</div>
+                    <div class="uname" id="sidebarUsername">Admin</div>
                     <div class="urole">Administrator</div>
                 </div>
             </div>
@@ -229,7 +217,7 @@
         </div>
     </aside>
 
-    <!-- ── Main ── -->
+    <!-- Main -->
     <div class="main">
         <div class="topbar">
             <span class="page-title">Claims Management</span>
@@ -246,85 +234,67 @@
         </div>
 
         <div class="content">
-
             <!-- Stats -->
             <div class="stats-grid">
-                <div class="stat-card sc-blue">
-                    <div class="sc-glow"></div>
+                <div class="stat-card sc-blue"><div class="sc-glow"></div>
                     <div class="sc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg></div>
-                    <div class="sc-label">Total Claims</div>
-                    <div class="sc-value" id="statTotal">0</div>
-                </div>
-                <div class="stat-card sc-amber">
-                    <div class="sc-glow"></div>
+                    <div class="sc-label">Total Claims</div><div class="sc-value" id="statTotal">0</div></div>
+                <div class="stat-card sc-amber"><div class="sc-glow"></div>
                     <div class="sc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
-                    <div class="sc-label">Pending</div>
-                    <div class="sc-value" id="statPending">0</div>
-                </div>
-                <div class="stat-card sc-green">
-                    <div class="sc-glow"></div>
+                    <div class="sc-label">Pending</div><div class="sc-value" id="statPending">0</div></div>
+                <div class="stat-card sc-green"><div class="sc-glow"></div>
                     <div class="sc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg></div>
-                    <div class="sc-label">Approved</div>
-                    <div class="sc-value" id="statApproved">0</div>
-                </div>
-                <div class="stat-card sc-red">
-                    <div class="sc-glow"></div>
+                    <div class="sc-label">Approved</div><div class="sc-value" id="statApproved">0</div></div>
+                <div class="stat-card sc-red"><div class="sc-glow"></div>
                     <div class="sc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
-                    <div class="sc-label">Rejected</div>
-                    <div class="sc-value" id="statRejected">0</div>
-                </div>
+                    <div class="sc-label">Rejected</div><div class="sc-value" id="statRejected">0</div></div>
             </div>
 
-            <!-- Form Card -->
+            <!-- ── Email owner banner (shown when row selected & owner has email) ── -->
+            <div class="email-banner" id="emailBanner">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                    <polyline points="22,6 12,13 2,6"/>
+                </svg>
+                <span>Owner: <strong id="bannerName">—</strong> &nbsp;·&nbsp; Email: <strong id="bannerEmail">—</strong>
+                &nbsp;·&nbsp; Notification will be sent automatically on status change.</span>
+            </div>
+
+            <!-- Form -->
             <div class="form-card">
                 <div class="form-card-title" id="formTitle">Submit a Claim</div>
                 <div class="form-grid">
                     <div class="fg"><label>Claim ID <span style="color:var(--muted);font-size:9px">(auto)</span></label>
-                        <input type="number" id="claimId" placeholder="Auto" readonly style="opacity:.5"/>
-                    </div>
+                        <input type="number" id="claimId" placeholder="Auto" readonly style="opacity:.5"/></div>
                     <div class="fg"><label>Vehicle Number *</label><input type="text" id="vehicleNumber" placeholder="e.g. WP-ABC-1234"/></div>
-                    <div class="fg"><label>Claim Amount (LKR) *</label><input type="number" id="claimAmount" placeholder="0.00"/></div>
+                    <div class="fg"><label>Claim Amount (LKR) *</label><input type="number" id="claimAmount" placeholder="0.00" step="0.01"/></div>
                     <div class="fg"><label>Claim Date</label><input type="date" id="claimDate"/></div>
                     <div class="fg"><label>Incident Date</label><input type="date" id="incidentDate"/></div>
                     <div class="fg"><label>Incident Location</label><input type="text" id="incidentLocation" placeholder="e.g. Colombo"/></div>
                     <div class="fg"><label>Claim Status</label>
                         <select id="claimStatus">
                             <option value="">-- Select --</option>
-                            <option>Pending</option>
-                            <option>Approved</option>
-                            <option>Rejected</option>
-                            <option>Paid</option>
-                        </select>
-                    </div>
+                            <option>Pending</option><option>Approved</option>
+                            <option>Rejected</option><option>Paid</option>
+                        </select></div>
                     <div class="fg"><label>Approved Date</label><input type="date" id="approvedDate"/></div>
                     <div class="fg"><label>Approved By (User ID)</label><input type="number" id="approvedBy" placeholder="User ID"/></div>
                     <div class="fg span2"><label>Description of Incident</label>
-                        <textarea id="description" placeholder="Describe what happened…"></textarea>
-                    </div>
+                        <textarea id="description" placeholder="Describe what happened…"></textarea></div>
                     <div class="fg"><label>Document Path</label><input type="text" id="documentPath" placeholder="/docs/claim.pdf"/></div>
                 </div>
                 <div class="form-actions">
                     <button class="btn btn-primary" id="btnRegister" onclick="doRegister()">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                        Register
-                    </button>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Register</button>
                     <button class="btn btn-warn" id="btnUpdate" onclick="doUpdate()" disabled>
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                        Update
-                    </button>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Update</button>
                     <button class="btn btn-danger-soft" id="btnDelete" onclick="doDeleteSelected()" disabled>
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
-                        Delete
-                    </button>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>Delete</button>
                     <div class="sep"></div>
-                    <button class="btn btn-green" id="btnGetAll" onclick="doGetAll()">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-                        Get All
-                    </button>
+                    <button class="btn btn-green" onclick="doGetAll()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>Get All</button>
                     <button class="btn btn-danger-soft" onclick="openResetModal()">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
-                        Reset All
-                    </button>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>Reset All</button>
                     <button class="btn btn-ghost" onclick="doClear()">Clear</button>
                     <div class="status-pill">
                         <div class="dot" id="dot"></div>
@@ -341,16 +311,15 @@
                 </div>
                 <div class="tbl-scroll">
                     <table>
-                        <thead>
-                        <tr>
+                        <thead><tr>
                             <th>Claim ID</th><th>Claim Date</th><th>Vehicle No</th>
+                            <th>Owner Email</th><!-- ← NEW column -->
                             <th>Amount (LKR)</th><th>Incident Date</th><th>Location</th>
                             <th>Status</th><th>Approved Date</th><th>Approved By</th>
                             <th>Description</th><th>Actions</th>
-                        </tr>
-                        </thead>
+                        </tr></thead>
                         <tbody id="tBody">
-                        <tr><td colspan="11"><div class="empty-row">
+                        <tr><td colspan="12"><div class="empty-row">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>
                             <p>Click <strong>Get All</strong> to load claims</p>
                         </div></td></tr>
@@ -358,7 +327,6 @@
                     </table>
                 </div>
             </div>
-
         </div>
     </div>
 </div>
@@ -366,10 +334,8 @@
 <!-- Delete Modal -->
 <div class="overlay" id="delModal">
     <div class="modal">
-        <div class="modal-head">
-            <span class="modal-title">Confirm Delete</span>
-            <button class="modal-close" onclick="cls('delModal')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
-        </div>
+        <div class="modal-head"><span class="modal-title">Confirm Delete</span>
+            <button class="modal-close" onclick="cls('delModal')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
         <div class="modal-body">
             <div class="confirm-icon">🗑️</div>
             <div class="confirm-title">Delete Claim?</div>
@@ -382,13 +348,11 @@
     </div>
 </div>
 
-<!-- Reset All Modal -->
+<!-- Reset Modal -->
 <div class="overlay" id="resetModal">
     <div class="modal">
-        <div class="modal-head">
-            <span class="modal-title">Reset All Claims</span>
-            <button class="modal-close" onclick="cls('resetModal')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
-        </div>
+        <div class="modal-head"><span class="modal-title">Reset All Claims</span>
+            <button class="modal-close" onclick="cls('resetModal')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
         <div class="modal-body">
             <div class="confirm-icon">⚠️</div>
             <div class="confirm-title">Reset All?</div>
@@ -404,10 +368,8 @@
 <!-- Logout Modal -->
 <div class="overlay" id="logoutModal">
     <div class="modal">
-        <div class="modal-head">
-            <span class="modal-title">Sign Out</span>
-            <button class="modal-close" onclick="cls('logoutModal')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
-        </div>
+        <div class="modal-head"><span class="modal-title">Sign Out</span>
+            <button class="modal-close" onclick="cls('logoutModal')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
         <div class="modal-body">
             <div class="confirm-icon">👋</div>
             <div class="confirm-title">Sign Out?</div>
@@ -415,7 +377,7 @@
         </div>
         <div class="modal-foot">
             <button class="btn btn-ghost" onclick="cls('logoutModal')">Cancel</button>
-            <button class="btn btn-primary" onclick="location.href='login.html'">Sign Out</button>
+            <button class="btn btn-danger" onclick="logout()">Sign Out</button>
         </div>
     </div>
 </div>
@@ -426,200 +388,1032 @@
     <span id="tmsg"></span>
 </div>
 
+<script src="../js/app.js"></script>
 <script>
-    const BASE = 'http://localhost:8080/api/v1/claim';
-    const FIELDS = ['claimId','claimDate','claimStatus','claimAmount','incidentDate','incidentLocation','description','documentPath','approvedDate','vehicleNumber','approvedBy'];
+    authGuard();
+
+    const BASE   = 'http://localhost:8080/api/v1/claim';
+    const FIELDS = ['claimId','claimDate','claimStatus','claimAmount','incidentDate',
+        'incidentLocation','description','documentPath','approvedDate',
+        'vehicleNumber','approvedBy'];
+
     let claims = [], selectedIndex = -1, deleteTarget = null;
 
     const $ = id => document.getElementById(id);
-    const ui = {
-        tBody:$('tBody'), tblCount:$('tblCount'), navCount:$('nav-count'),
-        formTitle:$('formTitle'),
-        btnRegister:$('btnRegister'), btnUpdate:$('btnUpdate'), btnDelete:$('btnDelete'),
-        btnGetAll:$('btnGetAll'), dot:$('dot'), statusTxt:$('statusTxt')
-    };
 
-    doGetAll();
+    const uname = localStorage.getItem('username');
+    if (uname) $('sidebarUsername').textContent = uname;
 
+    // ── Helpers ───────────────────────────────────────────────────────────────
     function getFields() {
         const o = {};
-        FIELDS.forEach(f => { const e=$(f); o[f] = e ? e.value.trim() || null : null; });
-        if (o.claimId)    o.claimId    = o.claimId    ? Number(o.claimId)    : null;
-        if (o.claimAmount) o.claimAmount = Number(o.claimAmount) || null;
-        if (o.approvedBy) o.approvedBy = o.approvedBy ? Number(o.approvedBy) : null;
-        if (!o.claimId)   delete o.claimId;
+        FIELDS.forEach(f => {
+            const e = $(f);
+            o[f] = e ? (e.value.trim() || null) : null;
+        });
+        o.claimId     = o.claimId     ? Number(o.claimId)     : null;
+        o.claimAmount = o.claimAmount ? Number(o.claimAmount) : null;
+        o.approvedBy  = o.approvedBy  ? Number(o.approvedBy)  : null;
+        if (!o.claimId) delete o.claimId;
         return o;
     }
     function setFields(c) { FIELDS.forEach(f => { const e=$(f); if(e) e.value = c[f] ?? ''; }); }
-    function clearFields() { FIELDS.forEach(f => { const e=$(f); if(!e) return; e.tagName==='SELECT'?(e.selectedIndex=0):(e.value=''); }); }
-    function setStatus(s, m) { ui.dot.className='dot '+(s||''); ui.statusTxt.textContent=m; }
+    function clearFields() {
+        FIELDS.forEach(f => {
+            const e = $(f);
+            if (!e) return;
+            e.tagName === 'SELECT' ? (e.selectedIndex = 0) : (e.value = '');
+        });
+    }
+    function setStatus(s, m) { $('dot').className = 'dot ' + (s || ''); $('statusTxt').textContent = m; }
 
     let toastTimer;
-    function toast(msg, type='info') {
+    function toast(msg, type = 'info') {
         clearTimeout(toastTimer);
         $('tmsg').textContent = msg;
-        $('tico').innerHTML = type==='ok' ? '<polyline points="20 6 9 17 4 12"/>'
-            : type==='err' ? '<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>'
-                : '<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/>';
-        const el=$('toast'); el.className=`toast show ${type}`;
-        toastTimer=setTimeout(()=>el.classList.remove('show'),3200);
+        $('tico').innerHTML = type === 'ok'
+            ? '<polyline points="20 6 9 17 4 12"/>'
+            : '<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>';
+        const el = $('toast');
+        el.className = `toast show ${type}`;
+        toastTimer = setTimeout(() => el.classList.remove('show'), 4000);
     }
+
     function cls(id) { $(id).classList.remove('open'); }
 
     function statusBadge(s) {
         const map = { Pending:'s-pending', Approved:'s-approved', Rejected:'s-rejected', Paid:'s-paid' };
-        return `<span class="status-badge ${map[s]||'s-pending'}">${s||'—'}</span>`;
+        return `<span class="status-badge ${map[s] || 's-pending'}">${s || '—'}</span>`;
     }
-    function fmt(d) { return d ? String(d).substring(0,10) : '—'; }
-    function short(d) { return d ? (d.length>28 ? d.substring(0,28)+'…' : d) : '—'; }
-    function esc(v) { return v==null?'—':String(v).replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
+    const fmt   = d => d ? String(d).substring(0, 10) : '—';
+    const short = d => d ? (d.length > 28 ? d.substring(0, 28) + '…' : d) : '—';
+    const esc   = v => v == null ? '—' : String(v).replace(/&/g,'&amp;').replace(/</g,'&lt;');
 
+    // ── Email chip helper ─────────────────────────────────────────────────────
+    function emailChip(email) {
+        if (!email) return '<span class="no-email">—</span>';
+        const display = email.length > 20 ? email.substring(0, 20) + '…' : email;
+        return `<span class="email-chip" title="${esc(email)}">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                <polyline points="22,6 12,13 2,6"/>
+            </svg>
+            ${esc(display)}</span>`;
+    }
+
+    // ── Safe JSON parse ───────────────────────────────────────────────────────
+    async function safeJson(res) {
+        const text = await res.text();
+        if (!text) return {};
+        try { return JSON.parse(text); } catch { return { message: text }; }
+    }
+
+    // ── Stats + render ────────────────────────────────────────────────────────
     function updateStats(data) {
         $('statTotal').textContent    = data.length;
-        $('statPending').textContent  = data.filter(c=>c.claimStatus==='Pending').length;
-        $('statApproved').textContent = data.filter(c=>c.claimStatus==='Approved').length;
-        $('statRejected').textContent = data.filter(c=>c.claimStatus==='Rejected').length;
-        ui.navCount.textContent = data.length;
-        ui.tblCount.textContent = data.length;
+        $('statPending').textContent  = data.filter(c => c.claimStatus === 'Pending').length;
+        $('statApproved').textContent = data.filter(c => c.claimStatus === 'Approved').length;
+        $('statRejected').textContent = data.filter(c => c.claimStatus === 'Rejected').length;
+        $('nav-count').textContent    = data.length;
+        $('tblCount').textContent     = data.length;
     }
 
     function render(data) {
         claims = Array.isArray(data) ? data : [];
         updateStats(claims);
         if (!claims.length) {
-            ui.tBody.innerHTML=`<tr><td colspan="11"><div class="empty-row">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>
-      <p>No claims found</p></div></td></tr>`;
+            $('tBody').innerHTML = `<tr><td colspan="12"><div class="empty-row">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>
+                <p>No claims found</p></div></td></tr>`;
             return;
         }
-        ui.tBody.innerHTML = claims.map((c,i) => `
-    <tr id="crow-${i}" class="${selectedIndex===i?'selected':''}" onclick="selectRow(${i})">
-      <td class="cid">#${c.claimId??'—'}</td>
-      <td style="color:var(--soft)">${fmt(c.claimDate)}</td>
-      <td><span class="veh-chip">${esc(c.vehicleNumber)}</span></td>
-      <td style="font-family:var(--font-head);font-weight:700;color:var(--amber)">${c.claimAmount?'LKR '+Number(c.claimAmount).toLocaleString():'—'}</td>
-      <td style="color:var(--soft)">${fmt(c.incidentDate)}</td>
-      <td style="color:var(--soft)">${esc(c.incidentLocation)}</td>
-      <td>${statusBadge(c.claimStatus)}</td>
-      <td style="color:var(--soft)">${fmt(c.approvedDate)}</td>
-      <td style="color:var(--muted)">${c.approvedBy??'—'}</td>
-      <td style="color:var(--muted)" title="${esc(c.description)}">${short(c.description)}</td>
-      <td>
-        <div class="action-btns">
-          <button class="btn btn-sm act-edit" onclick="event.stopPropagation();selectRow(${i})">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:11px;height:11px"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Edit
-          </button>
-          <button class="btn btn-sm act-del" onclick="event.stopPropagation();rowDel(${i})">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:11px;height:11px"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>Delete
-          </button>
-        </div>
-      </td>
-    </tr>`).join('');
+        $('tBody').innerHTML = claims.map((c, i) => `
+            <tr id="crow-${i}" class="${selectedIndex === i ? 'selected' : ''}" onclick="selectRow(${i})">
+                <td class="cid">#${c.claimId ?? '—'}</td>
+                <td style="color:var(--soft)">${fmt(c.claimDate)}</td>
+                <td><span class="veh-chip">${esc(c.vehicleNumber)}</span></td>
+                <td>${emailChip(c.ownerEmail)}</td>
+                <td style="font-family:var(--font-head);font-weight:700;color:var(--amber)">
+                    ${c.claimAmount ? 'LKR ' + Number(c.claimAmount).toLocaleString() : '—'}</td>
+                <td style="color:var(--soft)">${fmt(c.incidentDate)}</td>
+                <td style="color:var(--soft)">${esc(c.incidentLocation)}</td>
+                <td>${statusBadge(c.claimStatus)}</td>
+                <td style="color:var(--soft)">${fmt(c.approvedDate)}</td>
+                <td style="color:var(--muted)">${c.approvedBy ?? '—'}</td>
+                <td style="color:var(--muted)" title="${esc(c.description)}">${short(c.description)}</td>
+                <td><div class="action-btns">
+                    <button class="btn btn-sm act-edit" onclick="event.stopPropagation();selectRow(${i})">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:11px;height:11px"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Edit
+                    </button>
+                    <button class="btn btn-sm act-del" onclick="event.stopPropagation();rowDel(${i})">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:11px;height:11px"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>Delete
+                    </button>
+                </div></td>
+            </tr>`).join('');
     }
 
+    // ── Row selection — also drives the email banner ──────────────────────────
     function selectRow(i) {
-        if (selectedIndex===i) { doClear(); return; }
-        $(`crow-${selectedIndex}`)?.classList.remove('selected');
-        selectedIndex=i;
-        $(`crow-${i}`).classList.add('selected');
+        if (selectedIndex === i) { doClear(); return; }
+        document.getElementById(`crow-${selectedIndex}`)?.classList.remove('selected');
+        selectedIndex = i;
+        document.getElementById(`crow-${i}`).classList.add('selected');
         setFields(claims[i]);
         setEditMode();
-        window.scrollTo({top:0,behavior:'smooth'});
-    }
-    function rowDel(i) {
-        deleteTarget=i;
-        const c=claims[i];
-        $('delMsg').textContent=`Remove Claim #${c.claimId} (Vehicle: ${c.vehicleNumber||'—'}, Amount: LKR ${c.claimAmount?.toLocaleString()||'—'})? This cannot be undone.`;
-        $('delModal').classList.add('open');
-    }
-    function setEditMode() {
-        ui.formTitle.textContent=`Edit Claim #${claims[selectedIndex].claimId}`;
-        ui.formTitle.style.color='var(--amber)';
-        ui.btnRegister.disabled=true; ui.btnUpdate.disabled=false; ui.btnDelete.disabled=false;
-    }
-    function doClear() {
-        clearFields(); selectedIndex=-1; deleteTarget=null;
-        document.querySelectorAll('#tBody tr.selected').forEach(r=>r.classList.remove('selected'));
-        ui.formTitle.textContent='Submit a Claim';
-        ui.formTitle.style.color='var(--blue)';
-        ui.btnRegister.disabled=false; ui.btnUpdate.disabled=true; ui.btnDelete.disabled=true;
-        setStatus('','Idle');
+
+        // Show / hide email banner
+        const c = claims[i];
+        if (c.ownerEmail) {
+            $('bannerName').textContent  = c.ownerName  || '—';
+            $('bannerEmail').textContent = c.ownerEmail || '—';
+            $('emailBanner').classList.add('visible');
+        } else {
+            $('emailBanner').classList.remove('visible');
+        }
+
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
+    function rowDel(i) {
+        deleteTarget = i;
+        const c = claims[i];
+        $('delMsg').textContent = `Remove Claim #${c.claimId} (Vehicle: ${c.vehicleNumber || '—'}, Amount: LKR ${Number(c.claimAmount)?.toLocaleString() || '—'})? This cannot be undone.`;
+        $('delModal').classList.add('open');
+    }
+
+    function setEditMode() {
+        $('formTitle').textContent = `Edit Claim #${claims[selectedIndex].claimId}`;
+        $('formTitle').style.color = 'var(--amber)';
+        $('btnRegister').disabled = true;
+        $('btnUpdate').disabled   = false;
+        $('btnDelete').disabled   = false;
+    }
+
+    function doClear() {
+        clearFields(); selectedIndex = -1; deleteTarget = null;
+        document.querySelectorAll('#tBody tr.selected').forEach(r => r.classList.remove('selected'));
+        $('formTitle').textContent = 'Submit a Claim';
+        $('formTitle').style.color = 'var(--blue)';
+        $('btnRegister').disabled  = false;
+        $('btnUpdate').disabled    = true;
+        $('btnDelete').disabled    = true;
+        $('emailBanner').classList.remove('visible');
+        setStatus('', 'Idle');
+    }
+
+    // ── API calls ─────────────────────────────────────────────────────────────
     async function doRegister() {
-        const data=getFields();
-        if(!data.vehicleNumber){toast('Vehicle Number is required','err');return;}
-        if(!data.claimAmount){toast('Claim Amount is required','err');return;}
-        ui.btnRegister.innerHTML='<span class="spin"></span> Saving…'; ui.btnRegister.disabled=true;
-        setStatus('loading','Registering…');
+        const data = getFields();
+        if (!data.vehicleNumber) { toast('Vehicle Number is required', 'err'); return; }
+        if (!data.claimAmount)   { toast('Claim Amount is required', 'err');   return; }
+
+        $('btnRegister').innerHTML = '<span class="spin"></span> Saving…';
+        $('btnRegister').disabled  = true;
+        setStatus('loading', 'Registering…');
         try {
-            const r=await fetch(`${BASE}/register`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
-            const j=await r.json();
-            if(r.ok){toast('Claim registered ✓','ok');setStatus('ok','Registered');clearFields();await doGetAll();}
-            else{toast(`Failed: ${j.message}`,'err');setStatus('err','Failed');}
-        }catch{toast('Network error','err');setStatus('err','Network error');}
-        finally{ui.btnRegister.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Register';ui.btnRegister.disabled=false;}
+            const res = await apiFetch(`${BASE}/register`, {
+                method: 'POST', body: JSON.stringify(data)
+            });
+            const j = await safeJson(res);
+            if (res.ok) {
+                // Use the server message (contains email confirmation text)
+                toast(j.message || 'Claim registered ✓', 'ok');
+                setStatus('ok', 'Registered');
+                clearFields();
+                await doGetAll();
+            } else {
+                toast(`Failed: ${j.message || res.status}`, 'err');
+                setStatus('err', 'Failed');
+            }
+        } catch (e) {
+            toast(e.message || 'Network error', 'err');
+            setStatus('err', 'Network error');
+        } finally {
+            $('btnRegister').innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Register';
+            $('btnRegister').disabled  = false;
+        }
     }
 
     async function doGetAll() {
-        if(ui.btnGetAll) ui.btnGetAll.innerHTML='<span class="spin" style="border-top-color:var(--green)"></span> Loading…';
-        setStatus('loading','Loading…');
+        setStatus('loading', 'Loading…');
         try {
-            const r=await fetch(`${BASE}/all`);
-            const j=await r.json();
-            if(r.ok){render(j.data);setStatus('ok',`${claims.length} record(s)`);toast(`Loaded ${claims.length} claim(s)`,'info');}
-            else{toast(`Error: ${j.message}`,'err');setStatus('err','Failed');render([]);}
-        }catch{toast('Cannot reach server','err');setStatus('err','Network error');render([]);}
-        finally{if(ui.btnGetAll)ui.btnGetAll.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg> Get All';}
+            const res = await apiFetch(`${BASE}/all`);
+            const j   = await safeJson(res);
+            if (res.ok) {
+                render(j.data || []);
+                setStatus('ok', `${claims.length} record(s)`);
+                toast(`Loaded ${claims.length} claim(s)`, 'info');
+            } else {
+                toast(`Error: ${j.message || res.status}`, 'err');
+                setStatus('err', 'Failed');
+                render([]);
+            }
+        } catch (e) {
+            toast(e.message || 'Cannot reach server', 'err');
+            setStatus('err', 'Network error');
+            render([]);
+        }
     }
 
     async function doUpdate() {
-        if(selectedIndex<0){toast('Select a row to update','err');return;}
-        const data=getFields(); const cid=claims[selectedIndex].claimId;
-        ui.btnUpdate.innerHTML='<span class="spin" style="border-top-color:#111"></span> Updating…'; ui.btnUpdate.disabled=true;
-        setStatus('loading','Updating…');
+        if (selectedIndex < 0) { toast('Select a row to update', 'err'); return; }
+        const data = getFields();
+        const cid  = claims[selectedIndex].claimId;
+
+        $('btnUpdate').innerHTML = '<span class="spin" style="border-top-color:#111"></span> Updating…';
+        $('btnUpdate').disabled  = true;
+        setStatus('loading', 'Updating…');
         try {
-            const r=await fetch(`${BASE}/update/${cid}`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
-            const j=await r.json();
-            if(r.ok){toast(`Claim #${cid} updated ✓`,'ok');setStatus('ok','Updated');doClear();await doGetAll();}
-            else{toast(`Failed: ${j.message}`,'err');setStatus('err','Failed');}
-        }catch{toast('Network error','err');setStatus('err','Network error');}
-        finally{ui.btnUpdate.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> Update';ui.btnUpdate.disabled=false;}
+            const res = await apiFetch(`${BASE}/update/${cid}`, {
+                method: 'PUT', body: JSON.stringify(data)
+            });
+            const j = await safeJson(res);
+            if (res.ok) {
+                toast(j.message || `Claim #${cid} updated ✓`, 'ok');
+                setStatus('ok', 'Updated');
+                doClear();
+                await doGetAll();
+            } else {
+                toast(`Failed: ${j.message || res.status}`, 'err');
+                setStatus('err', 'Failed');
+            }
+        } catch (e) {
+            toast(e.message || 'Network error', 'err');
+            setStatus('err', 'Network error');
+        } finally {
+            $('btnUpdate').innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> Update';
+            $('btnUpdate').disabled  = false;
+        }
     }
 
-    function doDeleteSelected(){if(selectedIndex>=0)rowDel(selectedIndex);else toast('Select a row to delete','err');}
+    function doDeleteSelected() {
+        if (selectedIndex >= 0) rowDel(selectedIndex);
+        else toast('Select a row to delete', 'err');
+    }
 
     async function confirmDelete() {
-        if(deleteTarget===null)return;
-        const cid=claims[deleteTarget].claimId;
-        cls('delModal'); setStatus('loading','Deleting…');
+        if (deleteTarget === null) return;
+        const cid = claims[deleteTarget].claimId;
+        cls('delModal');
+        setStatus('loading', 'Deleting…');
         try {
-            const r=await fetch(`${BASE}/delete/${cid}`,{method:'DELETE'});
-            const j=await r.json();
-            if(r.ok){toast(`Claim #${cid} deleted`,'err');setStatus('ok','Deleted');doClear();await doGetAll();}
-            else{toast(`Failed: ${j.message}`,'err');setStatus('err','Failed');}
-        }catch{toast('Network error','err');setStatus('err','Network error');}
-        finally{deleteTarget=null;}
+            const res = await apiFetch(`${BASE}/delete/${cid}`, { method: 'DELETE' });
+            const j   = await safeJson(res);
+            if (res.ok) {
+                toast(`Claim #${cid} deleted`, 'err');
+                setStatus('ok', 'Deleted');
+                doClear();
+                await doGetAll();
+            } else {
+                toast(`Failed: ${j.message || res.status}`, 'err');
+                setStatus('err', 'Failed');
+            }
+        } catch (e) {
+            toast(e.message || 'Network error', 'err');
+            setStatus('err', 'Network error');
+        } finally {
+            deleteTarget = null;
+        }
     }
 
-    function openResetModal(){$('resetModal').classList.add('open');}
+    function openResetModal() { $('resetModal').classList.add('open'); }
+
     async function confirmResetAll() {
-        cls('resetModal'); setStatus('loading','Resetting…');
+        cls('resetModal');
+        setStatus('loading', 'Resetting…');
         try {
-            const r=await fetch(`${BASE}/reset`,{method:'DELETE'});
-            const j=await r.json();
-            if(r.ok){toast('All claims deleted','err');setStatus('ok','Reset done');doClear();render([]);}
-            else{toast(`Failed: ${j.message}`,'err');setStatus('err','Failed');}
-        }catch{toast('Network error','err');setStatus('err','Network error');}
+            const res = await apiFetch(`${BASE}/reset`, { method: 'DELETE' });
+            const j   = await safeJson(res);
+            if (res.ok) {
+                toast('All claims deleted', 'err');
+                setStatus('ok', 'Reset done');
+                doClear();
+                render([]);
+            } else {
+                toast(`Failed: ${j.message || res.status}`, 'err');
+                setStatus('err', 'Failed');
+            }
+        } catch (e) {
+            toast(e.message || 'Network error', 'err');
+            setStatus('err', 'Network error');
+        }
+    }
+    <!DOCTYPE html>
+    <html lang="en">
+        <head>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <title>VIMS — Claims</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet"/>
+    <style>
+        *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+        :root{
+        --bg:#0d0f14;--panel:#13161e;--panel2:#191d28;
+        --border:#232737;--border2:#2d3346;
+        --text:#eef0f6;--muted:#6b7591;--soft:#9ba3bf;
+        --blue:#4f8eff;--blue-dim:#1a2d5a;
+        --green:#2ecc8b;--green-dim:#0e3328;
+        --amber:#f5a623;--amber-dim:#3d2a06;
+        --red:#ff4f6b;--red-dim:#3d0f18;
+        --purple:#a78bfa;--purple-dim:#2d1f5e;
+        --teal:#2dd4bf;--teal-dim:#0d3330;
+        --r:12px;--r2:8px;--sidebar:220px;
+        --font-head:'Syne',sans-serif;--font-body:'DM Sans',sans-serif;
+    }
+        body{font-family:var(--font-body);background:var(--bg);color:var(--text);font-size:14px;min-height:100vh;overflow-x:hidden}
+        ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:99px}
+        .layout{display:flex;min-height:100vh}
+
+        /* Sidebar */
+        .sidebar{width:var(--sidebar);background:var(--panel);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:20px 12px;position:fixed;top:0;left:0;bottom:0;z-index:20;overflow-y:auto}
+        .logo{display:flex;align-items:center;gap:10px;padding:4px 8px 20px;border-bottom:1px solid var(--border);margin-bottom:16px}
+        .logo-mark{width:32px;height:32px;background:linear-gradient(135deg,var(--blue),var(--purple));border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 0 16px rgba(79,142,255,.35)}
+        .logo-mark svg{width:16px;height:16px;color:#fff}
+        .logo-text{font-family:var(--font-head);font-weight:800;font-size:15px;background:linear-gradient(90deg,#fff,var(--blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+        .nav-section{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;padding:4px 10px 6px;margin-top:4px}
+        .nav-item{display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:var(--r2);color:var(--soft);font-size:13px;font-weight:500;cursor:pointer;transition:all .15s;border:none;background:none;width:100%;text-align:left;position:relative}
+        .nav-item svg{width:15px;height:15px;flex-shrink:0}
+        .nav-item:hover{background:var(--panel2);color:var(--text)}
+        .nav-item.active{background:var(--blue-dim);color:var(--blue)}
+        .nav-item.active::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:3px;height:16px;background:var(--blue);border-radius:0 3px 3px 0}
+        .nav-badge{margin-left:auto;background:var(--blue-dim);color:var(--blue);font-size:10px;font-weight:700;padding:2px 6px;border-radius:99px;min-width:18px;text-align:center}
+        .sb-bottom{margin-top:auto;border-top:1px solid var(--border);padding-top:14px}
+        .user-card{display:flex;align-items:center;gap:9px;padding:10px;border-radius:var(--r2);background:var(--panel2);border:1px solid var(--border);margin-bottom:8px}
+        .avatar{width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,var(--blue),var(--purple));display:flex;align-items:center;justify-content:center;font-family:var(--font-head);font-weight:700;font-size:12px;color:#fff;flex-shrink:0}
+        .user-info .uname{font-size:12px;font-weight:600;line-height:1.2}
+        .user-info .urole{font-size:10px;color:var(--muted);margin-top:1px}
+        .logout-btn{display:flex;align-items:center;gap:7px;width:100%;padding:8px 10px;border-radius:var(--r2);background:none;border:none;cursor:pointer;color:var(--muted);font-family:var(--font-body);font-size:12px;font-weight:500;transition:all .15s}
+        .logout-btn:hover{background:var(--red-dim);color:var(--red)}
+        .logout-btn svg{width:13px;height:13px}
+
+        /* Main */
+        .main{margin-left:var(--sidebar);flex:1;display:flex;flex-direction:column}
+        .topbar{background:var(--panel);border-bottom:1px solid var(--border);padding:14px 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
+        .page-title{font-family:var(--font-head);font-size:16px;font-weight:700}
+        .topbar-right{display:flex;gap:8px;align-items:center}
+        .content{padding:24px 28px}
+
+        /* Buttons */
+        .btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:var(--r2);font-family:var(--font-body);font-size:13px;font-weight:500;cursor:pointer;border:none;transition:all .15s;white-space:nowrap}
+        .btn svg{width:13px;height:13px;flex-shrink:0}
+        .btn:disabled{opacity:.35;cursor:not-allowed}
+        .btn-primary{background:var(--blue);color:#fff;box-shadow:0 0 18px rgba(79,142,255,.3)}.btn-primary:hover:not(:disabled){background:#6ba3ff}
+        .btn-ghost{background:transparent;color:var(--soft);border:1px solid var(--border2)}.btn-ghost:hover:not(:disabled){background:var(--panel2);color:var(--text)}
+        .btn-warn{background:var(--amber);color:#111}.btn-warn:hover:not(:disabled){background:#f7b73a}
+        .btn-danger{background:var(--red);color:#fff}.btn-danger:hover:not(:disabled){background:#ff2245}
+        .btn-danger-soft{background:transparent;color:var(--red);border:1px solid var(--red-dim)}.btn-danger-soft:hover:not(:disabled){background:var(--red-dim)}
+        .btn-green{background:var(--green-dim);color:var(--green);border:1px solid rgba(46,204,139,.25)}.btn-green:hover:not(:disabled){background:rgba(46,204,139,.2)}
+        .btn-sm{padding:5px 10px;font-size:11px;border-radius:6px}
+        .act-edit{background:var(--blue-dim);color:var(--blue)}.act-edit:hover{background:rgba(79,142,255,.2)}
+        .act-del{background:var(--red-dim);color:var(--red)}.act-del:hover{background:rgba(255,79,107,.2)}
+        .sep{width:1px;height:24px;background:var(--border2);margin:0 2px;flex-shrink:0}
+
+        /* Stats */
+        .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px}
+        .stat-card{background:var(--panel);border:1px solid var(--border);border-radius:var(--r);padding:18px 20px;position:relative;overflow:hidden;transition:transform .15s;animation:fadeIn .3s ease both}
+        .stat-card:hover{transform:translateY(-2px)}
+        .sc-icon{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;margin-bottom:12px}
+        .sc-icon svg{width:17px;height:17px}
+        .sc-blue .sc-icon{background:var(--blue-dim);color:var(--blue)}.sc-amber .sc-icon{background:var(--amber-dim);color:var(--amber)}.sc-green .sc-icon{background:var(--green-dim);color:var(--green)}.sc-red .sc-icon{background:var(--red-dim);color:var(--red)}
+        .sc-label{font-size:11px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+        .sc-value{font-family:var(--font-head);font-size:28px;font-weight:700;line-height:1}
+        .sc-blue .sc-value{color:var(--blue)}.sc-amber .sc-value{color:var(--amber)}.sc-green .sc-value{color:var(--green)}.sc-red .sc-value{color:var(--red)}
+        .sc-glow{position:absolute;top:-18px;right:-18px;width:80px;height:80px;border-radius:50%;filter:blur(28px);opacity:.12;pointer-events:none}
+        .sc-blue .sc-glow{background:var(--blue)}.sc-amber .sc-glow{background:var(--amber)}.sc-green .sc-glow{background:var(--green)}.sc-red .sc-glow{background:var(--red)}
+        .stat-card:nth-child(1){animation-delay:.05s}.stat-card:nth-child(2){animation-delay:.1s}.stat-card:nth-child(3){animation-delay:.15s}.stat-card:nth-child(4){animation-delay:.2s}
+
+        /* Email info banner — shown when a row is selected */
+        .email-banner{display:none;align-items:center;gap:10px;background:var(--teal-dim);border:1px solid rgba(45,212,191,.2);border-radius:var(--r2);padding:10px 14px;margin-bottom:14px;font-size:12px;color:var(--teal)}
+        .email-banner.visible{display:flex}
+        .email-banner svg{width:14px;height:14px;flex-shrink:0}
+        .email-banner strong{color:#fff}
+
+        /* Form */
+        .form-card{background:var(--panel);border:1px solid var(--border);border-radius:var(--r);padding:22px;margin-bottom:22px;animation:fadeIn .3s ease .22s both}
+        .form-card-title{font-family:var(--font-head);font-size:13px;font-weight:700;margin-bottom:18px;display:flex;align-items:center;gap:8px;color:var(--blue)}
+        .form-card-title::before{content:'';width:8px;height:8px;border-radius:50%;background:var(--blue);display:inline-block;flex-shrink:0}
+        .form-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:12px}
+        .fg{display:flex;flex-direction:column;gap:5px}
+        .fg.span2{grid-column:span 2}
+        .fg label{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+        .fg input,.fg select,.fg textarea{padding:9px 12px;border:1px solid var(--border2);border-radius:var(--r2);background:var(--panel2);font-family:var(--font-body);font-size:13px;color:var(--text);outline:none;transition:border-color .15s;width:100%}
+        .fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--blue)}
+        .fg input::placeholder,.fg textarea::placeholder{color:var(--muted)}
+        .fg select option{background:var(--panel)}
+        .fg textarea{resize:vertical;min-height:72px}
+        .fg input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(.5)}
+        .form-actions{margin-top:18px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+        .status-pill{display:flex;align-items:center;gap:6px;margin-left:auto;font-size:11px;color:var(--muted)}
+        .dot{width:7px;height:7px;border-radius:50%;background:var(--muted);flex-shrink:0}
+        .dot.ok{background:var(--green)}.dot.err{background:var(--red)}.dot.loading{background:var(--amber);animation:blink .8s infinite}
+        @keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+
+        /* Table */
+        .table-card{background:var(--panel);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;animation:fadeIn .3s ease .3s both}
+        .table-header{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--border)}
+        .table-title{font-family:var(--font-head);font-size:14px;font-weight:700}
+        .tbl-count{font-size:11px;background:var(--blue-dim);color:var(--blue);padding:2px 8px;border-radius:99px;font-weight:700}
+        .tbl-scroll{overflow-x:auto}
+        table{width:100%;border-collapse:collapse}
+        thead tr{background:var(--panel2);border-bottom:1px solid var(--border)}
+        th{padding:10px 14px;text-align:left;font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}
+        tbody tr{border-bottom:1px solid var(--border);transition:background .1s;cursor:pointer}
+        tbody tr:last-child{border-bottom:none}
+        tbody tr:hover{background:rgba(79,142,255,.03)}
+        tbody tr.selected{background:rgba(79,142,255,.07)}
+        td{padding:11px 14px;font-size:13px;vertical-align:middle;white-space:nowrap}
+        .cid{font-family:var(--font-head);font-weight:700;color:var(--blue)}
+        .action-btns{display:flex;gap:5px}
+        .status-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:5px;font-size:11px;font-weight:600}
+        .status-badge::before{content:'';width:5px;height:5px;border-radius:50%;flex-shrink:0}
+        .s-pending{background:rgba(245,166,35,.12);color:var(--amber)}.s-pending::before{background:var(--amber)}
+        .s-approved{background:rgba(46,204,139,.12);color:var(--green)}.s-approved::before{background:var(--green)}
+        .s-rejected{background:rgba(255,79,107,.12);color:var(--red)}.s-rejected::before{background:var(--red)}
+        .s-paid{background:rgba(79,142,255,.12);color:var(--blue)}.s-paid::before{background:var(--blue)}
+        .veh-chip{background:var(--panel2);color:var(--soft);padding:2px 8px;border-radius:5px;font-size:11px;font-weight:600;font-family:var(--font-head)}
+        /* ── NEW: email chip in table ── */
+        .email-chip{display:inline-flex;align-items:center;gap:4px;background:var(--teal-dim);color:var(--teal);padding:2px 8px;border-radius:5px;font-size:10px;font-weight:500;max-width:160px;overflow:hidden;text-overflow:ellipsis}
+        .email-chip svg{width:10px;height:10px;flex-shrink:0}
+        .no-email{color:var(--muted);font-size:11px}
+        .empty-row{text-align:center;padding:52px 20px;color:var(--muted)}
+        .empty-row svg{width:36px;height:36px;margin:0 auto 10px;display:block;opacity:.2}
+        .empty-row p{font-size:13px}
+
+        /* Modals */
+        .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);z-index:100;align-items:center;justify-content:center;padding:20px}
+        .overlay.open{display:flex}
+        .modal{background:var(--panel);border:1px solid var(--border2);border-radius:16px;width:100%;max-width:380px;animation:slideUp .2s ease}
+        @keyframes slideUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+        .modal-head{display:flex;align-items:center;justify-content:space-between;padding:18px 20px;border-bottom:1px solid var(--border)}
+        .modal-title{font-family:var(--font-head);font-size:15px;font-weight:700}
+        .modal-close{background:var(--panel2);border:1px solid var(--border);border-radius:7px;cursor:pointer;color:var(--muted);padding:5px;display:flex;transition:all .15s}
+        .modal-close:hover{background:var(--red-dim);color:var(--red)}
+        .modal-close svg{width:14px;height:14px}
+        .modal-body{padding:20px}
+        .modal-foot{display:flex;justify-content:center;gap:8px;padding:16px 20px;border-top:1px solid var(--border)}
+        .confirm-icon{font-size:40px;text-align:center;margin-bottom:10px}
+        .confirm-title{font-family:var(--font-head);font-size:15px;font-weight:700;text-align:center;margin-bottom:6px}
+        .confirm-msg{font-size:12px;color:var(--muted);text-align:center;line-height:1.6}
+
+        /* Toast */
+        .toast{position:fixed;bottom:22px;right:22px;display:flex;align-items:center;gap:9px;padding:11px 16px;border-radius:10px;font-size:13px;font-weight:500;transform:translateY(8px);opacity:0;transition:all .22s cubic-bezier(.34,1.56,.64,1);pointer-events:none;z-index:999;box-shadow:0 8px 24px rgba(0,0,0,.4);max-width:340px}
+        .toast.show{transform:translateY(0);opacity:1}
+        .toast.ok{background:var(--green);color:#fff}.toast.err{background:var(--red);color:#fff}.toast.info{background:var(--blue);color:#fff}.toast.warn{background:var(--amber);color:#111}
+        .toast svg{width:14px;height:14px;flex-shrink:0}
+        .spin{display:inline-block;width:11px;height:11px;border:2px solid rgba(255,255,255,.25);border-top-color:currentColor;border-radius:50%;animation:spin .6s linear infinite}
+        @keyframes spin{to{transform:rotate(360deg)}}
+        @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+    </style>
+    </head>
+    <body>
+    <div class="layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <div class="logo-mark">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 17H3a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v5"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></svg>
+                </div>
+                <span class="logo-text">VIMS</span>
+            </div>
+            <span class="nav-section">Main</span>
+            <button class="nav-item" onclick="location.href='dashboard.html'">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+                Dashboard
+            </button>
+            <button class="nav-item" onclick="location.href='vehicles.html'">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 17H3a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v5"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg>
+                Vehicles
+            </button>
+            <button class="nav-item" onclick="location.href='policies.html'">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                Policies
+            </button>
+            <button class="nav-item" onclick="location.href='payments.html'">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+                Payments
+            </button>
+            <button class="nav-item active">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                Claims
+                <span class="nav-badge" id="nav-count">0</span>
+            </button>
+            <span class="nav-section" style="margin-top:8px">Management</span>
+            <button class="nav-item" onclick="location.href='user.html'">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                Users
+            </button>
+            <div class="sb-bottom">
+                <div class="user-card">
+                    <div class="avatar">A</div>
+                    <div class="user-info">
+                        <div class="uname" id="sidebarUsername">Admin</div>
+                        <div class="urole">Administrator</div>
+                    </div>
+                </div>
+                <button class="logout-btn" onclick="doLogout()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                    Sign out
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main -->
+        <div class="main">
+            <div class="topbar">
+                <span class="page-title">Claims Management</span>
+                <div class="topbar-right">
+                    <button class="btn btn-ghost" onclick="doGetAll()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+                        Refresh
+                    </button>
+                    <button class="btn btn-primary" onclick="doClear()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                        New Claim
+                    </button>
+                </div>
+            </div>
+
+            <div class="content">
+                <!-- Stats -->
+                <div class="stats-grid">
+                    <div class="stat-card sc-blue"><div class="sc-glow"></div>
+                        <div class="sc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg></div>
+                        <div class="sc-label">Total Claims</div><div class="sc-value" id="statTotal">0</div></div>
+                    <div class="stat-card sc-amber"><div class="sc-glow"></div>
+                        <div class="sc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+                        <div class="sc-label">Pending</div><div class="sc-value" id="statPending">0</div></div>
+                    <div class="stat-card sc-green"><div class="sc-glow"></div>
+                        <div class="sc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg></div>
+                        <div class="sc-label">Approved</div><div class="sc-value" id="statApproved">0</div></div>
+                    <div class="stat-card sc-red"><div class="sc-glow"></div>
+                        <div class="sc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
+                        <div class="sc-label">Rejected</div><div class="sc-value" id="statRejected">0</div></div>
+                </div>
+
+                <!-- ── Email owner banner (shown when row selected & owner has email) ── -->
+                <div class="email-banner" id="emailBanner">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                        <polyline points="22,6 12,13 2,6"/>
+                    </svg>
+                    <span>Owner: <strong id="bannerName">—</strong> &nbsp;·&nbsp; Email: <strong id="bannerEmail">—</strong>
+                        &nbsp;·&nbsp; Notification will be sent automatically on status change.</span>
+                </div>
+
+                <!-- Form -->
+                <div class="form-card">
+                    <div class="form-card-title" id="formTitle">Submit a Claim</div>
+                    <div class="form-grid">
+                        <div class="fg"><label>Claim ID <span style="color:var(--muted);font-size:9px">(auto)</span></label>
+                            <input type="number" id="claimId" placeholder="Auto" readonly style="opacity:.5"/></div>
+                        <div class="fg"><label>Vehicle Number *</label><input type="text" id="vehicleNumber" placeholder="e.g. WP-ABC-1234"/></div>
+                        <div class="fg"><label>Claim Amount (LKR) *</label><input type="number" id="claimAmount" placeholder="0.00" step="0.01"/></div>
+                        <div class="fg"><label>Claim Date</label><input type="date" id="claimDate"/></div>
+                        <div class="fg"><label>Incident Date</label><input type="date" id="incidentDate"/></div>
+                        <div class="fg"><label>Incident Location</label><input type="text" id="incidentLocation" placeholder="e.g. Colombo"/></div>
+                        <div class="fg"><label>Claim Status</label>
+                            <select id="claimStatus">
+                                <option value="">-- Select --</option>
+                                <option>Pending</option><option>Approved</option>
+                                <option>Rejected</option><option>Paid</option>
+                            </select></div>
+                        <div class="fg"><label>Approved Date</label><input type="date" id="approvedDate"/></div>
+                        <div class="fg"><label>Approved By (User ID)</label><input type="number" id="approvedBy" placeholder="User ID"/></div>
+                        <div class="fg span2"><label>Description of Incident</label>
+                            <textarea id="description" placeholder="Describe what happened…"></textarea></div>
+                        <div class="fg"><label>Document Path</label><input type="text" id="documentPath" placeholder="/docs/claim.pdf"/></div>
+                    </div>
+                    <div class="form-actions">
+                        <button class="btn btn-primary" id="btnRegister" onclick="doRegister()">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Register</button>
+                        <button class="btn btn-warn" id="btnUpdate" onclick="doUpdate()" disabled>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Update</button>
+                        <button class="btn btn-danger-soft" id="btnDelete" onclick="doDeleteSelected()" disabled>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>Delete</button>
+                        <div class="sep"></div>
+                        <button class="btn btn-green" onclick="doGetAll()">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>Get All</button>
+                        <button class="btn btn-danger-soft" onclick="openResetModal()">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>Reset All</button>
+                        <button class="btn btn-ghost" onclick="doClear()">Clear</button>
+                        <div class="status-pill">
+                            <div class="dot" id="dot"></div>
+                            <span id="statusTxt">Idle</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Table -->
+                <div class="table-card">
+                    <div class="table-header">
+                        <span class="table-title">Claim History</span>
+                        <span class="tbl-count" id="tblCount">0</span>
+                    </div>
+                    <div class="tbl-scroll">
+                        <table>
+                            <thead><tr>
+                                <th>Claim ID</th><th>Claim Date</th><th>Vehicle No</th>
+                                <th>Owner Email</th><!-- ← NEW column -->
+                                <th>Amount (LKR)</th><th>Incident Date</th><th>Location</th>
+                                <th>Status</th><th>Approved Date</th><th>Approved By</th>
+                                <th>Description</th><th>Actions</th>
+                            </tr></thead>
+                            <tbody id="tBody">
+                            <tr><td colspan="12"><div class="empty-row">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>
+                                <p>Click <strong>Get All</strong> to load claims</p>
+                            </div></td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Modal -->
+    <div class="overlay" id="delModal">
+        <div class="modal">
+            <div class="modal-head"><span class="modal-title">Confirm Delete</span>
+                <button class="modal-close" onclick="cls('delModal')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+            <div class="modal-body">
+                <div class="confirm-icon">🗑️</div>
+                <div class="confirm-title">Delete Claim?</div>
+                <div class="confirm-msg" id="delMsg">This action cannot be undone.</div>
+            </div>
+            <div class="modal-foot">
+                <button class="btn btn-ghost" onclick="cls('delModal')">Cancel</button>
+                <button class="btn btn-danger" onclick="confirmDelete()">Yes, Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reset Modal -->
+    <div class="overlay" id="resetModal">
+        <div class="modal">
+            <div class="modal-head"><span class="modal-title">Reset All Claims</span>
+                <button class="modal-close" onclick="cls('resetModal')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+            <div class="modal-body">
+                <div class="confirm-icon">⚠️</div>
+                <div class="confirm-title">Reset All?</div>
+                <div class="confirm-msg">All claims will be <strong>permanently deleted</strong>. This cannot be undone.</div>
+            </div>
+            <div class="modal-foot">
+                <button class="btn btn-ghost" onclick="cls('resetModal')">Cancel</button>
+                <button class="btn btn-danger" onclick="confirmResetAll()">Yes, Reset All</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Logout Modal -->
+    <div class="overlay" id="logoutModal">
+        <div class="modal">
+            <div class="modal-head"><span class="modal-title">Sign Out</span>
+                <button class="modal-close" onclick="cls('logoutModal')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+            <div class="modal-body">
+                <div class="confirm-icon">👋</div>
+                <div class="confirm-title">Sign Out?</div>
+                <div class="confirm-msg">You will be redirected to the login page.</div>
+            </div>
+            <div class="modal-foot">
+                <button class="btn btn-ghost" onclick="cls('logoutModal')">Cancel</button>
+                <button class="btn btn-danger" onclick="logout()">Sign Out</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast">
+        <svg id="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"></svg>
+        <span id="tmsg"></span>
+    </div>
+
+    <script src="../js/app.js"></script>
+<script>
+    authGuard();
+
+    const BASE   = 'http://localhost:8080/api/v1/claim';
+    const FIELDS = ['claimId','claimDate','claimStatus','claimAmount','incidentDate',
+        'incidentLocation','description','documentPath','approvedDate',
+        'vehicleNumber','approvedBy'];
+
+    let claims = [], selectedIndex = -1, deleteTarget = null;
+
+    const $ = id => document.getElementById(id);
+
+    const uname = localStorage.getItem('username');
+    if (uname) $('sidebarUsername').textContent = uname;
+
+    // ── Helpers ───────────────────────────────────────────────────────────────
+    function getFields() {
+        const o = {};
+        FIELDS.forEach(f => {
+            const e = $(f);
+            o[f] = e ? (e.value.trim() || null) : null;
+        });
+        o.claimId     = o.claimId     ? Number(o.claimId)     : null;
+        o.claimAmount = o.claimAmount ? Number(o.claimAmount) : null;
+        o.approvedBy  = o.approvedBy  ? Number(o.approvedBy)  : null;
+        if (!o.claimId) delete o.claimId;
+        return o;
+    }
+    function setFields(c) { FIELDS.forEach(f => { const e=$(f); if(e) e.value = c[f] ?? ''; }); }
+    function clearFields() {
+        FIELDS.forEach(f => {
+            const e = $(f);
+            if (!e) return;
+            e.tagName === 'SELECT' ? (e.selectedIndex = 0) : (e.value = '');
+        });
+    }
+    function setStatus(s, m) { $('dot').className = 'dot ' + (s || ''); $('statusTxt').textContent = m; }
+
+    let toastTimer;
+    function toast(msg, type = 'info') {
+        clearTimeout(toastTimer);
+        $('tmsg').textContent = msg;
+        $('tico').innerHTML = type === 'ok'
+            ? '<polyline points="20 6 9 17 4 12"/>'
+            : '<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>';
+        const el = $('toast');
+        el.className = `toast show ${type}`;
+        toastTimer = setTimeout(() => el.classList.remove('show'), 4000);
     }
 
-    function doLogout(){$('logoutModal').classList.add('open');}
+    function cls(id) { $(id).classList.remove('open'); }
 
-    document.querySelectorAll('.overlay').forEach(el=>
-        el.addEventListener('click',e=>{if(e.target===el)el.classList.remove('open');}));
+    function statusBadge(s) {
+        const map = { Pending:'s-pending', Approved:'s-approved', Rejected:'s-rejected', Paid:'s-paid' };
+        return `<span class="status-badge ${map[s] || 's-pending'}">${s || '—'}</span>`;
+    }
+    const fmt   = d => d ? String(d).substring(0, 10) : '—';
+    const short = d => d ? (d.length > 28 ? d.substring(0, 28) + '…' : d) : '—';
+    const esc   = v => v == null ? '—' : String(v).replace(/&/g,'&amp;').replace(/</g,'&lt;');
+
+    // ── Email chip helper ─────────────────────────────────────────────────────
+    function emailChip(email) {
+        if (!email) return '<span class="no-email">—</span>';
+        const display = email.length > 20 ? email.substring(0, 20) + '…' : email;
+        return `<span class="email-chip" title="${esc(email)}">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                <polyline points="22,6 12,13 2,6"/>
+            </svg>
+            ${esc(display)}</span>`;
+    }
+
+    // ── Safe JSON parse ───────────────────────────────────────────────────────
+    async function safeJson(res) {
+        const text = await res.text();
+        if (!text) return {};
+        try { return JSON.parse(text); } catch { return { message: text }; }
+    }
+
+    // ── Stats + render ────────────────────────────────────────────────────────
+    function updateStats(data) {
+        $('statTotal').textContent    = data.length;
+        $('statPending').textContent  = data.filter(c => c.claimStatus === 'Pending').length;
+        $('statApproved').textContent = data.filter(c => c.claimStatus === 'Approved').length;
+        $('statRejected').textContent = data.filter(c => c.claimStatus === 'Rejected').length;
+        $('nav-count').textContent    = data.length;
+        $('tblCount').textContent     = data.length;
+    }
+
+    function render(data) {
+        claims = Array.isArray(data) ? data : [];
+        updateStats(claims);
+        if (!claims.length) {
+            $('tBody').innerHTML = `<tr><td colspan="12"><div class="empty-row">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>
+                <p>No claims found</p></div></td></tr>`;
+            return;
+        }
+        $('tBody').innerHTML = claims.map((c, i) => `
+            <tr id="crow-${i}" class="${selectedIndex === i ? 'selected' : ''}" onclick="selectRow(${i})">
+                <td class="cid">#${c.claimId ?? '—'}</td>
+                <td style="color:var(--soft)">${fmt(c.claimDate)}</td>
+                <td><span class="veh-chip">${esc(c.vehicleNumber)}</span></td>
+                <td>${emailChip(c.ownerEmail)}</td>
+                <td style="font-family:var(--font-head);font-weight:700;color:var(--amber)">
+                    ${c.claimAmount ? 'LKR ' + Number(c.claimAmount).toLocaleString() : '—'}</td>
+                <td style="color:var(--soft)">${fmt(c.incidentDate)}</td>
+                <td style="color:var(--soft)">${esc(c.incidentLocation)}</td>
+                <td>${statusBadge(c.claimStatus)}</td>
+                <td style="color:var(--soft)">${fmt(c.approvedDate)}</td>
+                <td style="color:var(--muted)">${c.approvedBy ?? '—'}</td>
+                <td style="color:var(--muted)" title="${esc(c.description)}">${short(c.description)}</td>
+                <td><div class="action-btns">
+                    <button class="btn btn-sm act-edit" onclick="event.stopPropagation();selectRow(${i})">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:11px;height:11px"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Edit
+                    </button>
+                    <button class="btn btn-sm act-del" onclick="event.stopPropagation();rowDel(${i})">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:11px;height:11px"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>Delete
+                    </button>
+                </div></td>
+            </tr>`).join('');
+    }
+
+    // ── Row selection — also drives the email banner ──────────────────────────
+    function selectRow(i) {
+        if (selectedIndex === i) { doClear(); return; }
+        document.getElementById(`crow-${selectedIndex}`)?.classList.remove('selected');
+        selectedIndex = i;
+        document.getElementById(`crow-${i}`).classList.add('selected');
+        setFields(claims[i]);
+        setEditMode();
+
+        // Show / hide email banner
+        const c = claims[i];
+        if (c.ownerEmail) {
+            $('bannerName').textContent  = c.ownerName  || '—';
+            $('bannerEmail').textContent = c.ownerEmail || '—';
+            $('emailBanner').classList.add('visible');
+        } else {
+            $('emailBanner').classList.remove('visible');
+        }
+
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function rowDel(i) {
+        deleteTarget = i;
+        const c = claims[i];
+        $('delMsg').textContent = `Remove Claim #${c.claimId} (Vehicle: ${c.vehicleNumber || '—'}, Amount: LKR ${Number(c.claimAmount)?.toLocaleString() || '—'})? This cannot be undone.`;
+        $('delModal').classList.add('open');
+    }
+
+    function setEditMode() {
+        $('formTitle').textContent = `Edit Claim #${claims[selectedIndex].claimId}`;
+        $('formTitle').style.color = 'var(--amber)';
+        $('btnRegister').disabled = true;
+        $('btnUpdate').disabled   = false;
+        $('btnDelete').disabled   = false;
+    }
+
+    function doClear() {
+        clearFields(); selectedIndex = -1; deleteTarget = null;
+        document.querySelectorAll('#tBody tr.selected').forEach(r => r.classList.remove('selected'));
+        $('formTitle').textContent = 'Submit a Claim';
+        $('formTitle').style.color = 'var(--blue)';
+        $('btnRegister').disabled  = false;
+        $('btnUpdate').disabled    = true;
+        $('btnDelete').disabled    = true;
+        $('emailBanner').classList.remove('visible');
+        setStatus('', 'Idle');
+    }
+
+    // ── API calls ─────────────────────────────────────────────────────────────
+    async function doRegister() {
+        const data = getFields();
+        if (!data.vehicleNumber) { toast('Vehicle Number is required', 'err'); return; }
+        if (!data.claimAmount)   { toast('Claim Amount is required', 'err');   return; }
+
+        $('btnRegister').innerHTML = '<span class="spin"></span> Saving…';
+        $('btnRegister').disabled  = true;
+        setStatus('loading', 'Registering…');
+        try {
+            const res = await apiFetch(`${BASE}/register`, {
+                method: 'POST', body: JSON.stringify(data)
+            });
+            const j = await safeJson(res);
+            if (res.ok) {
+                // Use the server message (contains email confirmation text)
+                toast(j.message || 'Claim registered ✓', 'ok');
+                setStatus('ok', 'Registered');
+                clearFields();
+                await doGetAll();
+            } else {
+                toast(`Failed: ${j.message || res.status}`, 'err');
+                setStatus('err', 'Failed');
+            }
+        } catch (e) {
+            toast(e.message || 'Network error', 'err');
+            setStatus('err', 'Network error');
+        } finally {
+            $('btnRegister').innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Register';
+            $('btnRegister').disabled  = false;
+        }
+    }
+
+    async function doGetAll() {
+        setStatus('loading', 'Loading…');
+        try {
+            const res = await apiFetch(`${BASE}/all`);
+            const j   = await safeJson(res);
+            if (res.ok) {
+                render(j.data || []);
+                setStatus('ok', `${claims.length} record(s)`);
+                toast(`Loaded ${claims.length} claim(s)`, 'info');
+            } else {
+                toast(`Error: ${j.message || res.status}`, 'err');
+                setStatus('err', 'Failed');
+                render([]);
+            }
+        } catch (e) {
+            toast(e.message || 'Cannot reach server', 'err');
+            setStatus('err', 'Network error');
+            render([]);
+        }
+    }
+
+    async function doUpdate() {
+        if (selectedIndex < 0) { toast('Select a row to update', 'err'); return; }
+        const data = getFields();
+        const cid  = claims[selectedIndex].claimId;
+
+        $('btnUpdate').innerHTML = '<span class="spin" style="border-top-color:#111"></span> Updating…';
+        $('btnUpdate').disabled  = true;
+        setStatus('loading', 'Updating…');
+        try {
+            const res = await apiFetch(`${BASE}/update/${cid}`, {
+                method: 'PUT', body: JSON.stringify(data)
+            });
+            const j = await safeJson(res);
+            if (res.ok) {
+                toast(j.message || `Claim #${cid} updated ✓`, 'ok');
+                setStatus('ok', 'Updated');
+                doClear();
+                await doGetAll();
+            } else {
+                toast(`Failed: ${j.message || res.status}`, 'err');
+                setStatus('err', 'Failed');
+            }
+        } catch (e) {
+            toast(e.message || 'Network error', 'err');
+            setStatus('err', 'Network error');
+        } finally {
+            $('btnUpdate').innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> Update';
+            $('btnUpdate').disabled  = false;
+        }
+    }
+
+    function doDeleteSelected() {
+        if (selectedIndex >= 0) rowDel(selectedIndex);
+        else toast('Select a row to delete', 'err');
+    }
+
+    async function confirmDelete() {
+        if (deleteTarget === null) return;
+        const cid = claims[deleteTarget].claimId;
+        cls('delModal');
+        setStatus('loading', 'Deleting…');
+        try {
+            const res = await apiFetch(`${BASE}/delete/${cid}`, { method: 'DELETE' });
+            const j   = await safeJson(res);
+            if (res.ok) {
+                toast(`Claim #${cid} deleted`, 'err');
+                setStatus('ok', 'Deleted');
+                doClear();
+                await doGetAll();
+            } else {
+                toast(`Failed: ${j.message || res.status}`, 'err');
+                setStatus('err', 'Failed');
+            }
+        } catch (e) {
+            toast(e.message || 'Network error', 'err');
+            setStatus('err', 'Network error');
+        } finally {
+            deleteTarget = null;
+        }
+    }
+
+    function openResetModal() { $('resetModal').classList.add('open'); }
+
+    async function confirmResetAll() {
+        cls('resetModal');
+        setStatus('loading', 'Resetting…');
+        try {
+            const res = await apiFetch(`${BASE}/reset`, { method: 'DELETE' });
+            const j   = await safeJson(res);
+            if (res.ok) {
+                toast('All claims deleted', 'err');
+                setStatus('ok', 'Reset done');
+                doClear();
+                render([]);
+            } else {
+                toast(`Failed: ${j.message || res.status}`, 'err');
+                setStatus('err', 'Failed');
+            }
+        } catch (e) {
+            toast(e.message || 'Network error', 'err');
+            setStatus('err', 'Network error');
+        }
+    }
+
+    function doLogout() { $('logoutModal').classList.add('open'); }
+
+    document.querySelectorAll('.overlay').forEach(el =>
+        el.addEventListener('click', e => { if (e.target === el) el.classList.remove('open'); }));
+
+    doGetAll();
 </script>
-<script src="../js/jquery-3.7.1.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="../js/app.js"></script>
+</body>
+</html>
+    function doLogout() { $('logoutModal').classList.add('open'); }
+
+    document.querySelectorAll('.overlay').forEach(el =>
+        el.addEventListener('click', e => { if (e.target === el) el.classList.remove('open'); }));
+
+    doGetAll();
+</script>
 </body>
 </html>

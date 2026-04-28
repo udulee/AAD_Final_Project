@@ -358,33 +358,60 @@
 
     // ── Load ──
     function loadPolicies() {
-        $.get(API, function (data) {
-            updateStats(data);
-            if (!data.length) {
-                $("#policyTableBody").html(`<tr><td colspan="10" class="text-center text-muted py-4"><i class="bi bi-inbox me-1"></i>No policies found</td></tr>`);
-                return;
-            }
-            let rows = "";
-            data.forEach((p, i) => {
-                const statusCls = { ACTIVE:"status-active", EXPIRED:"status-expired", PENDING:"status-pending", CANCELLED:"status-cancelled" }[p.status] || "status-pending";
-                const typeCls   = p.policyType && p.policyType.includes("FULL") ? "type-full" : "type-third";
-                rows += `
+        $.ajax({
+            url: API,
+            type: "GET",
+            success: function (data) {
+                updateStats(data);
+
+                if (!data.length) {
+                    $("#policyTableBody").html(`
+                    <tr>
+                        <td colspan="10" class="text-center text-muted py-4">
+                            <i class="bi bi-inbox me-1"></i>No policies found
+                        </td>
+                    </tr>`);
+                    return;
+                }
+
+                let rows = "";
+                data.forEach((p, i) => {
+                    const statusCls = {
+                        ACTIVE:"status-active",
+                        EXPIRED:"status-expired",
+                        PENDING:"status-pending",
+                        CANCELLED:"status-cancelled"
+                    }[p.status] || "status-pending";
+
+                    const typeCls = p.policyType && p.policyType.includes("FULL")
+                        ? "type-full"
+                        : "type-third";
+
+                    rows += `
                 <tr id="row-${p.policyId}" onclick="selectRow(${p.policyId})">
                     <td>${i+1}</td>
                     <td><strong>${p.policyNumber ?? "-"}</strong></td>
                     <td><span class="type-badge ${typeCls}">${p.policyType ?? "-"}</span></td>
-                    <td><i class="bi bi-car-front me-1" style="color:var(--accent)"></i>${p.vehicleNumber ?? "-"}</td>
+                    <td>${p.vehicleNumber ?? "-"}</td>
                     <td>${p.customerId ?? "-"}</td>
                     <td>${p.startDate ?? "-"}</td>
                     <td>${p.endDate ?? "-"}</td>
-                    <td>${p.premiumAmount ? p.premiumAmount.toLocaleString() : "0"}</td>
-                    <td>${p.coverageAmount ? p.coverageAmount.toLocaleString() : "0"}</td>
+                    <td>${p.premiumAmount || 0}</td>
+                    <td>${p.coverageAmount || 0}</td>
                     <td><span class="status-badge ${statusCls}">${p.status ?? "-"}</span></td>
                 </tr>`;
-            });
-            $("#policyTableBody").html(rows);
-        }).fail(function () {
-            $("#policyTableBody").html(`<tr><td colspan="10" class="text-center text-danger py-4"><i class="bi bi-wifi-off me-1"></i>Failed to connect to server</td></tr>`);
+                });
+
+                $("#policyTableBody").html(rows);
+            },
+            error: function () {
+                $("#policyTableBody").html(`
+                <tr>
+                    <td colspan="10" class="text-center text-danger py-4">
+                        Failed to load policies
+                    </td>
+                </tr>`);
+            }
         });
     }
 
@@ -429,7 +456,7 @@
         const data = getFormData();
         if (!validateForm(data)) return;
         $.ajax({
-            url: API, type: "POST",
+            url: API+'/save', type: "POST",
             contentType: "application/json",
             data: JSON.stringify(data),
             success: function () {

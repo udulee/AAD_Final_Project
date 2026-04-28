@@ -17,6 +17,7 @@
             --text:     #f1f5f9;
             --muted:    #64748b;
             --danger:   #f87171;
+            --success:  #34d399;
             --radius:   14px;
         }
 
@@ -32,7 +33,6 @@
             position: relative;
         }
 
-        /* ── Animated background grid ── */
         body::before {
             content: '';
             position: fixed;
@@ -46,185 +46,102 @@
         }
         @keyframes gridMove { to { background-position: 48px 48px; } }
 
-        /* ── Glow orbs ── */
-        .orb {
-            position: fixed;
-            border-radius: 50%;
-            filter: blur(90px);
-            pointer-events: none;
-            animation: float 8s ease-in-out infinite;
-        }
-        .orb1 { width: 500px; height: 500px; background: rgba(59,130,246,.15); top: -150px; left: -100px; animation-delay: 0s; }
-        .orb2 { width: 400px; height: 400px; background: rgba(6,182,212,.1);  bottom: -100px; right: -80px; animation-delay: 3s; }
-        @keyframes float {
-            0%,100% { transform: translateY(0) scale(1); }
-            50%      { transform: translateY(-30px) scale(1.05); }
-        }
+        .orb { position: fixed; border-radius: 50%; filter: blur(90px); pointer-events: none; animation: float 8s ease-in-out infinite; }
+        .orb1 { width: 500px; height: 500px; background: rgba(59,130,246,.15); top: -150px; left: -100px; }
+        .orb2 { width: 400px; height: 400px; background: rgba(6,182,212,.1); bottom: -100px; right: -80px; animation-delay: 3s; }
+        @keyframes float { 0%,100%{transform:translateY(0) scale(1)} 50%{transform:translateY(-30px) scale(1.05)} }
 
-        /* ── Card ── */
         .card {
-            position: relative;
-            z-index: 10;
-            background: rgba(17, 24, 39, 0.85);
+            position: relative; z-index: 10;
+            background: rgba(17,24,39,0.85);
             backdrop-filter: blur(20px);
             border: 1px solid var(--border);
             border-radius: 24px;
             padding: 52px 48px;
-            width: 100%;
-            max-width: 440px;
+            width: 100%; max-width: 440px;
             box-shadow: 0 32px 80px rgba(0,0,0,.5), 0 0 0 1px rgba(255,255,255,.04);
             animation: slideUp .6s cubic-bezier(.16,1,.3,1) both;
         }
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(32px); }
-            to   { opacity: 1; transform: translateY(0); }
-        }
+        @keyframes slideUp { from{opacity:0;transform:translateY(32px)} to{opacity:1;transform:translateY(0)} }
 
-        /* ── Logo / Brand ── */
-        .brand {
+        .tabs {
             display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 36px;
+            background: rgba(255,255,255,.04);
+            border-radius: 10px;
+            padding: 4px;
+            margin-bottom: 32px;
+            gap: 4px;
         }
-        .brand-icon {
-            width: 44px; height: 44px;
-            background: linear-gradient(135deg, var(--accent), var(--accent2));
-            border-radius: 12px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 22px;
+        .tab {
+            flex: 1; padding: 9px; border: none; background: transparent;
+            color: var(--muted); font-family: 'Syne', sans-serif; font-size: 13px;
+            font-weight: 600; border-radius: 7px; cursor: pointer; transition: all .2s;
         }
-        .brand-name {
-            font-family: 'Syne', sans-serif;
-            font-size: 20px;
-            font-weight: 800;
-            letter-spacing: -0.5px;
-        }
+        .tab.active { background: var(--accent); color: #fff; }
+
+        .brand { display: flex; align-items: center; gap: 12px; margin-bottom: 28px; }
+        .brand-icon { width: 44px; height: 44px; background: linear-gradient(135deg,var(--accent),var(--accent2)); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px; }
+        .brand-name { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 800; letter-spacing: -0.5px; }
         .brand-name span { color: var(--accent); }
 
-        h1 {
-            font-family: 'Syne', sans-serif;
-            font-size: 28px;
-            font-weight: 700;
-            margin-bottom: 6px;
-            letter-spacing: -0.5px;
-        }
-        .subtitle {
-            color: var(--muted);
-            font-size: 14px;
-            margin-bottom: 36px;
-            font-weight: 300;
-        }
+        .pane { display: none; }
+        .pane.active { display: block; }
 
-        /* ── Form ── */
-        .field { margin-bottom: 20px; }
-        label {
-            display: block;
-            font-size: 12px;
-            font-weight: 500;
-            letter-spacing: .06em;
-            text-transform: uppercase;
-            color: var(--muted);
-            margin-bottom: 8px;
-        }
+        h1 { font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+        .subtitle { color: var(--muted); font-size: 13px; margin-bottom: 24px; font-weight: 300; }
+
+        .field { margin-bottom: 16px; }
+        label { display: block; font-size: 11px; font-weight: 500; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin-bottom: 7px; }
         .input-wrap { position: relative; }
-        .input-wrap .icon {
-            position: absolute;
-            left: 14px; top: 50%;
-            transform: translateY(-50%);
-            color: var(--muted);
-            font-size: 16px;
-            pointer-events: none;
-        }
+        .input-wrap .icon { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); color: var(--muted); font-size: 15px; pointer-events: none; }
         input {
-            width: 100%;
-            padding: 13px 14px 13px 42px;
+            width: 100%; padding: 12px 12px 12px 40px;
             background: rgba(255,255,255,.04);
             border: 1px solid var(--border);
             border-radius: var(--radius);
-            color: var(--text);
-            font-family: 'DM Sans', sans-serif;
-            font-size: 15px;
-            outline: none;
-            transition: border-color .2s, box-shadow .2s, background .2s;
+            color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 14px;
+            outline: none; transition: border-color .2s, box-shadow .2s, background .2s;
         }
-        input:focus {
-            border-color: var(--accent);
-            background: rgba(59,130,246,.05);
-            box-shadow: 0 0 0 3px rgba(59,130,246,.15);
-        }
+        input:focus { border-color: var(--accent); background: rgba(59,130,246,.05); box-shadow: 0 0 0 3px rgba(59,130,246,.15); }
         input::placeholder { color: var(--muted); }
 
-        /* ── Error msg ── */
-        .error-msg {
-            display: none;
-            background: rgba(248,113,113,.1);
-            border: 1px solid rgba(248,113,113,.3);
-            color: var(--danger);
-            border-radius: 10px;
-            padding: 10px 14px;
-            font-size: 13px;
-            margin-bottom: 18px;
-            animation: shake .4s ease;
+        .alert {
+            display: none; border-radius: 10px; padding: 10px 14px;
+            font-size: 13px; margin-bottom: 16px; align-items: center; gap: 8px;
         }
-        .error-msg.show { display: flex; align-items: center; gap: 8px; }
-        @keyframes shake {
-            0%,100% { transform: translateX(0); }
-            25%      { transform: translateX(-6px); }
-            75%      { transform: translateX(6px); }
-        }
+        .alert.show { display: flex; }
+        .alert.err  { background: rgba(248,113,113,.1); border: 1px solid rgba(248,113,113,.3); color: var(--danger); }
+        .alert.ok   { background: rgba(52,211,153,.1);  border: 1px solid rgba(52,211,153,.3);  color: var(--success); }
+        @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
+        .alert.err.show { animation: shake .4s ease; }
 
-        /* ── Button ── */
-        .btn-login {
-            width: 100%;
-            padding: 14px;
+        .btn-main {
+            width: 100%; padding: 13px;
             background: linear-gradient(135deg, var(--accent), var(--accent2));
-            border: none;
-            border-radius: var(--radius);
-            color: #fff;
-            font-family: 'Syne', sans-serif;
-            font-size: 15px;
-            font-weight: 700;
-            letter-spacing: .04em;
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-            transition: opacity .2s, transform .15s;
-            margin-top: 8px;
+            border: none; border-radius: var(--radius);
+            color: #fff; font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700;
+            cursor: pointer; position: relative; overflow: hidden;
+            transition: opacity .2s, transform .15s; margin-top: 8px;
         }
-        .btn-login::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: rgba(255,255,255,0);
-            transition: background .2s;
-        }
-        .btn-login:hover { opacity: .92; transform: translateY(-1px); }
-        .btn-login:active { transform: translateY(0); }
-        .btn-login:hover::after { background: rgba(255,255,255,.06); }
-        .btn-login.loading { pointer-events: none; opacity: .7; }
+        .btn-main:hover { opacity: .92; transform: translateY(-1px); }
+        .btn-main.loading { pointer-events: none; opacity: .7; }
+        .spinner { display: none; width: 18px; height: 18px; border: 2px solid rgba(255,255,255,.3); border-top-color: #fff; border-radius: 50%; animation: spin .7s linear infinite; margin: 0 auto; }
+        @keyframes spin { to{transform:rotate(360deg)} }
+        .btn-main.loading .btn-text { display: none; }
+        .btn-main.loading .spinner  { display: block; }
 
-        /* ── Spinner inside button ── */
-        .spinner {
-            display: none;
-            width: 18px; height: 18px;
-            border: 2px solid rgba(255,255,255,.3);
-            border-top-color: #fff;
-            border-radius: 50%;
-            animation: spin .7s linear infinite;
-            margin: 0 auto;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        .btn-login.loading .btn-text { display: none; }
-        .btn-login.loading .spinner { display: block; }
+        .footer-note { text-align: center; margin-top: 24px; font-size: 11px; color: var(--muted); }
 
-        /* ── Footer ── */
-        .footer-note {
-            text-align: center;
-            margin-top: 28px;
-            font-size: 12px;
-            color: var(--muted);
+        .select-wrap { position: relative; }
+        .select-wrap select {
+            width: 100%; padding: 12px 12px 12px 40px;
+            background: rgba(255,255,255,.04); border: 1px solid var(--border);
+            border-radius: var(--radius); color: var(--text);
+            font-family: 'DM Sans', sans-serif; font-size: 14px; outline: none;
+            appearance: none; cursor: pointer; transition: border-color .2s;
         }
+        .select-wrap select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(59,130,246,.15); }
+        .select-wrap select option { background: #111827; }
     </style>
 </head>
 <body>
@@ -237,77 +154,227 @@
         <div class="brand-name">Vehicle<span>MS</span></div>
     </div>
 
-    <h1>Welcome back</h1>
-    <p class="subtitle">Sign in to your management portal</p>
-
-    <div class="error-msg" id="errorMsg">
-        <span>⚠</span>
-        <span id="errorText">Invalid username or password.</span>
+    <div class="tabs">
+        <button class="tab active" onclick="switchTab('login')">Sign In</button>
+        <button class="tab"        onclick="switchTab('signup')">Sign Up</button>
     </div>
 
-    <div class="field">
-        <label>Username</label>
-        <div class="input-wrap">
-            <span class="icon">👤</span>
-            <input type="text" id="username" placeholder="Enter your username" autocomplete="username"/>
+    <!-- ── Sign-In Pane ── -->
+    <div class="pane active" id="pane-login">
+        <h1>Welcome back</h1>
+        <p class="subtitle">Sign in to your management portal</p>
+
+        <div class="alert err" id="loginErr"><span>⚠</span><span id="loginErrTxt"></span></div>
+
+        <div class="field">
+            <label>Username</label>
+            <div class="input-wrap">
+                <span class="icon">👤</span>
+                <input type="text" id="loginUsername" placeholder="Enter your username" autocomplete="username"/>
+            </div>
         </div>
-    </div>
-
-    <div class="field">
-        <label>Password</label>
-        <div class="input-wrap">
-            <span class="icon">🔒</span>
-            <input type="password" id="password" placeholder="Enter your password" autocomplete="current-password"/>
+        <div class="field">
+            <label>Password</label>
+            <div class="input-wrap">
+                <span class="icon">🔒</span>
+                <input type="password" id="loginPassword" placeholder="Enter your password" autocomplete="current-password"/>
+            </div>
         </div>
+
+        <button class="btn-main" id="btnLogin" onclick="handleLogin()">
+            <span class="btn-text">Sign In →</span>
+            <div class="spinner"></div>
+        </button>
     </div>
 
-    <button class="btn-login" id="loginBtn" onclick="handleLogin()">
-        <span class="btn-text">Sign In →</span>
-        <div class="spinner"></div>
-    </button>
+    <!-- ── Sign-Up Pane ── -->
+    <div class="pane" id="pane-signup">
+        <h1>Create account</h1>
+        <p class="subtitle">Register a new VIMS account</p>
+
+        <div class="alert err" id="signupErr"><span>⚠</span><span id="signupErrTxt"></span></div>
+        <div class="alert ok"  id="signupOk" ><span>✓</span><span id="signupOkTxt"></span></div>
+
+        <div class="field">
+            <label>Username *</label>
+            <div class="input-wrap">
+                <span class="icon">👤</span>
+                <input type="text" id="regUsername" placeholder="Choose a username"/>
+            </div>
+        </div>
+        <div class="field">
+            <label>Full Name</label>
+            <div class="input-wrap">
+                <span class="icon">🏷️</span>
+                <input type="text" id="regFullName" placeholder="Your full name"/>
+            </div>
+        </div>
+        <div class="field">
+            <label>Email *</label>
+            <div class="input-wrap">
+                <span class="icon">✉️</span>
+                <input type="email" id="regEmail" placeholder="you@example.com"/>
+            </div>
+        </div>
+        <div class="field">
+            <label>Password *</label>
+            <div class="input-wrap">
+                <span class="icon">🔒</span>
+                <input type="password" id="regPassword" placeholder="Min 6 characters"/>
+            </div>
+        </div>
+        <div class="field">
+            <label>Role</label>
+            <div class="input-wrap select-wrap">
+                <span class="icon">🛡️</span>
+                <select id="regRole">
+                    <option value="CUSTOMER">Customer</option>
+                    <option value="ADMIN">Admin</option>
+                </select>
+            </div>
+        </div>
+
+        <button class="btn-main" id="btnSignup" onclick="handleSignup()">
+            <span class="btn-text">Create Account →</span>
+            <div class="spinner"></div>
+        </button>
+    </div>
 
     <p class="footer-note">Vehicle Management System &copy; 2025</p>
 </div>
+
 <script>
+    const API = 'http://localhost:8080/api/v1/auth';
+
+    // Tab switching
+    function switchTab(tab) {
+        document.querySelectorAll('.tab').forEach((t, i) =>
+            t.classList.toggle('active', (i === 0 && tab === 'login') || (i === 1 && tab === 'signup')));
+        document.getElementById('pane-login').classList.toggle('active', tab === 'login');
+        document.getElementById('pane-signup').classList.toggle('active', tab === 'signup');
+        hideAlerts();
+    }
+
+    function hideAlerts() {
+        ['loginErr','signupErr','signupOk'].forEach(id =>
+            document.getElementById(id).classList.remove('show'));
+    }
+
+    function showErr(pane, msg) {
+        if (pane === 'login') {
+            document.getElementById('loginErrTxt').textContent = msg;
+            const el = document.getElementById('loginErr');
+            el.classList.remove('show');
+            void el.offsetWidth; // reflow to re-trigger animation
+            el.classList.add('show');
+        } else {
+            document.getElementById('signupErrTxt').textContent = msg;
+            document.getElementById('signupErr').classList.add('show');
+            document.getElementById('signupOk').classList.remove('show');
+        }
+    }
+
+    function showOk(pane, msg) {
+        if (pane === 'signup') {
+            document.getElementById('signupOkTxt').textContent = msg;
+            document.getElementById('signupOk').classList.add('show');
+            document.getElementById('signupErr').classList.remove('show');
+        }
+    }
+
+    // ── Enter key support ─────────────────────────────────────────────────────
     document.addEventListener('keydown', e => {
-        if (e.key === 'Enter') handleLogin();
+        if (e.key !== 'Enter') return;
+        const loginPane = document.getElementById('pane-login').classList.contains('active');
+        loginPane ? handleLogin() : handleSignup();
     });
 
-    function handleLogin() {
-        const username = document.getElementById('username').value.trim();
-        const password = document.getElementById('password').value.trim();
-        const btn      = document.getElementById('loginBtn');
-        const errorMsg = document.getElementById('errorMsg');
-        const errorTxt = document.getElementById('errorText');
-
-        errorMsg.classList.remove('show');
+    // ── Sign-In ───────────────────────────────────────────────────────────────
+    async function handleLogin() {
+        const username = document.getElementById('loginUsername').value.trim();
+        const password = document.getElementById('loginPassword').value.trim();
 
         if (!username || !password) {
-            errorTxt.textContent = 'Please fill in both fields.';
-            errorMsg.classList.add('show');
-            return;
+            showErr('login', 'Please fill in both fields.'); return;
         }
 
+        const btn = document.getElementById('btnLogin');
         btn.classList.add('loading');
+        hideAlerts();
 
-        // 🔥 Replace this with your Spring Boot API later
-        setTimeout(() => {
-            btn.classList.remove('loading');
+        try {
+            const res = await fetch(`${API}/signin`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, password })
+            });
 
-            if (username === 'admin' && password === '1234') {
+            const json = await res.json();
 
-                // ✅ save login state (important)
-                localStorage.setItem("isLogged", "true");
-
-                // ✅ redirect to dashboard
+            if (res.ok && json.data?.accessToken) {
+                // Store JWT for use in all subsequent API calls
+                localStorage.setItem('token',    json.data.accessToken);
+                localStorage.setItem('username', username);
+                localStorage.setItem('isLogged', 'true');
                 window.location.replace('pages/dashboard.html');
-
             } else {
-                errorTxt.textContent = 'Invalid username or password.';
-                errorMsg.classList.add('show');
-                document.getElementById('password').value = '';
+                const msg = json.message || 'Invalid username or password.';
+                showErr('login', msg);
+                document.getElementById('loginPassword').value = '';
             }
-        }, 800);
+        } catch (err) {
+            showErr('login', 'Cannot reach server. Please try again.');
+        } finally {
+            btn.classList.remove('loading');
+        }
     }
-</script></body>
+
+    // ── Sign-Up ───────────────────────────────────────────────────────────────
+    async function handleSignup() {
+        const username = document.getElementById('regUsername').value.trim();
+        const fullName = document.getElementById('regFullName').value.trim();
+        const email    = document.getElementById('regEmail').value.trim();
+        const password = document.getElementById('regPassword').value.trim();
+        const role     = document.getElementById('regRole').value;
+
+        if (!username) { showErr('signup', 'Username is required.'); return; }
+        if (!email)    { showErr('signup', 'Email is required.');    return; }
+        if (!password || password.length < 6) { showErr('signup', 'Password must be at least 6 characters.'); return; }
+
+        const btn = document.getElementById('btnSignup');
+        btn.classList.add('loading');
+        hideAlerts();
+
+        try {
+            const res = await fetch(`${API}/signup`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, fullName, email, password, role })
+            });
+
+            const json = await res.json();
+
+            if (res.ok) {
+                showOk('signup', 'Account created! A welcome email has been sent. Sign in now.');
+                // Clear signup form
+                ['regUsername','regFullName','regEmail','regPassword'].forEach(id =>
+                    document.getElementById(id).value = '');
+                // Auto-switch to login after 2 s
+                setTimeout(() => switchTab('login'), 2000);
+            } else {
+                showErr('signup', json.message || 'Registration failed. Please try again.');
+            }
+        } catch (err) {
+            showErr('signup', 'Cannot reach server. Please try again.');
+        } finally {
+            btn.classList.remove('loading');
+        }
+    }
+
+    // ── Auth guard: redirect if already logged in ─────────────────────────────
+    if (localStorage.getItem('isLogged') === 'true' && localStorage.getItem('token')) {
+        window.location.replace('pages/dashboard.html');
+    }
+</script>
+</body>
 </html>

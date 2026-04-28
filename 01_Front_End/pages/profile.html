@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - VIMS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+        :root{
+            --bg:#0d0f14;--panel:#13161e;--panel2:#191d28;--border:#232737;--border2:#2d3346;
+            --text:#eef0f6;--muted:#6b7591;--soft:#9ba3bf;
+            --blue:#4f8eff;--blue-dim:#1a2d5a;
+            --green:#2ecc8b;--green-dim:#0e3328;
+            --amber:#f5a623;--amber-dim:#3d2a06;
+            --red:#ff4f6b;--red-dim:#3d0f18;
+            --purple:#a78bfa;
+            --r:12px;--r2:8px;--sidebar:230px;
+            --font-head:'Syne',sans-serif;--font-body:'DM Sans',sans-serif
+        }
+        body{font-family:var(--font-body);background:var(--bg);color:var(--text);font-size:14px;min-height:100vh;overflow-x:hidden}
+        ::-webkit-scrollbar{width:5px}
+        ::-webkit-scrollbar-track{background:transparent}
+        ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:99px}
+
+        /* ── Layout ── */
+        .layout{display:flex;min-height:100vh}
+
+        /* ── Sidebar ── */
+        .sidebar{width:var(--sidebar);background:var(--panel);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:20px 12px;position:fixed;top:0;left:0;bottom:0;z-index:20;overflow-y:auto}
+        .sidebar-brand{display:flex;align-items:center;gap:12px;padding:6px 8px 20px;border-bottom:1px solid var(--border);margin-bottom:16px}
+        .brand-icon{width:36px;height:36px;background:linear-gradient(135deg,var(--blue),var(--purple));border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 0 16px rgba(79,142,255,.35);font-size:16px;color:#fff}
+        .brand-text h2{font-family:var(--font-head);font-weight:800;font-size:14px;background:linear-gradient(90deg,#fff,var(--blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+        .brand-text span{font-size:10px;color:var(--muted)}
+        .nav-section-title{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;padding:4px 10px 6px;margin-top:8px}
+        .nav-item{display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:var(--r2);color:var(--soft);font-size:13px;font-weight:500;cursor:pointer;transition:all .15s;position:relative;margin-bottom:2px}
+        .nav-item i{width:16px;text-align:center;flex-shrink:0;font-size:13px}
+        .nav-item:hover{background:var(--panel2);color:var(--text)}
+        .nav-item.active{background:var(--blue-dim);color:var(--blue)}
+        .nav-item.active::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:3px;height:16px;background:var(--blue);border-radius:0 3px 3px 0}
+        .sb-bottom{margin-top:auto;border-top:1px solid var(--border);padding-top:14px}
+        .user-card{display:flex;align-items:center;gap:9px;padding:10px;border-radius:var(--r2);background:var(--panel2);border:1px solid var(--border);margin-bottom:8px}
+        .avatar-sm{width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,var(--blue),var(--purple));display:flex;align-items:center;justify-content:center;font-family:var(--font-head);font-weight:700;font-size:12px;color:#fff;flex-shrink:0}
+        .user-info .uname{font-size:12px;font-weight:600}
+        .user-info .urole{font-size:10px;color:var(--muted);margin-top:1px}
+        .logout-btn{display:flex;align-items:center;gap:7px;width:100%;padding:8px 10px;border-radius:var(--r2);background:none;border:none;cursor:pointer;color:var(--muted);font-family:var(--font-body);font-size:12px;font-weight:500;transition:all .15s}
+        .logout-btn:hover{background:var(--red-dim);color:var(--red)}
+
+        /* ── Main ── */
+        .main-content{margin-left:var(--sidebar);flex:1;display:flex;flex-direction:column}
+        .topbar{background:var(--panel);border-bottom:1px solid var(--border);padding:14px 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
+        .topbar-title{font-family:var(--font-head);font-size:16px;font-weight:700}
+        .topbar-right{display:flex;gap:10px;align-items:center}
+        .user-badge{display:flex;align-items:center;gap:8px;background:var(--panel2);border:1px solid var(--border);padding:6px 12px;border-radius:var(--r2);font-size:13px}
+        .user-avatar{width:26px;height:26px;border-radius:7px;background:linear-gradient(135deg,var(--blue),var(--purple));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:11px;color:#fff}
+        .btn-logout{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:var(--r2);background:var(--red-dim);color:var(--red);border:1px solid rgba(255,79,107,.2);cursor:pointer;font-size:12px;font-weight:500;font-family:var(--font-body);transition:all .15s}
+        .btn-logout:hover{background:var(--red);color:#fff}
+        .page-content{padding:24px 28px}
+
+        /* ── Cards ── */
+        .card{background:var(--panel);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:20px}
+        .card-hd{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--border)}
+        .card-hd h3{font-family:var(--font-head);font-size:14px;font-weight:700;display:flex;align-items:center;gap:8px}
+        .card-hd h3 i{color:var(--blue)}
+        .card-body{padding:20px}
+
+        /* ── Profile Avatar ── */
+        .profile-avatar-wrap{text-align:center;margin-bottom:22px}
+        .profile-avatar{width:72px;height:72px;border-radius:16px;background:linear-gradient(135deg,var(--blue),var(--purple));color:#fff;display:flex;align-items:center;justify-content:center;font-family:var(--font-head);font-size:2rem;font-weight:800;margin:0 auto 12px;box-shadow:0 0 24px rgba(79,142,255,.3)}
+        .profile-avatar-wrap h3{font-family:var(--font-head);font-size:15px;font-weight:700;margin-bottom:6px}
+
+        /* ── Badges ── */
+        .badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:5px;font-size:11px;font-weight:600}
+        .badge::before{content:'';width:5px;height:5px;border-radius:50%;flex-shrink:0}
+        .badge-active,.bg{background:rgba(46,204,139,.12);color:var(--green)}.badge-active::before,.bg::before{background:var(--green)}
+        .ba{background:rgba(245,166,35,.12);color:var(--amber)}.ba::before{background:var(--amber)}
+        .br{background:rgba(255,79,107,.12);color:var(--red)}.br::before{background:var(--red)}
+        .bb{background:rgba(79,142,255,.12);color:var(--blue)}.bb::before{background:var(--blue)}
+        .bx{background:rgba(107,117,146,.15);color:var(--muted)}.bx::before{background:var(--muted)}
+
+        /* ── Form ── */
+        .form-group{margin-bottom:14px}
+        .form-label{display:block;font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
+        .form-control{width:100%;padding:9px 12px;border:1px solid var(--border2);border-radius:var(--r2);background:var(--panel2);font-family:var(--font-body);font-size:13px;color:var(--text);outline:none;transition:border-color .15s}
+        .form-control:focus{border-color:var(--blue)}
+        .form-control[readonly]{opacity:.55;cursor:not-allowed}
+        textarea.form-control{resize:vertical;min-height:80px}
+
+        /* ── Buttons ── */
+        .btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border-radius:var(--r2);font-family:var(--font-body);font-size:13px;font-weight:500;cursor:pointer;border:none;transition:all .15s;width:100%;justify-content:center}
+        .btn-primary{background:var(--blue);color:#fff}.btn-primary:hover{background:#6ba3ff}
+        .btn-warning{background:var(--amber);color:#111}.btn-warning:hover{background:#f7b73a}
+        .btn-ghost{background:transparent;color:var(--soft);border:1px solid var(--border2)}.btn-ghost:hover{background:var(--panel2);color:var(--text)}
+
+        /* ── Alerts ── */
+        .alert{padding:10px 14px;border-radius:var(--r2);font-size:12px;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+        .alert-info{background:rgba(79,142,255,.1);color:var(--blue);border:1px solid rgba(79,142,255,.2)}
+        .alert-success{background:var(--green-dim);color:var(--green);border:1px solid rgba(46,204,139,.25)}
+        .alert-danger{background:var(--red-dim);color:var(--red);border:1px solid rgba(255,79,107,.25)}
+
+        /* ── Account Info rows ── */
+        .info-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--border)}
+        .info-row:last-child{border-bottom:none}
+        .info-label{font-size:12px;color:var(--muted)}
+        .info-value{font-size:13px;font-weight:600;font-family:var(--font-head)}
+
+        /* ── Grid ── */
+        .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+
+        /* ── Loading overlay ── */
+        .loading-overlay{display:none;position:fixed;inset:0;background:rgba(13,15,20,.8);z-index:999;align-items:center;justify-content:center}
+        .loading-overlay.show{display:flex}
+        .spinner{width:36px;height:36px;border:3px solid var(--border2);border-top-color:var(--blue);border-radius:50%;animation:spin .7s linear infinite}
+        @keyframes spin{to{transform:rotate(360deg)}}
+
+        /* ── Logout modal ── */
+        #lmo{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);z-index:200;align-items:center;justify-content:center}
+    </style>
+</head>
+<body>
+
+<div class="loading-overlay" id="loadingOverlay"><div class="spinner"></div></div>
+
+<div class="layout">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="sidebar-brand">
+            <div class="brand-icon"><i class="fas fa-shield-alt"></i></div>
+            <div class="brand-text"><h2>VIMS</h2><span>Vehicle Insurance</span></div>
+        </div>
+        <nav id="sidebarNav"></nav>
+        <div class="sb-bottom">
+            <div class="user-card">
+                <div class="avatar-sm" id="sbAvatar">U</div>
+                <div class="user-info">
+                    <div class="uname" id="userDisplayName">User</div>
+                    <div class="urole" id="userRole">—</div>
+                </div>
+            </div>
+            <button class="logout-btn" onclick="showLogout()"><i class="fas fa-sign-out-alt"></i> Sign Out</button>
+        </div>
+    </aside>
+
+    <!-- MAIN -->
+    <div class="main-content">
+        <header class="topbar">
+            <div class="topbar-title">My Profile</div>
+            <div class="topbar-right">
+                <div class="user-badge">
+                    <div class="user-avatar" id="userAvatar">U</div>
+                    <span id="topbarUser">User</span>
+                </div>
+                <button class="btn-logout" onclick="showLogout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+            </div>
+        </header>
+
+        <div class="page-content">
+            <div id="alertContainer"></div>
+
+            <div class="grid-2">
+
+                <!-- PERSONAL INFO -->
+                <div class="card">
+                    <div class="card-hd"><h3><i class="fas fa-user"></i> Personal Information</h3></div>
+                    <div class="card-body">
+                        <div class="profile-avatar-wrap">
+                            <div class="profile-avatar" id="profileAvatar">U</div>
+                            <h3 id="profileName">—</h3>
+                            <span id="profileRoleBadge" class="badge badge-active">—</span>
+                        </div>
+                        <div id="profileAlertContainer"></div>
+                        <div class="form-group">
+                            <label class="form-label">Full Name *</label>
+                            <input type="text" id="p-name" class="form-control" placeholder="Your full name">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Email (Read Only)</label>
+                            <input type="email" id="p-email" class="form-control" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Phone *</label>
+                            <input type="text" id="p-phone" class="form-control" placeholder="07XXXXXXXX">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">NIC Number</label>
+                            <input type="text" id="p-nic" class="form-control" placeholder="XXXXXXXXX V or XXXXXXXXXXXX">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Address</label>
+                            <textarea id="p-address" class="form-control" rows="3" placeholder="Your address..."></textarea>
+                        </div>
+                        <button class="btn btn-primary" onclick="updateProfile()">
+                            <i class="fas fa-save"></i> Save Changes
+                        </button>
+                    </div>
+                </div>
+
+                <div>
+                    <!-- CHANGE PASSWORD -->
+                    <div class="card">
+                        <div class="card-hd"><h3><i class="fas fa-lock"></i> Change Password</h3></div>
+                        <div class="card-body">
+                            <div id="pwAlertContainer"></div>
+                            <div class="alert alert-info"><i class="fas fa-info-circle"></i> Minimum 6 characters required.</div>
+                            <div class="form-group">
+                                <label class="form-label">Current Password *</label>
+                                <input type="password" id="pw-current" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">New Password *</label>
+                                <input type="password" id="pw-new" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Confirm New Password *</label>
+                                <input type="password" id="pw-confirm" class="form-control">
+                            </div>
+                            <button class="btn btn-warning" onclick="changePassword()">
+                                <i class="fas fa-key"></i> Change Password
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- ACCOUNT DETAILS -->
+                    <div class="card">
+                        <div class="card-hd"><h3><i class="fas fa-info-circle"></i> Account Details</h3></div>
+                        <div class="card-body">
+                            <div class="info-row"><span class="info-label">User ID</span><span class="info-value" id="info-id">—</span></div>
+                            <div class="info-row"><span class="info-label">Role</span><span class="info-value" id="info-role">—</span></div>
+                            <div class="info-row"><span class="info-label">Status</span><span id="info-status">—</span></div>
+                            <div class="info-row"><span class="info-label">Member Since</span><span class="info-value" id="info-joined">—</span></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div><!-- /grid -->
+        </div><!-- /page-content -->
+    </div><!-- /main-content -->
+</div><!-- /layout -->
+
+<!-- LOGOUT MODAL -->
+<div id="lmo">
+    <div style="background:var(--panel);border:1px solid var(--border2);border-radius:16px;max-width:320px;width:90%;padding:28px;text-align:center">
+        <div style="font-size:38px;margin-bottom:8px">👋</div>
+        <div style="font-family:var(--font-head);font-size:15px;font-weight:700;margin-bottom:5px">Sign Out?</div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:20px">You will be redirected to the login page.</div>
+        <div style="display:flex;gap:8px;justify-content:center">
+            <button onclick="document.getElementById('lmo').style.display='none'" style="padding:8px 18px;border-radius:var(--r2);background:transparent;color:var(--soft);border:1px solid var(--border2);cursor:pointer;font-family:var(--font-body);font-size:13px">Cancel</button>
+            <button onclick="logout()" style="padding:8px 18px;border-radius:var(--r2);background:#374151;color:#fff;border:none;cursor:pointer;font-family:var(--font-body);font-size:13px;font-weight:600">Sign Out</button>
+        </div>
+    </div>
+</div>
+
+<script src="/js/app.js"></script>
+<script>
+    const user = requireAuth();
+    let apiBase = '';
+
+    function showLogout(){document.getElementById('lmo').style.display='flex';}
+
+    function getBadgeClass(s){
+        const m={ACTIVE:'bg',APPROVED:'bg',PENDING:'ba',SUSPENDED:'ba',REJECTED:'br',CANCELLED:'br',EXPIRED:'bx'};
+        return m[s]||'bx';
+    }
+
+    function formatDate(d){return d?String(d).substring(0,10):'—';}
+
+    function showAlert(msg, type, containerId='alertContainer'){
+        const el=document.getElementById(containerId);
+        if(!el)return;
+        el.innerHTML=`<div class="alert alert-${type}"><i class="fas fa-${type==='success'?'check-circle':type==='danger'?'exclamation-circle':'info-circle'}"></i> ${msg}</div>`;
+        setTimeout(()=>el.innerHTML='',4000);
+    }
+
+    if (user) {
+        document.getElementById('userDisplayName').textContent = user.name;
+        document.getElementById('topbarUser').textContent = user.name;
+        document.getElementById('userAvatar').textContent = user.name.charAt(0).toUpperCase();
+        document.getElementById('sbAvatar').textContent = user.name.charAt(0).toUpperCase();
+        document.getElementById('userRole').textContent = user.role;
+
+        apiBase = user.role === 'ADMIN' ? '/admin' : '/customer';
+
+        const nav = document.getElementById('sidebarNav');
+        if (user.role === 'ADMIN') {
+            nav.innerHTML = `
+        <div class="nav-section-title">Overview</div>
+        <div class="nav-item" onclick="location.href='/html/admin-dashboard.html'"><i class="fas fa-tachometer-alt"></i> Dashboard</div>
+        <div class="nav-section-title">Management</div>
+        <div class="nav-item" onclick="location.href='/html/admin-users.html'"><i class="fas fa-users"></i> Customers</div>
+        <div class="nav-item" onclick="location.href='/html/admin-vehicles.html'"><i class="fas fa-car"></i> Vehicles</div>
+        <div class="nav-item" onclick="location.href='/html/admin-policies.html'"><i class="fas fa-file-contract"></i> Policies</div>
+        <div class="nav-item" onclick="location.href='/html/admin-claims.html'"><i class="fas fa-clipboard-list"></i> Claims</div>
+        <div class="nav-item" onclick="location.href='/html/admin-payments.html'"><i class="fas fa-credit-card"></i> Payments</div>
+        <div class="nav-item" onclick="location.href='/html/admin-reports.html'"><i class="fas fa-chart-bar"></i> Reports</div>
+        <div class="nav-section-title">Account</div>
+        <div class="nav-item active"><i class="fas fa-user-cog"></i> My Profile</div>`;
+        } else {
+            nav.innerHTML = `
+        <div class="nav-section-title">Main</div>
+        <div class="nav-item" onclick="location.href='/html/customer-dashboard.html'"><i class="fas fa-tachometer-alt"></i> Dashboard</div>
+        <div class="nav-section-title">My Insurance</div>
+        <div class="nav-item" onclick="location.href='/html/vehicles.html'"><i class="fas fa-car"></i> My Vehicles</div>
+        <div class="nav-item" onclick="location.href='/html/policies.html'"><i class="fas fa-file-contract"></i> My Policies</div>
+        <div class="nav-item" onclick="location.href='/html/claims.html'"><i class="fas fa-clipboard-list"></i> My Claims</div>
+        <div class="nav-item" onclick="location.href='/html/payments.html'"><i class="fas fa-credit-card"></i> Payments</div>
+        <div class="nav-section-title">Account</div>
+        <div class="nav-item active"><i class="fas fa-user-cog"></i> My Profile</div>`;
+        }
+
+        loadProfile();
+    }
+
+    async function loadProfile() {
+        document.getElementById('loadingOverlay').classList.add('show');
+        try {
+            const res = await Api.get(`${apiBase}/profile`);
+            const p = res.data;
+            document.getElementById('p-name').value    = p.fullName;
+            document.getElementById('p-email').value   = p.email;
+            document.getElementById('p-phone').value   = p.phone || '';
+            document.getElementById('p-nic').value     = p.nicNumber || '';
+            document.getElementById('p-address').value = p.address || '';
+            document.getElementById('profileName').textContent     = p.fullName;
+            document.getElementById('profileAvatar').textContent   = p.fullName.charAt(0).toUpperCase();
+            document.getElementById('profileRoleBadge').textContent = p.role;
+            document.getElementById('profileRoleBadge').className  = `badge ${getBadgeClass('ACTIVE')}`;
+            document.getElementById('info-id').textContent     = p.id;
+            document.getElementById('info-role').textContent   = p.role;
+            document.getElementById('info-status').innerHTML   = `<span class="badge ${getBadgeClass(p.status)}">${p.status}</span>`;
+            document.getElementById('info-joined').textContent = formatDate(p.createdAt);
+        } catch(e) {
+            showAlert(e.message||'Failed to load profile', 'danger');
+        } finally {
+            document.getElementById('loadingOverlay').classList.remove('show');
+        }
+    }
+
+    async function updateProfile() {
+        const payload = {
+            fullName:  document.getElementById('p-name').value.trim(),
+            phone:     document.getElementById('p-phone').value.trim(),
+            nicNumber: document.getElementById('p-nic').value.trim() || null,
+            address:   document.getElementById('p-address').value.trim() || null,
+        };
+        if (!payload.fullName || !payload.phone) {
+            showAlert('Full name and phone are required', 'danger', 'profileAlertContainer'); return;
+        }
+        try {
+            await Api.put(`${apiBase}/profile`, payload);
+            showAlert('Profile updated successfully!', 'success', 'profileAlertContainer');
+            document.getElementById('profileName').textContent           = payload.fullName;
+            document.getElementById('profileAvatar').textContent         = payload.fullName.charAt(0).toUpperCase();
+            document.getElementById('topbarUser').textContent            = payload.fullName;
+            document.getElementById('userDisplayName').textContent       = payload.fullName;
+            document.getElementById('sbAvatar').textContent              = payload.fullName.charAt(0).toUpperCase();
+            document.getElementById('userAvatar').textContent            = payload.fullName.charAt(0).toUpperCase();
+        } catch(e) {
+            showAlert(e.message||'Update failed', 'danger', 'profileAlertContainer');
+        }
+    }
+
+    async function changePassword() {
+        const payload = {
+            currentPassword: document.getElementById('pw-current').value,
+            newPassword:     document.getElementById('pw-new').value,
+            confirmPassword: document.getElementById('pw-confirm').value,
+        };
+        if (!payload.currentPassword || !payload.newPassword || !payload.confirmPassword) {
+            showAlert('Please fill all password fields', 'danger', 'pwAlertContainer'); return;
+        }
+        if (payload.newPassword !== payload.confirmPassword) {
+            showAlert('Passwords do not match', 'danger', 'pwAlertContainer'); return;
+        }
+        if (payload.newPassword.length < 6) {
+            showAlert('Password must be at least 6 characters', 'danger', 'pwAlertContainer'); return;
+        }
+        try {
+            await Api.patch(`${apiBase}/profile/change-password`, payload);
+            showAlert('Password changed! Please login again.', 'success', 'pwAlertContainer');
+            document.getElementById('pw-current').value = '';
+            document.getElementById('pw-new').value     = '';
+            document.getElementById('pw-confirm').value = '';
+            setTimeout(logout, 2500);
+        } catch(e) {
+            showAlert(e.message||'Password change failed', 'danger', 'pwAlertContainer');
+        }
+    }
+</script>
+</body>
+</html>
