@@ -320,9 +320,9 @@
                 localStorage.setItem('isLogged', 'true');
 
                 if (json.data.role === 0) {
-                    window.location.replace('pages/admin-dashbord.html');
-                } else {
                     window.location.replace('pages/dashboard.html');
+                } else {
+                    window.location.replace('pages/dashboard-user.html');
                 }
             } else {
                 const msg = json.message || 'Invalid username or password.';
@@ -381,10 +381,11 @@
     // ── Auth guard: redirect if already logged in ─────────────────────────────
     if (localStorage.getItem('isLogged') === 'true' && localStorage.getItem('token')) {
         const role = localStorage.getItem('role');
+        console.log(role)
         if (role == 0) {
-            window.location.replace('pages/admin-dashbord.html');
-        } else {
             window.location.replace('pages/dashboard.html');
+        } else {
+            window.location.replace('pages/dashboard-user.html');
         }
     }
 </script>

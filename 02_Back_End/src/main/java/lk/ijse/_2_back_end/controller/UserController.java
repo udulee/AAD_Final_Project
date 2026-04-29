@@ -35,6 +35,7 @@ public class UserController {
             List<UserDTO> users = userService.getAllUsers();
             return ResponseEntity.ok(users);
         } catch (RuntimeException e) {
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(e.getMessage());
         }

@@ -38,6 +38,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 
     @Override
     public void createUser(UserDTO dto) {
+        dto.setPassword(passwordEncoder.encode(dto.getPassword()));
         userRepository.save(modelMapper.map(dto,User.class));
     }
 

@@ -37,6 +37,7 @@
 
     // ── Logout ────────────────────────────────────────────────────────────────
     function logout() {
+        localStorage.clear()
         localStorage.removeItem('token');
         localStorage.removeItem('username');
         localStorage.removeItem('isLogged');

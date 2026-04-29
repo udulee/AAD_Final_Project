@@ -49,8 +49,8 @@ public class AuthServiceImpl implements AuthService {
         registerDTO.setPassword(passwordEncoder.encode(registerDTO.getPassword()));
 
         if (registerDTO.getRole() != null) {
-            Role role = registerDTO.getRole() == 0 ? Role.ADMIN : Role.USER;
-            registerDTO.setRoleValue(role);
+//            Role role = registerDTO.getRole() == 0 ? Role.ADMIN : Role.USER;
+//            registerDTO.setRoleValue(role);
         }
 
         userRepository.save(modelMapper.map(registerDTO,User.class));

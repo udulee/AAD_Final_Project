@@ -14,9 +14,9 @@ public class UserDTO {
     private String password;
     private String fullName;
     private String email;
-    private Integer role;
+    private Role role;
 
-    public void setRoleValue(Role roleEnum) {
-        this.role = roleEnum == Role.ADMIN ? 0 : 1;
-    }
+//    public void setRoleValue(Role roleEnum) {
+//        this.role = roleEnum == Role.ADMIN ? 0 : 1;
+//    }
 }
