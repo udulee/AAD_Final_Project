@@ -1,6 +1,7 @@
 package lk.ijse._2_back_end.service.impl;
 
 import lk.ijse._2_back_end.dto.PolicyDTO;
+import lk.ijse._2_back_end.dto.PolicySaveRequestDto;
 import lk.ijse._2_back_end.entity.Policy;
 import lk.ijse._2_back_end.entity.User;
 import lk.ijse._2_back_end.entity.Vehicle;
@@ -32,7 +33,7 @@ public class PolicyServiceImpl implements PolicyService {
     // ========================= CRUD =========================
 
     @Override
-    public void registerPolicy(PolicyDTO dto) {
+    public void registerPolicy(PolicySaveRequestDto dto) {
 
         if (dto.getPolicyNumber() != null &&
                 policyRepository.existsByPolicyNumber(dto.getPolicyNumber())) {
@@ -51,10 +52,9 @@ public class PolicyServiceImpl implements PolicyService {
         po.setStatus(dto.getStatus());
 
         // ✅ Fetch related entities
-        Vehicle vehicle = vehicleRepository.findById(dto.getVehicleId())
-                .orElseThrow(() -> new RuntimeException("Vehicle not found"));
+        Vehicle vehicle = vehicleRepository.getVehicleByVehicleNumberIs(dto.getVehicleNumber());
 
-        User user = (User) userRepository.findById(dto.getUserId().getUserId())
+        User user = (User) userRepository.findById(dto.getCustomerId())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         po.setVehicle(vehicle);

@@ -1,10 +1,14 @@
 package lk.ijse._2_back_end.entity;
 
 import jakarta.persistence.*;
+import lk.ijse._2_back_end.entity.Claim;
+import lk.ijse._2_back_end.entity.User;
+import lk.ijse._2_back_end.entity.Vehicle;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -24,16 +28,15 @@ public class Policy {
     private LocalDate startDate;
     private LocalDate endDate;
 
-    private double premiumAmount;
-    private double coverageAmount;
-    private double deductibleAmount;
+    private BigDecimal premiumAmount;
+    private BigDecimal coverageAmount;
+    private BigDecimal deductibleAmount;
 
     private String status;
 
     private LocalDate createdDate;
     private LocalDate updatedDate;
 
-    // Relationships
     @ManyToOne
     @JoinColumn(name = "vehicle_id")
     private Vehicle vehicle;

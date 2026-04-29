@@ -1,7 +1,9 @@
 package lk.ijse._2_back_end.controller;
 
 import lk.ijse._2_back_end.dto.PolicyDTO;
+import lk.ijse._2_back_end.dto.PolicySaveRequestDto;
 import lk.ijse._2_back_end.service.PolicyService;
+import lk.ijse._2_back_end.util.APIResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,12 +23,13 @@ public class PolicyController {
 
     //  CREATE
     @PostMapping("/save")
-    public ResponseEntity<?> registerPolicy(@RequestBody PolicyDTO dto) {
+    public ResponseEntity<APIResponse> registerPolicy(@RequestBody PolicySaveRequestDto dto) {
         try {
             policyService.registerPolicy(dto);
-            return ResponseEntity.status(HttpStatus.CREATED).body("Policy registered successfully!");
+            return ResponseEntity.status(HttpStatus.CREATED).body(new APIResponse(201,"Policy registered successfully!",null));
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.CREATED).body(new APIResponse(500,e.getMessage(),null));
         }
     }
 
