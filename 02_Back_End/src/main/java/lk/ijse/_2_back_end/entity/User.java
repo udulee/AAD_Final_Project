@@ -1,6 +1,7 @@
 package lk.ijse._2_back_end.entity;
 
 import jakarta.persistence.*;
+import lk.ijse._2_back_end.config.RoleConverter;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -24,7 +25,8 @@ public class User {
     private String password;
     private String fullName;
     private String email;
-    private  Role role; // ← "ADMIN" / "CUSTOMER"
+    @Convert(converter = RoleConverter.class)
+    private Role role;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     List<Vehicle> vehicleList;

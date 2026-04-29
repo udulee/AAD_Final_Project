@@ -1,5 +1,6 @@
 package lk.ijse._2_back_end.dto;
 
+import lk.ijse._2_back_end.entity.Role;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,5 +14,9 @@ public class UserDTO {
     private String password;
     private String fullName;
     private String email;
-    private String role;
+    private Integer role;
+
+    public void setRoleValue(Role roleEnum) {
+        this.role = roleEnum == Role.ADMIN ? 0 : 1;
+    }
 }

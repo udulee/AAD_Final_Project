@@ -712,7 +712,7 @@
             fullName: $("#fullName").val().trim(),
             email:    $("#email").val().trim(),
             password: $("#password").val().trim(),
-            role:     $("#role").val()
+            role:     $("#role").val().toLowerCase() == "admin" ? 0 : 1
         };
     }
 

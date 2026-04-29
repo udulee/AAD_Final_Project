@@ -228,8 +228,8 @@
             <div class="input-wrap select-wrap">
                 <span class="icon">🛡️</span>
                 <select id="regRole">
-                    <option value="CUSTOMER">Customer</option>
-                    <option value="ADMIN">Admin</option>
+                    <option value="1">Customer</option>
+                    <option value="0">Admin</option>
                 </select>
             </div>
         </div>
@@ -312,11 +312,18 @@
             const json = await res.json();
 
             if (res.ok && json.data?.accessToken) {
-                // Store JWT for use in all subsequent API calls
-                localStorage.setItem('token',    json.data.accessToken);
-                localStorage.setItem('username', username);
+                localStorage.setItem('token', json.data.accessToken);
+                localStorage.setItem('username', json.data.username);
+                localStorage.setItem('email', json.data.email);
+                localStorage.setItem('userId', json.data.userId);
+                localStorage.setItem('role', json.data.role);
                 localStorage.setItem('isLogged', 'true');
-                window.location.replace('pages/dashboard.html');
+
+                if (json.data.role === 0) {
+                    window.location.replace('pages/admin-dashbord.html');
+                } else {
+                    window.location.replace('pages/dashboard.html');
+                }
             } else {
                 const msg = json.message || 'Invalid username or password.';
                 showErr('login', msg);
@@ -335,7 +342,7 @@
         const fullName = document.getElementById('regFullName').value.trim();
         const email    = document.getElementById('regEmail').value.trim();
         const password = document.getElementById('regPassword').value.trim();
-        const role     = document.getElementById('regRole').value;
+        const role     = parseInt(document.getElementById('regRole').value).toLocaleString();
 
         if (!username) { showErr('signup', 'Username is required.'); return; }
         if (!email)    { showErr('signup', 'Email is required.');    return; }
@@ -373,7 +380,12 @@
 
     // ── Auth guard: redirect if already logged in ─────────────────────────────
     if (localStorage.getItem('isLogged') === 'true' && localStorage.getItem('token')) {
-        window.location.replace('pages/dashboard.html');
+        const role = localStorage.getItem('role');
+        if (role == 0) {
+            window.location.replace('pages/admin-dashbord.html');
+        } else {
+            window.location.replace('pages/dashboard.html');
+        }
     }
 </script>
 </body>

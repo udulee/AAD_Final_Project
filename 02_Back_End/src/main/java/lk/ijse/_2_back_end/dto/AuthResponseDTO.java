@@ -7,4 +7,8 @@ import lombok.Data;
 @AllArgsConstructor
 public class AuthResponseDTO {
     private String accessToken;
+    private Long userId;
+    private String username;
+    private String email;
+    private Integer role;
 }
