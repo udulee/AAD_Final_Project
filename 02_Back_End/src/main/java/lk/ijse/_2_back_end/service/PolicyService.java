@@ -7,10 +7,14 @@ import java.util.List;
 
 public interface PolicyService {
     void registerPolicy(PolicySaveRequestDto dto);
-    List getAllPolicies();
-    void getPolicyById();
-    void updatePolicy(Long id,PolicyDTO dto);
+    List<PolicyDTO> getAllPolicies();
+    PolicyDTO getPolicyById(Long id);
+    void updatePolicy(Long id, PolicyDTO dto);
     void deletePolicy(Long id);
-
     void resetPolicies();
+
+    Double getTotalRevenue();
+    long getTotalPolicies();
+    long getActivePolicies();
+    long getSuspendedPolicies();
 }

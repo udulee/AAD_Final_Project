@@ -1,10 +1,11 @@
 package lk.ijse._2_back_end.controller;
 
+import lk.ijse._2_back_end.dto.DashboardResponse;
 import lk.ijse._2_back_end.dto.PolicyDTO;
 import lk.ijse._2_back_end.dto.PolicySaveRequestDto;
 import lk.ijse._2_back_end.service.PolicyService;
 import lk.ijse._2_back_end.util.APIResponse;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,93 +17,90 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/v1/policies")
 @CrossOrigin(origins = "*")
+@RequiredArgsConstructor
 public class PolicyController {
 
-    @Autowired
-    private PolicyService policyService;
+    private final PolicyService policyService;
 
-    //  CREATE
     @PostMapping("/save")
     public ResponseEntity<APIResponse> registerPolicy(@RequestBody PolicySaveRequestDto dto) {
         try {
             policyService.registerPolicy(dto);
-            return ResponseEntity.status(HttpStatus.CREATED).body(new APIResponse(201,"Policy registered successfully!",null));
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(new APIResponse(201, "Policy registered successfully!", null));
         } catch (RuntimeException e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.CREATED).body(new APIResponse(500,e.getMessage(),null));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new APIResponse(400, e.getMessage(), null));
         }
     }
 
-    // READ ALL
     @GetMapping
-    public ResponseEntity<?> getAllPolicies() {
+    public ResponseEntity<APIResponse> getAllPolicies() {
         try {
             List<PolicyDTO> list = policyService.getAllPolicies();
-            return ResponseEntity.ok(list);
+            return ResponseEntity.ok(new APIResponse(200, "OK", list));
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new APIResponse(500, e.getMessage(), null));
         }
     }
 
-    // READ BY ID
     @GetMapping("/{id}")
-    public void getPolicyById(@PathVariable Long id) {
-        policyService.getPolicyById();
-//        try {
-//            return ResponseEntity.ok(policyService.getPolicyById());
-//        } catch (RuntimeException e) {
-//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-//        }
+    public ResponseEntity<APIResponse> getPolicyById(@PathVariable Long id) {
+        try {
+            PolicyDTO policy = policyService.getPolicyById(id);
+            return ResponseEntity.ok(new APIResponse(200, "OK", policy));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new APIResponse(404, e.getMessage(), null));
+        }
     }
 
-    //  UPDATE
     @PutMapping("/{id}")
-    public ResponseEntity<?> updatePolicy(@PathVariable Long id, @RequestBody PolicyDTO dto) {
+    public ResponseEntity<APIResponse> updatePolicy(@PathVariable Long id, @RequestBody PolicyDTO dto) {
         try {
             policyService.updatePolicy(id, dto);
-            return ResponseEntity.ok("Policy updated successfully!");
+            return ResponseEntity.ok(new APIResponse(200, "Policy updated successfully!", null));
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new APIResponse(400, e.getMessage(), null));
         }
     }
 
-    //  DELETE
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deletePolicy(@PathVariable Long id) {
+    public ResponseEntity<APIResponse> deletePolicy(@PathVariable Long id) {
         try {
             policyService.deletePolicy(id);
-            return ResponseEntity.ok("Policy deleted successfully!");
+            return ResponseEntity.ok(new APIResponse(200, "Policy deleted successfully!", null));
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new APIResponse(404, e.getMessage(), null));
         }
     }
 
-    // ✅ RESET
     @DeleteMapping("/reset")
-    public ResponseEntity<?> resetPolicies() {
+    public ResponseEntity<APIResponse> resetPolicies() {
         try {
             policyService.resetPolicies();
-            return ResponseEntity.ok("All policies reset successfully!");
+            return ResponseEntity.ok(new APIResponse(200, "All policies reset successfully!", null));
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new APIResponse(500, e.getMessage(), null));
         }
     }
 
-    // 🔥 NEW DASHBOARD API (IMPORTANT)
     @GetMapping("/dashboard")
-    public ResponseEntity<?> getDashboard() {
+    public ResponseEntity<APIResponse> getDashboard() {
         try {
-//            Map<String, > data = new HashMap<>();
-//
-//            data.put("totalRevenue", policyService.getPolicyById());
-//            data.put("totalPolicies", policyService.getTotalPolicies());
-//            data.put("activePolicies", policyService.getActivePolicies());
-//            data.put("suspendedPolicies", policyService.getSuspendedPolicies());
-
-          //  return ResponseEntity.ok(data);
-return null;
+            Map<String, Object> data = new HashMap<>();
+            data.put("totalRevenue", policyService.getTotalRevenue());
+            data.put("totalPolicies", policyService.getTotalPolicies());
+            data.put("activePolicies", policyService.getActivePolicies());
+            data.put("suspendedPolicies", policyService.getSuspendedPolicies());
+            return ResponseEntity.ok(new APIResponse(200, "OK", data));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new APIResponse(500, e.getMessage(), null));
         }
     }
 }

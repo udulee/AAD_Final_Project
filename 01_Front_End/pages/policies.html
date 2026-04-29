@@ -345,6 +345,18 @@
 <script src="../js/app.js"></script>
 <script>
     const API = "http://localhost:8080/api/v1/policies";
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+        window.location.href = "../index.html";
+    }
+
+    function getHeaders() {
+        return {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + token
+        };
+    }
 
     // ── Toast ──
     function showToast(msg, type = "success") {
@@ -361,7 +373,9 @@
         $.ajax({
             url: API,
             type: "GET",
-            success: function (data) {
+            headers: getHeaders(),
+            success: function (response) {
+                const data = response.data || [];
                 updateStats(data);
 
                 if (!data.length) {
@@ -393,7 +407,7 @@
                     <td><strong>${p.policyNumber ?? "-"}</strong></td>
                     <td><span class="type-badge ${typeCls}">${p.policyType ?? "-"}</span></td>
                     <td>${p.vehicleNumber ?? "-"}</td>
-                    <td>${p.customerId ?? "-"}</td>
+                    <td>${p.userId ?? "-"}</td>
                     <td>${p.startDate ?? "-"}</td>
                     <td>${p.endDate ?? "-"}</td>
                     <td>${p.premiumAmount || 0}</td>
@@ -432,23 +446,30 @@
 
     // ── Fill form ──
     function fillForm(id) {
-        $.get(`${API}/${id}`, function (p) {
-            $("#policyId").val(p.policyId);
-            $("#policyNumber").val(p.policyNumber);
-            $("#policyType").val(p.policyType);
-            $("#status").val(p.status);
-            $("#startDate").val(p.startDate);
-            $("#endDate").val(p.endDate);
-            $("#vehicleNumber").val(p.vehicleNumber);
-            $("#customerId").val(p.customerId);
-            $("#premiumAmount").val(p.premiumAmount);
-            $("#coverageAmount").val(p.coverageAmount);
-            $("#deductibleAmount").val(p.deductibleAmount);
-            $("#formTitle").text("Edit Policy");
-            $("#btnUpdate").prop("disabled", false);
-            $("#btnDelete").prop("disabled", false);
-            $("#selectedIdDisplay").html(`<i class="bi bi-info-circle me-1"></i>Selected Policy ID: <strong>${p.policyId}</strong>`);
-        }).fail(() => showToast("Failed to fetch policy!", "danger"));
+        $.ajax({
+            url: `${API}/${id}`,
+            type: "GET",
+            headers: getHeaders(),
+            success: function (response) {
+                const p = response.data;
+                $("#policyId").val(p.policyId);
+                $("#policyNumber").val(p.policyNumber);
+                $("#policyType").val(p.policyType);
+                $("#status").val(p.status);
+                $("#startDate").val(p.startDate);
+                $("#endDate").val(p.endDate);
+                $("#vehicleNumber").val(p.vehicleNumber);
+                $("#customerId").val(p.userId);
+                $("#premiumAmount").val(p.premiumAmount);
+                $("#coverageAmount").val(p.coverageAmount);
+                $("#deductibleAmount").val(p.deductibleAmount);
+                $("#formTitle").text("Edit Policy");
+                $("#btnUpdate").prop("disabled", false);
+                $("#btnDelete").prop("disabled", false);
+                $("#selectedIdDisplay").html(`<i class="bi bi-info-circle me-1"></i>Selected Policy ID: <strong>${p.policyId}</strong>`);
+            },
+            error: function () { showToast("Failed to fetch policy!", "danger"); }
+        });
     }
 
     // ── Register ──
@@ -457,13 +478,18 @@
         if (!validateForm(data)) return;
         $.ajax({
             url: API+'/save', type: "POST",
+            headers: getHeaders(),
             contentType: "application/json",
             data: JSON.stringify(data),
-            success: function () {
-                showToast("Policy registered successfully!");
+            success: function (response) {
+                showToast(response.message || "Policy registered successfully!");
                 resetForm(); loadPolicies();
             },
-            error: function (xhr) { showToast(xhr.responseText || "Failed to register!", "danger"); }
+            error: function (xhr) {
+                let msg = "Failed to register!";
+                try { msg = JSON.parse(xhr.responseText).message || msg; } catch(e){}
+                showToast(msg, "danger");
+            }
         });
     }
 
@@ -473,15 +499,21 @@
         if (!id) { showToast("Please select a policy!", "warning"); return; }
         const data = getFormData();
         if (!validateForm(data)) return;
+        data.policyId = parseInt(id);
         $.ajax({
             url: `${API}/${id}`, type: "PUT",
+            headers: getHeaders(),
             contentType: "application/json",
             data: JSON.stringify(data),
-            success: function () {
-                showToast("Policy updated successfully!");
+            success: function (response) {
+                showToast(response.message || "Policy updated successfully!");
                 resetForm(); loadPolicies();
             },
-            error: function (xhr) { showToast(xhr.responseText || "Failed to update!", "danger"); }
+            error: function (xhr) {
+                let msg = "Failed to update!";
+                try { msg = JSON.parse(xhr.responseText).message || msg; } catch(e){}
+                showToast(msg, "danger");
+            }
         });
     }
 
@@ -492,11 +524,16 @@
         if (!confirm(`Delete Policy ID: ${id}?`)) return;
         $.ajax({
             url: `${API}/${id}`, type: "DELETE",
-            success: function () {
-                showToast("Policy deleted!", "success");
+            headers: getHeaders(),
+            success: function (response) {
+                showToast(response.message || "Policy deleted!", "success");
                 resetForm(); loadPolicies();
             },
-            error: function (xhr) { showToast(xhr.responseText || "Failed to delete!", "danger"); }
+            error: function (xhr) {
+                let msg = "Failed to delete!";
+                try { msg = JSON.parse(xhr.responseText).message || msg; } catch(e){}
+                showToast(msg, "danger");
+            }
         });
     }
 
@@ -505,11 +542,16 @@
         if (!confirm("⚠️ This will DELETE ALL policies permanently. Continue?")) return;
         $.ajax({
             url: `${API}/reset`, type: "DELETE",
-            success: function () {
-                showToast("All policies have been reset!", "success");
+            headers: getHeaders(),
+            success: function (response) {
+                showToast(response.message || "All policies have been reset!", "success");
                 resetForm(); loadPolicies();
             },
-            error: function (xhr) { showToast(xhr.responseText || "Failed to reset!", "danger"); }
+            error: function (xhr) {
+                let msg = "Failed to reset!";
+                try { msg = JSON.parse(xhr.responseText).message || msg; } catch(e){}
+                showToast(msg, "danger");
+            }
         });
     }
 
@@ -552,7 +594,10 @@
     }
 
     function logout() {
-        if (confirm("Logout?")) window.location.href = "../index.html";
+        if (confirm("Logout?")) {
+            localStorage.clear();
+            window.location.href = "../index.html";
+        }
     }
 
     // ── Init ──
