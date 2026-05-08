@@ -3,6 +3,7 @@ package lk.ijse._2_back_end.service.impl;
 import lk.ijse._2_back_end.dto.UserDTO;
 import lk.ijse._2_back_end.entity.User;
 import lk.ijse._2_back_end.repository.UserRepository;
+import lk.ijse._2_back_end.service.EmailService;
 import lk.ijse._2_back_end.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -22,6 +23,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     private final PasswordEncoder passwordEncoder;
     private final ModelMapper modelMapper;
     private final LazyInitializationExcludeFilter eagerJpaMetamodelCacheCleanup;
+    private final EmailService emailService;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -39,7 +41,13 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     @Override
     public void createUser(UserDTO dto) {
         dto.setPassword(passwordEncoder.encode(dto.getPassword()));
-        userRepository.save(modelMapper.map(dto,User.class));
+        User savedUser = userRepository.save(modelMapper.map(dto, User.class));
+
+        emailService.sendWelcomeEmail(
+                savedUser.getEmail(),
+                savedUser.getFullName() != null ? savedUser.getFullName() : savedUser.getUsername(),
+                savedUser.getUsername()
+        );
     }
 
     @Override

@@ -7,6 +7,7 @@ import lk.ijse._2_back_end.entity.Role;
 import lk.ijse._2_back_end.entity.User;
 import lk.ijse._2_back_end.repository.UserRepository;
 import lk.ijse._2_back_end.service.AuthService;
+import lk.ijse._2_back_end.service.EmailService;
 import lk.ijse._2_back_end.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -22,6 +23,7 @@ public class AuthServiceImpl implements AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
     private final ModelMapper modelMapper;
+    private final EmailService emailService;
 
     public AuthResponseDTO authenticate(AuthDTO authDTO){
         User user=userRepository.findByUsername(authDTO.getUsername()).orElseThrow(
@@ -53,7 +55,14 @@ public class AuthServiceImpl implements AuthService {
 //            registerDTO.setRoleValue(role);
         }
 
-        userRepository.save(modelMapper.map(registerDTO,User.class));
+        User savedUser = userRepository.save(modelMapper.map(registerDTO, User.class));
+
+        emailService.sendWelcomeEmail(
+                savedUser.getEmail(),
+                savedUser.getFullName() != null ? savedUser.getFullName() : savedUser.getUsername(),
+                savedUser.getUsername()
+        );
+
         return "User registered successfully";
     }
 }
