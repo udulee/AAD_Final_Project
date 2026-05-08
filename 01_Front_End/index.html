@@ -322,7 +322,7 @@
                 if (json.data.role === 0) {
                     window.location.replace('pages/dashboard.html');
                 } else {
-                    window.location.replace('pages/dashboard-user.html');
+                    window.location.replace('pages/user-dashboard.html');
                 }
             } else {
                 const msg = json.message || 'Invalid username or password.';
@@ -385,7 +385,7 @@
         if (role == 0) {
             window.location.replace('pages/dashboard.html');
         } else {
-            window.location.replace('pages/dashboard-user.html');
+            window.location.replace('pages/user-dashboard.html');
         }
     }
 </script>
