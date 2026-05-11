@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <title>Policies - VIMS Admin</title>
+    <title>My Policies - VIMS</title>
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
     <link rel="stylesheet" href="../css/admin.css">
@@ -100,35 +100,32 @@
 <body>
 <div class="layout">
     <aside class="sidebar">
-        <div class="sidebar-brand">
-            <div class="brand-icon"><i class="fas fa-shield-alt"></i></div>
-            <div class="brand-text"><h2>VIMS Admin</h2><span>Management Console</span></div>
+        <div class="logo" style="display:flex;align-items:center;gap:10px;padding:6px 8px 20px;border-bottom:1px solid var(--border);margin-bottom:16px">
+            <div style="width:36px;height:36px;background:linear-gradient(135deg,var(--blue),var(--purple));border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:16px"><i class="fas fa-shield-alt"></i></div>
+            <div><h2 style="font-family:var(--font-head);font-weight:800;font-size:14px;background:linear-gradient(90deg,#fff,var(--blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent">VIMS</h2><span style="font-size:10px;color:var(--muted)">Customer Portal</span></div>
         </div>
         <nav>
-            <div class="nav-section-title">Overview</div>
-            <div class="nav-item" onclick="location.href='admin-dashboard.html'"><i class="fas fa-tachometer-alt"></i> Dashboard</div>
-            <div class="nav-section-title">Management</div>
-            <div class="nav-item" onclick="location.href='admin-users.html'"><i class="fas fa-users"></i> Customers</div>
-            <div class="nav-item" onclick="location.href='admin-vehicles.html'"><i class="fas fa-car"></i> Vehicles</div>
-            <div class="nav-item active"><i class="fas fa-file-contract"></i> Policies</div>
-            <div class="nav-item" onclick="location.href='admin-claims.html'"><i class="fas fa-clipboard-list"></i> Claims</div>
-            <div class="nav-item" onclick="location.href='admin-payments.html'"><i class="fas fa-credit-card"></i> Payments</div>
-            <div class="nav-item active" onclick="location.href='report.html'"><i class="fas fa-chart-bar nav-icon"></i> Reports</div>
-            <div class="nav-section-title">Account</div>
-            <div class="nav-item" onclick="location.href='profile.html'"><i class="fas fa-user-cog"></i> My Profile</div>
+            <div style="font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;padding:4px 10px 6px">Main</div>
+            <div class="nav-item" onclick="location.href='user-dashboard.html'"><i class="fas fa-tachometer-alt"></i> Dashboard</div>
+            <div style="font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;padding:4px 10px 6px;margin-top:8px">Management</div>
+            <div class="nav-item" onclick="location.href='user-vehicles.html'"><i class="fas fa-car"></i> My Vehicles</div>
+            <div class="nav-item active" onclick="location.href='user-policies.html'"><i class="fas fa-file-contract"></i> Policies</div>
+            <div class="nav-item" onclick="location.href='user-payments.html'"><i class="fas fa-credit-card"></i> Payments</div>
+            <div class="nav-item" onclick="location.href='user-claims.html'"><i class="fas fa-clipboard-list"></i> Claims</div>
+            <div class="nav-item" onclick="location.href='user-users.html'"><i class="fas fa-users"></i> Users</div>
         </nav>
         <div class="sb-bottom">
-            <div class="user-card"><div class="avatar">A</div><div class="user-info"><div class="uname">Admin</div><div class="urole">Administrator</div></div></div>
-            <button class="logout-btn" onclick="showLogout()"><i class="fas fa-sign-out-alt"></i> Sign Out</button>
+            <div class="user-card"><div class="avatar">U</div><div class="user-info"><div class="uname">User</div><div class="urole">Customer</div></div></div>
+            <button class="logout-btn" onclick="location.href='../index.html'"><i class="fas fa-sign-out-alt"></i> Sign Out</button>
         </div>
     </aside>
 
     <div class="main-content">
         <header class="topbar">
-            <div class="topbar-title">Policy Management</div>
+            <div class="topbar-title">My Policies</div>
             <div class="topbar-right">
-                <div class="user-badge"><div class="user-avatar">A</div><span>Admin</span></div>
-                <button class="btn-logout" onclick="showLogout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                <div class="user-badge"><div class="user-avatar">U</div><span>User</span></div>
+                <button class="btn-logout" onclick="location.href='../index.html'"><i class="fas fa-sign-out-alt"></i> Logout</button>
             </div>
         </header>
         <div class="page-content">
